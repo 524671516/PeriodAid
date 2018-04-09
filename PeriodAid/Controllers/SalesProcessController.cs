@@ -498,7 +498,7 @@ namespace PeriodAid.Controllers
             List<int> CRM_Contractlist = new List<int>();
             for (int x = 1; x <= page; x++)
             {
-                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status=" + UserInfo.status_unsend + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status=3531567&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
                 var res = await Get_Request(url);
                 CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res);
                 if (r.code == "0")
@@ -602,7 +602,7 @@ namespace PeriodAid.Controllers
                 crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
             }
             crm_db.SaveChanges();
-            return Json(new { result = "SUCCESS"});
+            return Json(new { result = "SUCCESS" });
         }
         
         public async Task<string> getSingleCrmDetailInfo(int contract_id)
@@ -1264,8 +1264,9 @@ namespace PeriodAid.Controllers
                 contract.employee_id = seller.Id;
                 contract.employee_name = seller.name;
                 contract.edit_time = DateTime.Now;
-                success = contract.platform_code + " " + contract.contract_title + "SUCCESS";
                 crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
+                success = contract.platform_code + " " + contract.contract_title + "SUCCESS";
                 var updatcrm = UpdateCRM(contractId, contract.contract_status, contract.express_information, contract.express_remark);
                 if (updatcrm.Result != 1)
                 {

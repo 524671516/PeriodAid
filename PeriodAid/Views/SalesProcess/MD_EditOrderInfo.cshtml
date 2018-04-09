@@ -12,37 +12,37 @@
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             @Html.HiddenFor(model => model.Id)
             <div class="form-group hidden">
-                <input id="vip_code" type="text" value="@ViewBag.Order.vip_code" class="form-control" name="vip_code" />
+                <input id="vip_code" type="text" value="@Model.vip_code" class="form-control" name="vip_code" />
                 @Html.ValidationMessageFor(model => model.vip_code, "", new { @class = "text-danger" })
                 
-                <input id="order_code" type="text" value="@ViewBag.Order.order_code" class="form-control" name="order_code" />
+                <input id="order_code" type="text" value="@Model.order_code" class="form-control" name="order_code" />
                 @Html.ValidationMessageFor(model => model.order_code, "", new { @class = "text-danger" })
 
-                <input id="qty" type="text" value="@ViewBag.Order.qty" class="form-control" name="qty" />
+                <input id="qty" type="text" value="@Model.qty" class="form-control" name="qty" />
                 @Html.ValidationMessageFor(model => model.qty, "", new { @class = "text-danger" })
 
-                <input id="parentOrder_id" type="text" value="@ViewBag.Order.parentOrder_id" class="form-control" name="parentOrder_id" />
+                <input id="parentOrder_id" type="text" value="@Model.parentOrder_id" class="form-control" name="parentOrder_id" />
                 @Html.ValidationMessageFor(model => model.parentOrder_id, "", new { @class = "text-danger" })
 
-                <input id="delivery_state" type="text" value="@ViewBag.Order.delivery_state" class="form-control" name="delivery_state" />
+                <input id="delivery_state" type="text" value="@Model.delivery_state" class="form-control" name="delivery_state" />
                 @Html.ValidationMessageFor(model => model.delivery_state, "", new { @class = "text-danger" })
 
-                <input id="order_status" type="text" value="@ViewBag.Order.order_status" class="form-control" name="order_status" />
+                <input id="order_status" type="text" value="@Model.order_status" class="form-control" name="order_status" />
                 @Html.ValidationMessageFor(model => model.order_status, "", new { @class = "text-danger" })
 
-                <input id="receiver_times" type="text" value="@ViewBag.Order.receiver_times" class="form-control" name="receiver_times" />
+                <input id="receiver_times" type="text" value="@Model.receiver_times" class="form-control" name="receiver_times" />
                 @Html.ValidationMessageFor(model => model.receiver_times, "", new { @class = "text-danger" })
 
-                <input id="product_id" type="text" value="@ViewBag.Order.product_id" class="form-control" name="product_id" />
+                <input id="product_id" type="text" value="@Model.product_id" class="form-control" name="product_id" />
                 @Html.ValidationMessageFor(model => model.product_id, "", new { @class = "text-danger" })
 
-                <input id="receiver_address" type="text" value="@ViewBag.Order.receiver_address" class="form-control" name="receiver_address" />
+                <input id="receiver_address" type="text" value="@Model.receiver_address" class="form-control" name="receiver_address" />
                 @Html.ValidationMessageFor(model => model.receiver_address, "", new { @class = "text-danger" })
 
-                <input id="receiver_tel" type="text" value="@ViewBag.Order.receiver_tel" class="form-control" name="receiver_tel" />
+                <input id="receiver_tel" type="text" value="@Model.receiver_tel" class="form-control" name="receiver_tel" />
                 @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
 
-                <input id="receiver_area" type="text" value="@ViewBag.Order.receiver_area" class="form-control" name="receiver_area" />
+                <input id="receiver_area" type="text" value="@Model.receiver_area" class="form-control" name="receiver_area" />
                 @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
