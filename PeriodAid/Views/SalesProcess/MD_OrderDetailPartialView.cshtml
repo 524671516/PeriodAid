@@ -15,16 +15,11 @@
             <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
                 <td>@item.order_code</td>
                 <td style="text-indent:15px">@item.qty</td>
-                <td>@Html.ReceiverStatus(item.delivery_state)</td>
+                <td>@Html.DeliveryStatus(item.delivery_state)</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
-                @if (@item.receiver_address == null)
-                {
-                    <td>@item.receiver_address</td>
-                }
-                else
-                {
-                    <td>@item.receiver_area</td>
-                }
+                <td>
+                    <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+                </td>
                 <td>@item.express_information</td>
                 <td>
                     <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.delivery_state" data-toggle="modal" data-target="#myModal">编辑</a>

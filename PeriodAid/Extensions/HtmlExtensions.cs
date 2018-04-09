@@ -197,7 +197,7 @@ namespace System.Web.Mvc
             }
         }
         // YYS
-        public static string ReceiverStatus(this HtmlHelper helper, int status)
+        public static string DeliveryStatus(this HtmlHelper helper, int status)
         {
             switch (status)
             {
