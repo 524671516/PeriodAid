@@ -51,7 +51,20 @@
     </div>
 </div>
 <script>
+    $(".times_view").mouseover(function () {
+        var that = $(this)
+        $.ajax({
+            url: "/SalesProcess/ReceiverTimes/",
+            data: {
+                order_id: that.attr("data-id")
+            },
+            success: function (data) {
+                that.attr("data-original-title", "待提交数:" + data + "次")
+            }
+        })
+    })
     $(function () {
+        $(".times_view").trigger("mouseover").unbind("mouseover")
         $('[data-toggle="tooltip"]').tooltip();
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
@@ -70,18 +83,6 @@
             var that = $(this);
             var orderId = that.attr("data-id")
             that.attr("href", "/SalesProcess/MD_OrderDetailView/?order_id=" + orderId)
-        })
-        $(".times_view").mouseover(function () {
-            var that = $(this)
-            $.ajax({
-                url: "/SalesProcess/ReceiverTimes/",
-                data: {
-                    order_id: that.attr("data-id")
-                },
-                success: function (data) {
-                    that.attr("data-original-title", "待提交数:" + data + "次")
-                }
-            })
         })
         // 合并发送
         $(".amalgamate_btn").on("click", function () {
