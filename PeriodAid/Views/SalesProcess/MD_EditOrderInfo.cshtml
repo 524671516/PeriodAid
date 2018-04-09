@@ -18,14 +18,14 @@
                 <input id="order_code" type="text" value="@ViewBag.Order.order_code" class="form-control" name="order_code" />
                 @Html.ValidationMessageFor(model => model.order_code, "", new { @class = "text-danger" })
 
-                <input id="quantity" type="text" value="@ViewBag.Order.quantity" class="form-control" name="quantity" />
-                @Html.ValidationMessageFor(model => model.quantity, "", new { @class = "text-danger" })
+                <input id="qty" type="text" value="@ViewBag.Order.qty" class="form-control" name="qty" />
+                @Html.ValidationMessageFor(model => model.qty, "", new { @class = "text-danger" })
 
                 <input id="parentOrder_id" type="text" value="@ViewBag.Order.parentOrder_id" class="form-control" name="parentOrder_id" />
                 @Html.ValidationMessageFor(model => model.parentOrder_id, "", new { @class = "text-danger" })
 
-                <input id="receiver_status" type="text" value="@ViewBag.Order.receiver_status" class="form-control" name="receiver_status" />
-                @Html.ValidationMessageFor(model => model.receiver_status, "", new { @class = "text-danger" })
+                <input id="delivery_state" type="text" value="@ViewBag.Order.delivery_state" class="form-control" name="delivery_state" />
+                @Html.ValidationMessageFor(model => model.delivery_state, "", new { @class = "text-danger" })
 
                 <input id="order_status" type="text" value="@ViewBag.Order.order_status" class="form-control" name="order_status" />
                 @Html.ValidationMessageFor(model => model.order_status, "", new { @class = "text-danger" })

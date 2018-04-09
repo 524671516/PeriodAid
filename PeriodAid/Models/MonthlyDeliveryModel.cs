@@ -88,8 +88,6 @@ namespace PeriodAid.Models
 
     public static class OrderInfo
     {
-        // 合并后的订单times
-        public static int amalgamate_time =10;
     }
 
 
