@@ -19,6 +19,7 @@ namespace PeriodAid.Models
         }
         public virtual DbSet<MD_Order> MD_Order { get; set; }
         public virtual DbSet<MD_Product> MD_Product { get; set; }
+        public virtual DbSet<MD_Record> MD_Record { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<MD_Product>().HasMany(m => m.MD_Order).WithRequired(m => m.MD_Product).HasForeignKey(m => m.product_id).WillCascadeOnDelete(false);
@@ -84,6 +85,20 @@ namespace PeriodAid.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<MD_Order> MD_Order { get; set; }
 
+    }
+
+    [Table("MD_Record")]
+    public partial class MD_Record
+    {
+        public int Id { get; set; }
+
+        [StringLength(32)]
+        public string record_type { get; set; }
+
+        [StringLength(64)]
+        public string record_detail { get; set; }
+
+        public DateTime? record_date { get; set; }
     }
 
     public static class OrderInfo
