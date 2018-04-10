@@ -1218,7 +1218,7 @@ namespace PeriodAid.DAL
     {
         public string pay_type_code { get; set; }
         public DateTime? paytime { get; set; }
-        public double payment { get; set; }
+        public decimal payment { get; set; }
     }
     public class Orders_Result
     {

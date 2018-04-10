@@ -257,7 +257,7 @@ namespace PeriodAid.Controllers
             cell_pos = 0;
             var s0 = single_row.CreateCell(cell_pos);
             s0.SetCellValue("送货单号");
-            single_row.CreateCell(++cell_pos).SetCellValue(storageName + DateTime.Now.Month + DateTime.Now.Day);
+            single_row.CreateCell(++cell_pos).SetCellValue(storageName + DateTime.Now.ToString("MMdd"));
             var c0 = single_row.CreateCell(++cell_pos);
             c0.SetCellValue("供应商名称");
             single_row.CreateCell(++cell_pos);

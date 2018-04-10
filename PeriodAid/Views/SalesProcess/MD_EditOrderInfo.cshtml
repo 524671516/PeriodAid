@@ -36,14 +36,18 @@
                 <input id="product_id" type="text" value="@Model.product_id" class="form-control" name="product_id" />
                 @Html.ValidationMessageFor(model => model.product_id, "", new { @class = "text-danger" })
 
-                <input id="receiver_address" type="text" value="@Model.receiver_address" class="form-control" name="receiver_address" />
-                @Html.ValidationMessageFor(model => model.receiver_address, "", new { @class = "text-danger" })
-
                 <input id="receiver_tel" type="text" value="@Model.receiver_tel" class="form-control" name="receiver_tel" />
                 @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
 
                 <input id="receiver_area" type="text" value="@Model.receiver_area" class="form-control" name="receiver_area" />
                 @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">邮寄地址</label>
+                <div class="col-md-10">
+                    <input id="receiver_address" type="text" value="@Model.receiver_address" class="form-control order_control" autocomplete="off" name="receiver_address" />
+                    @Html.ValidationMessageFor(model => model.receiver_address, "", new { @class = "text-danger" })
+                </div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label">邮寄日期</label>

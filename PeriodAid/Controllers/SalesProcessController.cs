@@ -1251,7 +1251,7 @@ namespace PeriodAid.Controllers
                 ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
                 {
                     pay_type_code = "zhifubao",
-                    payment = item.CRM_Contract.total_amount
+                    payment = (decimal)item.CRM_Contract.total_amount
                 };
                 order.payments.Add(payments);
             }
