@@ -94,8 +94,7 @@ namespace PeriodAid.Models
 
         [StringLength(32)]
         public string record_type { get; set; }
-
-        [StringLength(64)]
+        
         public string record_detail { get; set; }
 
         public DateTime? record_date { get; set; }
