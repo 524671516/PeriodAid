@@ -18,7 +18,7 @@
                 <td>@Html.DeliveryStatus(item.delivery_state)</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
-                    <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+                    <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
                 </td>
                 <td>@item.express_information</td>
                 <td>
@@ -34,6 +34,11 @@
         </div>
     </div>
 </div>
+<script src="~/Scripts/jquery-2.1.3.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/distpicker.data.js"></script>
+<script src="~/Scripts/jquery-confirm.js"></script>
+<script src="~/Scripts/jquery.form.min.js"></script>
 <script>
     $(function () {
         var border_list = $(".edit_btn")

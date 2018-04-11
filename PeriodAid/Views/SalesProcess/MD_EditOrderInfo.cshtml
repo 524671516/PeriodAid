@@ -1,4 +1,9 @@
 ﻿@model PeriodAid.Models.MD_Order
+<style>
+    .select_area {
+        display: initial;
+    }
+</style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>修改订单信息</h2>
@@ -38,9 +43,18 @@
 
                 <input id="receiver_tel" type="text" value="@Model.receiver_tel" class="form-control" name="receiver_tel" />
                 @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
-
-                <input id="receiver_area" type="text" value="@Model.receiver_area" class="form-control" name="receiver_area" />
-                @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">邮寄区域</label>
+                <div class="col-md-10">
+                    <div class="distpicker5">
+                        <select class="select_province form-control select_area" style="width:31%"></select>
+                        <select class="select_city form-control select_area" style="width:31%"></select>
+                        <select class="select_district form-control select_area" style="width:31%"></select>
+                    </div>
+                    <input id="receiver_area" type="text" value="@Model.receiver_area" class="form-control hidden" name="receiver_area" />
+                    @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
+                </div>
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label">邮寄地址</label>
@@ -65,14 +79,42 @@
         </div>
     }
 </div>
+<script src="~/Scripts/distpicker.js"></script>
+<script src="~/Scripts/main.js"></script>
 <script>
     $(function () {
+        $(".distpicker5").distpicker({
+            autoSelect: false
+        });
         window.moment = Kalendae.moment;
         var k4 = new Kalendae.Input('receiver_date', {
             months: 1,
             titleFormat: "MM月, YYYY年",
             format: "YYYY-MM-DD"
         });
+        var strarea = $("#receiver_area").val()
+        var Indexprovince = strarea.indexOf("-")
+        var Strprovince = strarea.substring(0, Indexprovince)
+        var Indexcity = strarea.lastIndexOf("-")
+        var Strcity = strarea.substring(Indexprovince + 1, Indexcity)
+        var Strdistrict = strarea.substring(Indexcity + 1, strarea.length)
+        // 三级联动
+        $(".select_province").change(function () {
+            var options = $(this).children("option:selected");
+            $(this).parent(".distpicker5").siblings("#receiver_area").attr("data-province", options.val())
+        })
+        $(".select_city").change(function () {
+            var options = $(this).children("option:selected");
+            $(this).parent(".distpicker5").siblings("#receiver_area").attr("data-city", options.val())
+        })
+        $(".select_district").change(function () {
+            var options = $(this).children("option:selected");
+            $(this).parent(".distpicker5").siblings("#receiver_area").attr("data-district", options.val())
+            var Province = $("#receiver_area").attr("data-province")
+            var City = $("#receiver_area").attr("data-city")
+            var District = $("#receiver_area").attr("data-district")
+            $("#receiver_area").val(Province + "-" + City + "-" + District)
+        })
     })
     $("#save-btn").on("click", function () {
         if (!$(this).hasClass("disabled")) {
@@ -103,7 +145,7 @@
                                 },
                             }
                         });
-                        
+
                     } else {
                         errorAlert('保存失败')
                     }
