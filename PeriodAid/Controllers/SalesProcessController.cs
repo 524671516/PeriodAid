@@ -1379,14 +1379,13 @@ namespace PeriodAid.Controllers
                 var total_quantity = count * Order.qty;
                 md_db.MD_Order.RemoveRange(order);
                 var OrderDetail = new MD_Order();
-                if (Order.order_code.Contains("YYS"))
+                if (Order.order_code.Contains("MD"))
                 {
-                    OrderDetail.order_code = Order.order_code + Order.receiver_times + 1;
+                    OrderDetail.order_code = Order.order_code +"-"+ Order.receiver_times;
                 }
                 else
                 {
-
-                    OrderDetail.order_code = "YYS" + Order.order_code + Order.receiver_times + 1;
+                    OrderDetail.order_code = "MD" + Order.order_code +"-"+ Order.receiver_times;
                 }
                 OrderDetail.qty = total_quantity;
                 OrderDetail.amount = 0;
