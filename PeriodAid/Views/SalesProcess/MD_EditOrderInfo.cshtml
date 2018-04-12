@@ -48,9 +48,9 @@
                 <label class="col-md-2 control-label">邮寄区域</label>
                 <div class="col-md-10">
                     <div class="distpicker5">
-                        <select class="select_province form-control select_area" style="width:31%"></select>
-                        <select class="select_city form-control select_area" style="width:31%"></select>
-                        <select class="select_district form-control select_area" style="width:31%"></select>
+                        <select class="select_province form-control select_area" style="width:33%"></select>
+                        <select class="select_city form-control select_area" style="width:33%"></select>
+                        <select class="select_district form-control select_area" style="width:32%"></select>
                     </div>
                     <input id="receiver_area" type="text" value="@Model.receiver_area" class="form-control hidden" name="receiver_area" />
                     @Html.ValidationMessageFor(model => model.receiver_area, "", new { @class = "text-danger" })
@@ -98,6 +98,16 @@
         var Indexcity = strarea.lastIndexOf("-")
         var Strcity = strarea.substring(Indexprovince + 1, Indexcity)
         var Strdistrict = strarea.substring(Indexcity + 1, strarea.length)
+        $(".select_province").children("option:selected").text(Strprovince)
+        $(".select_city").children("option:selected").text(Strcity)
+        $(".select_district").children("option:selected").text(Strdistrict)
+        $(".select_area").on('click', function () {
+            var that = $(this)
+            console.log(that.children("option").eq(0).val())
+            $(".select_province").children("option").eq(0).text("—省—")
+            $(".select_city").children("option").eq(0).text("—市—")
+            $(".select_district").children("option").eq(0).text("—区—")
+        })
         // 三级联动
         $(".select_province").change(function () {
             var options = $(this).children("option:selected");
