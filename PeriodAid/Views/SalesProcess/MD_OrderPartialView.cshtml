@@ -24,9 +24,9 @@
                 </td>
                 <td style="text-indent:7px">@item.qty</td>
                 <td>
-                    <div style="width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.vip_code">@item.vip_code</div>
+                    <div style="width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.vip_code</div>
                 </td>
-                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
+                <td style="text-indent:5px">@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
                     <div style="width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
                      @item.receiver_area @item.receiver_address
