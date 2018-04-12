@@ -2,29 +2,41 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
+            <th style="width:5%">
+                <label style="margin-left:5px" class="checkbox-custom">
+                    <input type="checkbox" class="btn" id="checkbox-all">
+                </label>
+            </th>
             <th style="width:20%">平台单号</th>
             <th style="width:10%">产品数量</th>
             <th style="width:10%">发货状态</th>
             <th style="width:10%">发货时间</th>
             <th style="width:20%">邮寄地址</th>
             <th style="width:20%">物流单号</th>
-            <th style="width:10%"></th>
+            <th style="width:10%">
+                <a class="btn btn-xs btn-success hidden" id="merged_order" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;合并订单</a>
+            </th>
         </tr>
         @foreach (var item in Model)
         {
-            <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
-                <td>@item.order_code</td>
-                <td style="text-indent:15px">@item.qty</td>
-                <td>@Html.DeliveryStatus(item.delivery_state)</td>
-                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
-                <td>
-                    <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
-                </td>
-                <td>@item.express_information</td>
-                <td>
-                    <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.delivery_state" data-toggle="modal" data-target="#myModal">编辑</a>
-                </td>
-            </tr>
+        <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
+            <td>
+                <label class="checkbox-custom">
+                    <input type="checkbox" class="btn checkbox" data-oid="@item.order_code" data-utatus="@item.upload_status">
+                </label>
+            </td>
+            <td>@item.order_code</td>
+            <td style="text-indent:15px">@item.qty</td>
+            <td>@Html.DeliveryStatus(item.delivery_state)</td>
+            <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
+            <td>
+                <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
+            </td>
+            <td>@item.express_information</td>
+            <td>
+                <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.delivery_state" data-toggle="modal" data-target="#myModal">编辑</a>
+            </td>
+        </tr>
         }
     </table>
 </div>
@@ -34,7 +46,6 @@
         </div>
     </div>
 </div>
-<script src="~/Scripts/jquery-2.1.3.min.js"></script>
 <script src="~/Scripts/bootstrap.min.js"></script>
 <script src="~/Scripts/distpicker.data.js"></script>
 <script src="~/Scripts/jquery-confirm.js"></script>
@@ -58,6 +69,7 @@
         $('.edit_btn[data-receiver="2"]').addClass("disabled")
         $("#ul-hover li").eq(1).addClass("current")
         $('.edit_btn[data-utatus="1"]').addClass("disabled")
+        $('.checkbox[data-utatus="1"]').attr("disabled","disabled")
         // 编辑
         $(".edit_btn").on("click", function () {
             var that = $(this)
@@ -72,6 +84,78 @@
                     $("#orderId_show").attr("data-id", $("#orderId").attr("data-id"))
                 }
             })
+        })
+
+        var orderarry = [];
+        //全选
+        $("#checkbox-all").click(function () {
+            var i = 0
+            var that = $(this)
+            if (that.is(":checked")) {
+                $('.checkbox').not('[disabled="disabled"]').prop("checked", true)
+                var list = $(".checkbox:checked")
+                if (list.length < 1) {
+                    $("#merged_order").addClass("hidden")
+                } else {
+                    $("#merged_order").removeClass("hidden")
+                    for (i; i < list.length; i++) {
+                        var list_data = $(list[i]).attr("data-oid")
+                        if (orderarry.indexOf(list_data) == -1) {
+                            orderarry.push(list_data)
+                        }
+                    }
+                }
+                console.log(orderarry)
+            }
+            else {
+                $("#merged_order").addClass("hidden")
+                $(".checkbox").not('[disabled="disabled"]').prop("checked", false)
+                var list = $(".checkbox:unchecked")
+                for (i; i < list.length; i++) {
+                    orderarry.remove($(list[i]).attr("data-oid"))
+                }
+                console.log(orderarry)
+            }
+        })
+        //单选
+        $(".checkbox").on("click", function () {
+            var that = $(this)
+            var C_id = that.attr("data-val")
+            var select = that.is(":checked");
+            if (select) {
+                orderarry.push(C_id)
+                if ($("input:checked").length > 1) {
+                    if (that.attr("data-status") == "3531567") {
+                        $("#batch_change_status").removeClass("hidden")
+                        $(".change_status").hide()
+                    }
+                    else if (that.attr("data-status") == "3890335") {
+                        $("#batch_change_Partdeliverys").removeClass("hidden")
+                        $(".get_erp_status").addClass("hidden")
+                    }
+                    else {
+                        $("#batch_change_deliverys").removeClass("hidden")
+                        $(".get_erp_status").addClass("hidden")
+                    }
+                }
+            }
+            else {
+                orderarry.remove(C_id)
+                if (orderarry.length < 2) {
+                    if (that.attr("data-status") == "3531567") {
+                        $("#batch_change_status").addClass("hidden")
+                        $(".change_status").show()
+                    }
+                    else if (that.attr("data-status") == "3890335") {
+                        $("#batch_change_Partdeliverys").addClass("hidden")
+                        $(".get_erp_status").removeClass("hidden")
+                    }
+                    else {
+                        $("#batch_change_deliverys").addClass("hidden")
+                        $(".get_erp_status").removeClass("hidden")
+                    }
+                }
+            }
         })
     })
 </script>            

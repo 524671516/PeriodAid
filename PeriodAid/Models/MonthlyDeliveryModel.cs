@@ -63,6 +63,9 @@ namespace PeriodAid.Models
         [StringLength(256)]
         public string vip_code { get; set; }
 
+        [StringLength(128)]
+        public string receiver_name { get; set; }
+
         public int parentOrder_id { get; set; }
 
         public int receiver_times { get; set; }

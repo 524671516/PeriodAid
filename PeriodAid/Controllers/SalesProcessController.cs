@@ -1447,5 +1447,16 @@ namespace PeriodAid.Controllers
             return Json(new { result = "FAIL" });
         }
 
+        //合并订单
+        [HttpPost]
+        public JsonResult merged_order(string[] order_list)
+        {
+            foreach(var order in order_list)
+            {
+
+
+            }
+        }
+
     }
 }
