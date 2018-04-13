@@ -543,12 +543,38 @@ namespace PeriodAid.Models
 
     public partial class orders_List
     {
-        public List<deliverys_List> deliverys { get; set; }
-
         public string platform_code { get; set; }
 
         public int delivery_state { get; set; }
-        
+
+        public DateTime createtime { get; set; }
+
+        public string buyer_memo { get; set; }
+
+        public string receiver_address { get; set; }
+
+        public string receiver_area { get; set; }
+
+        public string receiver_mobile { get; set; }
+
+        public string receiver_name { get; set; }
+
+        public string vip_code { get; set; }
+
+        public double qty { get; set; }
+
+        public decimal amount { get; set; }
+
+        public decimal payment_amount { get; set; }
+
+        public decimal discount_fee { get; set; }
+
+        public decimal payment { get; set; }
+
+        public List<deliverys_List> deliverys { get; set; }
+
+        public List<details_List> details { get; set; }
+
     }
 
     public partial class deliverys_List
@@ -559,6 +585,11 @@ namespace PeriodAid.Models
 
         public string mail_no { get; set; }
 
+    }
+
+    public partial class details_List
+    {
+        public string note { get; set; }
     }
 
     public partial class deliverys_Result

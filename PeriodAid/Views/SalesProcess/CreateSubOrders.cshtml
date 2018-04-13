@@ -1,0 +1,99 @@
+﻿@model PeriodAid.Models.MD_Order
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>复购订单信息</h2>
+</div>
+<div class="modal-body" id="modal-body">
+    @using (Html.BeginForm("CreateSubOrders", "SalesProcess", FormMethod.Post, new { @id = "subOrder-form" }))
+    {
+        <div class="form-horizontal">
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <label class="col-md-offset-1 col-md-2 control-label">产品代码</label>
+                <div class="col-md-8">
+                    <input type="text" value="@Model.MD_Product.product_code" class="form-control order_control" readonly="readonly" />
+                </div>
+            </div>@if (Model.product_id == 1)
+            {
+                <div class="form-group">
+                    <label class="col-md-offset-1 col-md-2 control-label">配货次数</label>
+                    <div class="col-md-8">
+                        <div>
+                            <select class="form-control select_times">
+                                <option>5</option>
+                                <option>4</option>
+                                <option>3</option>
+                                <option>2</option>
+                                <option>1</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="col-md-offset-1 col-md-2 control-label">配货次数</label>
+                    <div class="col-md-8">
+                        <div>
+                            <select class="form-control select_times">
+                                <option>2</option>
+                                <option>1</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="form-group">
+                <label class="col-md-offset-1 col-md-2 control-label">产品数量</label>
+                <div class="col-md-8">
+                    <input id="order_qty" type="text" value="@Model.qty" style="text-indent:5px" class="form-control order_control" name="order_qty" autocomplete="off" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    <input type="button" value="生成复购订单" id="save-btn" class="btn btn-default" name="save-btn" />
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+<script>
+    $("#save-btn").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#subOrder-form").ajaxSubmit({
+                url: '/SalesProcess/CreateSubOrders',
+                type: 'post',
+                data:{
+                    order_qty: $("#order_qty").val(),
+                    times: $(".select_times").children("option:selected").val()
+                },
+                success: function (data) {
+                    $.ajax({
+                        url: "/SalesProcess/MD_OrderPartialView/",
+                        type: "post",
+                        data: {
+                            page: 1,
+                            query: $("#order_query").val()
+                        },
+                        success: function (data) {
+                            $("#order_list_content").html(data)
+                            $("#myModal").modal('hide');
+                            $('.modal-backdrop.in').remove()
+                            $('body').removeClass('modal-open')
+                            $('.create_btn').addClass("disabled")
+                            $.alert({
+                                title: '提示!',
+                                content: '操作成功!',
+                                type: 'green',
+                            });
+                        }
+                    })
+                }
+            })
+            return false;
+        }
+    })
+</script>

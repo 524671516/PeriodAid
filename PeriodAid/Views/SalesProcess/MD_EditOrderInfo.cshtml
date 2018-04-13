@@ -43,6 +43,12 @@
 
                 <input id="receiver_tel" type="text" value="@Model.receiver_tel" class="form-control" name="receiver_tel" />
                 @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
+
+                <input id="receiver_name" type="text" value="@Model.receiver_name" class="form-control" name="receiver_name" />
+                @Html.ValidationMessageFor(model => model.receiver_name, "", new { @class = "text-danger" })
+                
+                <input id="express_information" type="text" value=" " class="form-control" name="express_information" />
+                @Html.ValidationMessageFor(model => model.express_information, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <label class="col-md-2 control-label">邮寄区域</label>

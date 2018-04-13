@@ -1328,8 +1328,8 @@ namespace PeriodAid.Controllers
             if (query != "")
             {
                 var SearchResult = (from m in order
-                                    where m.order_code.Contains(query)
-                                    orderby m.Id descending
+                                    where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
+                                    orderby m.receiver_date descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
@@ -1337,7 +1337,7 @@ namespace PeriodAid.Controllers
             {
                 var SearchResult = (from m in md_db.MD_Order
                                     where m.order_status != -1 && m.receiver_times == 1
-                                    orderby m.Id descending
+                                    orderby m.receiver_date descending
                                     select m).ToPagedList(_page, 15);
                 return PartialView(SearchResult);
             }
@@ -1362,34 +1362,38 @@ namespace PeriodAid.Controllers
         {
             var orderDetail = from m in md_db.MD_Order
                               where m.parentOrder_id == parentOrder_id
+                              orderby m.receiver_date ascending
                               select m;
             return PartialView(orderDetail);
         }
         // 合并
         [HttpPost]
-        public JsonResult Amalgamate_Order(int order_id)
+        public JsonResult Amalgamate_Order(int[] order_id)
         {
-            var order = from m in md_db.MD_Order
-                        where m.parentOrder_id == order_id && m.order_status == 0 && m.delivery_state == 0 && m.receiver_times != 1
-                        select m;
-            var count = order.Count();
-            if(count != 0)
+            var FirstOid = order_id[0];
+            var Order = md_db.MD_Order.SingleOrDefault(m => m.Id == FirstOid && m.upload_status == 0);
+            foreach (var oId in order_id)
             {
-                var Order = md_db.MD_Order.Where(m => m.parentOrder_id == order_id && m.upload_status == 1).OrderByDescending(m => m.receiver_times).FirstOrDefault();
-                var total_quantity = count * Order.qty;
+                var order = from m in md_db.MD_Order
+                            where m.Id == oId && m.order_status == 0 && m.delivery_state == 0 && m.receiver_times != 1
+                            select m;
                 md_db.MD_Order.RemoveRange(order);
+            }
+            var count = order_id.Count();
+            if (count != 0)
+            {
+                var total_quantity = count * Order.qty;
                 var OrderDetail = new MD_Order();
                 if (Order.order_code.Contains("MD"))
                 {
-                    OrderDetail.order_code = Order.order_code +"-"+ Order.receiver_times;
+                    OrderDetail.order_code = Order.order_code;
                 }
                 else
                 {
-                    OrderDetail.order_code = "MD" + Order.order_code +"-"+ Order.receiver_times;
+                    OrderDetail.order_code = "MD" + Order.order_code;
                 }
                 OrderDetail.qty = total_quantity;
-                OrderDetail.amount = 0;
-                OrderDetail.receiver_date = Order.receiver_date.Value.AddDays(30);
+                OrderDetail.receiver_date = Order.receiver_date.Value;
                 OrderDetail.delivery_state = 0;
                 OrderDetail.order_status = 1;
                 OrderDetail.receiver_area = Order.receiver_area;
@@ -1398,21 +1402,23 @@ namespace PeriodAid.Controllers
                 OrderDetail.receiver_tel = Order.receiver_tel;
                 OrderDetail.product_id = Order.product_id;
                 OrderDetail.vip_code = Order.vip_code;
-                OrderDetail.receiver_times = Order.receiver_times + 1;
+                OrderDetail.receiver_times = Order.receiver_times;
+                OrderDetail.express_information = " ";
+                OrderDetail.receiver_name = Order.receiver_name;
                 md_db.MD_Order.Add(OrderDetail);
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
-            }else
+            }
+            else
             {
                 return Json(new { result = "FAIL" });
             }
-            
         }
         // 取消发送
         public JsonResult Cancel_Order(int order_id)
         {
             var order = from m in md_db.MD_Order
-                        where m.parentOrder_id == order_id && m.order_status == 0 && m.delivery_state == 0 && m.upload_status != 1 && m.receiver_times != 1
+                        where m.parentOrder_id == order_id  && m.delivery_state == 0 && m.upload_status != 1 && m.receiver_times != 1
                         select m;
             if(order.Count() != 0)
             {
@@ -1446,6 +1452,176 @@ namespace PeriodAid.Controllers
             }
             return Json(new { result = "FAIL" });
         }
-
+        // 手工获取ERP订单信息
+        [HttpPost]
+        public JsonResult getSingleErpOrder(string platform_code)
+        {
+            var md_order = md_db.MD_Order.SingleOrDefault(m => m.order_code == platform_code);
+            string json = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                    "\"platform_code\":\"" + platform_code + "\"," +
+                    //"\"platform_code\":\"" + platform_code + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"" +
+                    "}";
+            string signature = sign(json, AppSecret);
+            string info = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                    "\"platform_code\":\"" + platform_code + "\"," +
+                    //"\"platform_code\":\"" + platform_code + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
+            string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+            try
+            {
+                streamWriter.Write(info);
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
+                    if (r.success)
+                    {
+                        if (r.orders.Count() != 0)
+                        {
+                            if (md_order == null)
+                            {
+                                var strAddre = r.orders[0].receiver_address;
+                                var indexAddre1 = strAddre.IndexOf(" ");
+                                var indexAddre2 = strAddre.IndexOf(" ", indexAddre1 + 1);
+                                var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1)+1;
+                                var strReceiver_address = strAddre.Substring(indexAddre3, strAddre.Length - indexAddre3);
+                                var strArea = r.orders[0].receiver_area;
+                                var strReceiver_area = strArea;
+                                if (strArea == null)
+                                {
+                                    strReceiver_area = strAddre.Substring(0, indexAddre3-1);
+                                    strReceiver_area = strReceiver_area.Replace(" ", "-");
+                                }
+                                string[] t = strReceiver_area.Split('-');
+                                var findT = (t.Length - 1);
+                                if (findT < 2)
+                                {
+                                    strReceiver_area = strReceiver_area + "-";
+                                }
+                                md_order = new MD_Order();
+                                md_order.order_code = r.orders[0].platform_code;
+                                md_order.receiver_date = r.orders[0].createtime.Date;
+                                md_order.order_status = 0;
+                                if (r.orders[0].deliverys.Count != 0)
+                                {
+                                    md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
+                                }
+                                else
+                                {
+                                    md_order.express_information = "";
+                                }
+                                md_order.remark = r.orders[0].buyer_memo;
+                                md_order.receiver_address = strReceiver_address;
+                                md_order.receiver_area = strReceiver_area;
+                                md_order.upload_status = 1;
+                                md_order.receiver_tel = r.orders[0].receiver_mobile;
+                                if (r.orders[0].details[0].note.Contains("sqz333"))
+                                {
+                                    md_order.product_id = 1;
+                                }
+                                else if (r.orders[0].details[0].note.Contains("sqz444"))
+                                {
+                                    md_order.product_id = 3;
+                                }
+                                md_order.vip_code = r.orders[0].vip_code;
+                                md_order.receiver_times = 1;
+                                md_order.qty = (int)r.orders[0].qty/3;
+                                md_order.amount = r.orders[0].amount;
+                                md_order.discount_fee = r.orders[0].discount_fee;
+                                md_order.payment_amount = r.orders[0].payment_amount;
+                                md_order.delivery_state = r.orders[0].delivery_state;
+                                md_order.payment = r.orders[0].payment;
+                                md_order.receiver_name = r.orders[0].receiver_name;
+                                md_db.MD_Order.Add(md_order);
+                                md_db.SaveChanges();
+                                md_order.parentOrder_id = md_order.Id;
+                                md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
+                            }
+                            else
+                            {
+                                return Json(new { result = "ERROR" });
+                            }
+                        }else
+                        {
+                            return Json(new { result = "NOTFOUND" });
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                streamWriter.Close();
+                MD_Record logs = new MD_Record();
+                try_times++;
+                if (try_times >= 5)
+                {
+                    logs.record_date = DateTime.Now;
+                    logs.record_type = "[ErpOrder]获取失败";
+                    logs.record_detail = "FAIL" ;
+                    md_db.MD_Record.Add(logs);
+                    md_db.SaveChanges();
+                    try_times = 0;
+                    return Json(new { result = "FAIL" });
+                }
+                return getSingleErpOrder(platform_code);
+            }
+            md_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+        // 生成子订单
+        public ActionResult CreateSubOrders(int order_id)
+        {
+            var order = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
+            return PartialView(order);
+        }
+        [HttpPost]
+        public ActionResult CreateSubOrders(MD_Order model,int order_qty,int times)
+        {
+            var order = md_db.MD_Order.SingleOrDefault(m => m.Id == model.Id);
+            for(int i = 1; i< times+1; i++)
+            {
+                var subOrder = new MD_Order();
+                subOrder.order_code = "MD" + order.order_code + "-" + i;
+                subOrder.receiver_date = order.receiver_date.Value.AddDays(+i * 30);
+                subOrder.order_status = 0;
+                subOrder.remark = order.remark;
+                subOrder.receiver_address = order.receiver_address;
+                subOrder.receiver_tel = order.receiver_tel;
+                subOrder.vip_code = order.vip_code;
+                subOrder.receiver_area = order.receiver_area;
+                subOrder.receiver_times = i+1;
+                subOrder.qty = order_qty;
+                subOrder.product_id = order.product_id;
+                if (order.product_id == 1)
+                {
+                    subOrder.product_id = 2;
+                }
+                subOrder.parentOrder_id = order.Id;
+                subOrder.receiver_name = order.receiver_name;
+                subOrder.express_information = "";
+                md_db.MD_Order.Add(subOrder);
+            }
+            order.order_status = 1;
+            md_db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+            md_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
     }
 }

@@ -1176,6 +1176,7 @@
     <Content Include="Views\SalesProcess\MD_OrderDetailView.cshtml" />
     <Content Include="Views\SalesProcess\MD_OrderDetailPartialView.cshtml" />
     <Content Include="Views\SalesProcess\MD_EditOrderInfo.cshtml" />
+    <Content Include="Views\SalesProcess\CreateSubOrders.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

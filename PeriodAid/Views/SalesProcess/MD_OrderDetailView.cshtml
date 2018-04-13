@@ -13,7 +13,7 @@
 <ol class="breadcrumb">
     当前位置：
     <li class="active">订单详情</li>
-    <li class="backBtn"><a style="cursor:pointer" onclick="backBtn()">返回上一页</a></li>
+    <li><a style="cursor:pointer" class="backBtn">返回上一页</a></li>
 </ol>
 <div id="orderdetail_list_content" style="margin-top:20px">
 </div>
@@ -27,7 +27,11 @@
                 },
                 success: function (data) {
                     $("#orderdetail_list_content").html(data)
+                    $(".amalgamate_btn").attr("data-pid", $("#orderId").attr("data-id"))
                 }
+            })
+            $(".backBtn").on("click", function () {
+                $(this).attr("href", "/SalesProcess/MD_OrderView/")
             })
         })
     </script>

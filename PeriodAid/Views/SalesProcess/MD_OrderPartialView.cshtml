@@ -9,10 +9,11 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:20%">平台单号</th>
+            <th style="width:15%">平台单号</th>
+            <th style="width:5%">代码</th>
             <th style="width:5%">数量</th>
             <th style="width:10%">客户名称</th>
-            <th style="width:15%">首单发货日期</th>
+            <th style="width:10%">发货日期</th>
             <th style="width:20%">邮寄地址</th>
             <th style="width:30%"></th>
         </tr>
@@ -20,22 +21,23 @@
         {
             <tr class="times_view" data-id="@item.Id" data-toggle="tooltip" data-placement="left">
                 <td>
-                    <div style="width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.order_code</div>
+                    <div style="width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.order_code</div>
                 </td>
+                <td>@item.MD_Product.product_code</td>
                 <td style="text-indent:7px">@item.qty</td>
                 <td>
-                    <div style="width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.vip_code</div>
+                    <div style="width:82px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.vip_code</div>
                 </td>
-                <td style="text-indent:5px">@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
+                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
-                    <div style="width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                    <div style="width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"  data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">
                      @item.receiver_area @item.receiver_address
                     </div>
                 </td>
                 <td>
-                    <a class="btn btn-xs btn-success amalgamate_btn select_btn" role="button" data-id="@item.Id" data-ostatus="@item.order_status">合并发送</a>
+                    <a class="btn btn-xs btn-success create_btn select_btn" role="button" data-id="@item.Id" data-pid="@item.parentOrder_id" data-ostatus="@item.order_status" data-toggle="modal" data-target="#myModal">生成复购订单</a>
                     <a class="btn btn-xs btn-danger cancel_btn select_btn" role="button" data-id="@item.Id" data-ostatus="@item.order_status">取消发送</a>
-                    <a class="btn btn-xs btn-info orderDetail_btn" role="button" data-id="@item.Id">订单详情</a>
+                    <a class="btn btn-xs btn-info orderDetail_btn" role="button" data-id="@item.Id">复购订单</a>
                 </td>
             </tr>
         }
@@ -64,6 +66,8 @@
         })
     })
     $(function () {
+        $('.create_btn[data-ostatus="1"]').addClass("disabled")
+        $('.create_btn[data-ostatus="0"]').removeClass("disabled")
         $(".times_view").trigger("mouseover").unbind("mouseover")
         $('[data-toggle="tooltip"]').tooltip();
         $(".pagination > li > a").click(function () {
@@ -83,56 +87,6 @@
             var that = $(this);
             var orderId = that.attr("data-id")
             that.attr("href", "/SalesProcess/MD_OrderDetailView/?order_id=" + orderId)
-        })
-        // 合并发送
-        $(".amalgamate_btn").on("click", function () {
-            var that = $(this)
-            $.confirm({
-                title: '提示!',
-                type: 'green',
-                content: that.parents(".times_view").attr("data-original-title"),
-                buttons: {
-                    确定: function () {
-                        $.ajax({
-                            url: "/SalesProcess/Amalgamate_Order/",
-                            type: "post",
-                            data: {
-                                order_id: that.attr("data-id")
-                            },
-                            success: function (data) {
-                                if (data.result == "SUCCESS") {
-                                    $.alert({
-                                        title: '提示!',
-                                        content: '合并成功!',
-                                        type: 'green',
-                                    });
-                                    $.ajax({
-                                        url: "/SalesProcess/MD_OrderPartialView/",
-                                        data: {
-                                            page: 1,
-                                            query: $("#order_query").val()
-                                        },
-                                        success: function (data) {
-                                            $("#order_list_content").html(data)
-                                            $("#tm-view-loading").hide()
-                                        }
-                                    })
-                                }
-                                else {
-                                    $.alert({
-                                        title: '提示!',
-                                        content: '订单已合并!',
-                                        type: 'red',
-                                    });
-                                }
-                            }
-                        })
-                    },
-                    取消: function () {
-                        
-                    },
-                }
-            });
         })
         // 取消发送
         $(".cancel_btn").on("click", function () {
@@ -182,6 +136,20 @@
                     },
                 }
             });
+        })
+        // 生成子订单
+        $(".create_btn").on("click", function () {
+            var that = $(this)
+            $.ajax({
+                url: "/SalesProcess/CreateSubOrders/",
+                data: {
+                    order_id: that.attr("data-id")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
         })
     })
 </script>
