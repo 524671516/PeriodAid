@@ -8,11 +8,12 @@
                 </label>
             </th>
             <th style="width:20%">平台单号</th>
-            <th style="width:10%">产品数量</th>
+            <th style="width:8%">代码</th>
+            <th style="width:7%">数量</th>
             <th style="width:10%">发货状态</th>
             <th style="width:10%">发货时间</th>
             <th style="width:20%">邮寄地址</th>
-            <th style="width:20%">物流单号</th>
+            <th style="width:15%">物流单号</th>
             <th style="width:10%">
                 <a class="btn btn-xs btn-danger amalgamate_btn hidden" role="button">合并</a>
             </th>
@@ -22,19 +23,20 @@
             <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
                 <td>
                     <label class="checkbox-custom">
-                        <input type="checkbox" class="btn checkbox" data-val="@item.Id" data-upstatus ="@item.upload_status" data-ostatus ="@item.order_status">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.Id" data-upstatus="@item.upload_status" data-ostatus="@item.order_status">
                     </label>
                 </td>
                 <td>@item.order_code</td>
-                <td style="text-indent:15px">@item.qty</td>
+                <td>@item.MD_Product.product_code</td>
+                <td style="text-indent:10px">@item.qty</td>
                 <td>@Html.DeliveryStatus(item.delivery_state)</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
                     <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
                 </td>
                 <td>
-                    <div style="width:182px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div>
-               
+                    <div style="width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div>
+
                 </td>
                 <td>
                     <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.delivery_state" data-toggle="modal" data-target="#myModal">编辑</a>
@@ -56,7 +58,6 @@
 <script>
     $(function () {
         $('.checkbox[data-upstatus="1"]').attr("disabled", "disabled")
-        $('.checkbox[data-ostatus="1"]').attr("disabled", "disabled")
         var border_list = $(".edit_btn")
         var j = 0
         for (j; j < border_list.length; j++) {
@@ -96,13 +97,11 @@
         var i = 0
         var that = $(this)
         if (that.is(":checked")) {
-            $('.checkbox[data-upstatus="0"][data-ostatus="0"]').prop("checked", true);
+            $('.checkbox[data-upstatus="0"]').prop("checked", true);
             var list = $(".checkbox:checked")
             if (list.length < 2) {
-                console.log(1)
                 $(".amalgamate_btn").addClass("hidden")
             } else {
-                console.log(2)
                 $(".amalgamate_btn").removeClass("hidden")
                 for (i; i < list.length; i++) {
                     var list_data = $(list[i]).attr("data-val")
@@ -120,7 +119,6 @@
                 orderarry.remove($(list[i]).attr("data-val"))
             }
         }
-        console.log(orderarry)
     })
     //单选
     $(".checkbox").on("click", function () {
@@ -141,7 +139,6 @@
                 $(".change_status").show()
             }
         }
-        console.log(orderarry)
     })
     // 合并发送
     $(".amalgamate_btn").on("click", function () {
@@ -157,7 +154,7 @@
                         url: "/SalesProcess/Amalgamate_Order/",
                         type: "post",
                         data: {
-                            order_id: orderarry.sort()
+                            order_id: orderarry.sort((a,b)=>a-b)
                         },
                         success: function (data) {
                             if (data.result == "SUCCESS") {
@@ -192,4 +189,4 @@
             }
         });
     })
-</script>            
+</script>
