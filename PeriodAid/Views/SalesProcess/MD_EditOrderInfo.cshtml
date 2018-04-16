@@ -19,7 +19,7 @@
             <div class="form-group hidden">
                 <input id="vip_code" type="text" value="@Model.vip_code" class="form-control" name="vip_code" />
                 @Html.ValidationMessageFor(model => model.vip_code, "", new { @class = "text-danger" })
-                
+
                 <input id="order_code" type="text" value="@Model.order_code" class="form-control" name="order_code" />
                 @Html.ValidationMessageFor(model => model.order_code, "", new { @class = "text-danger" })
 
@@ -46,7 +46,7 @@
 
                 <input id="receiver_name" type="text" value="@Model.receiver_name" class="form-control" name="receiver_name" />
                 @Html.ValidationMessageFor(model => model.receiver_name, "", new { @class = "text-danger" })
-                
+
                 <input id="express_information" type="text" value=" " class="form-control" name="express_information" />
                 @Html.ValidationMessageFor(model => model.express_information, "", new { @class = "text-danger" })
             </div>
