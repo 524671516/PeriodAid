@@ -1539,6 +1539,9 @@ namespace PeriodAid.Controllers
                                 else if (r.orders[0].details[0].note.Contains("sqz444"))
                                 {
                                     md_order.product_id = 3;
+                                }else
+                                {
+                                    return Json(new { result = "FAIL" });
                                 }
                                 md_order.vip_code = r.orders[0].vip_code;
                                 md_order.receiver_times = 1;
@@ -1578,7 +1581,7 @@ namespace PeriodAid.Controllers
                     md_db.MD_Record.Add(logs);
                     md_db.SaveChanges();
                     try_times = 0;
-                    return Json(new { result = "FAIL" });
+                    return Json(new { result = "SYSTEMERROR" });
                 }
                 return getSingleErpOrder(platform_code);
             }
