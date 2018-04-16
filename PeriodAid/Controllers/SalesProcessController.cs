@@ -1497,16 +1497,30 @@ namespace PeriodAid.Controllers
                         {
                             if (md_order == null)
                             {
+
+                                md_order = new MD_Order();
+                                if (r.orders[0].details[0].note.Contains("sqz333"))
+                                {
+                                    md_order.product_id = 1;
+                                }
+                                else if (r.orders[0].details[0].note.Contains("sqz444"))
+                                {
+                                    md_order.product_id = 3;
+                                }
+                                else
+                                {
+                                    return Json(new { result = "FAIL" });
+                                }
                                 var strAddre = r.orders[0].receiver_address;
                                 var indexAddre1 = strAddre.IndexOf(" ");
                                 var indexAddre2 = strAddre.IndexOf(" ", indexAddre1 + 1);
-                                var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1)+1;
+                                var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1) + 1;
                                 var strReceiver_address = strAddre.Substring(indexAddre3, strAddre.Length - indexAddre3);
                                 var strArea = r.orders[0].receiver_area;
                                 var strReceiver_area = strArea;
                                 if (strArea == null)
                                 {
-                                    strReceiver_area = strAddre.Substring(0, indexAddre3-1);
+                                    strReceiver_area = strAddre.Substring(0, indexAddre3 - 1);
                                     strReceiver_area = strReceiver_area.Replace(" ", "-");
                                 }
                                 string[] t = strReceiver_area.Split('-');
@@ -1515,7 +1529,6 @@ namespace PeriodAid.Controllers
                                 {
                                     strReceiver_area = strReceiver_area + "-";
                                 }
-                                md_order = new MD_Order();
                                 md_order.order_code = r.orders[0].platform_code;
                                 md_order.receiver_date = r.orders[0].createtime.Date;
                                 md_order.order_status = 0;
@@ -1532,20 +1545,9 @@ namespace PeriodAid.Controllers
                                 md_order.receiver_area = strReceiver_area;
                                 md_order.upload_status = 1;
                                 md_order.receiver_tel = r.orders[0].receiver_mobile;
-                                if (r.orders[0].details[0].note.Contains("sqz333"))
-                                {
-                                    md_order.product_id = 1;
-                                }
-                                else if (r.orders[0].details[0].note.Contains("sqz444"))
-                                {
-                                    md_order.product_id = 3;
-                                }else
-                                {
-                                    return Json(new { result = "FAIL" });
-                                }
                                 md_order.vip_code = r.orders[0].vip_code;
                                 md_order.receiver_times = 1;
-                                md_order.qty = (int)r.orders[0].qty/3;
+                                md_order.qty = (int)r.orders[0].qty / 3;
                                 md_order.amount = r.orders[0].amount;
                                 md_order.discount_fee = r.orders[0].discount_fee;
                                 md_order.payment_amount = r.orders[0].payment_amount;
@@ -1561,7 +1563,8 @@ namespace PeriodAid.Controllers
                             {
                                 return Json(new { result = "ERROR" });
                             }
-                        }else
+                        }
+                        else
                         {
                             return Json(new { result = "NOTFOUND" });
                         }
@@ -1577,7 +1580,7 @@ namespace PeriodAid.Controllers
                 {
                     logs.record_date = DateTime.Now;
                     logs.record_type = "[ErpOrder]获取失败";
-                    logs.record_detail = "FAIL" ;
+                    logs.record_detail = "FAIL";
                     md_db.MD_Record.Add(logs);
                     md_db.SaveChanges();
                     try_times = 0;
