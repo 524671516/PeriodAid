@@ -99,10 +99,8 @@
             $('.checkbox[data-upstatus="0"][data-ostatus="0"]').prop("checked", true);
             var list = $(".checkbox:checked")
             if (list.length < 2) {
-                console.log(1)
                 $(".amalgamate_btn").addClass("hidden")
             } else {
-                console.log(2)
                 $(".amalgamate_btn").removeClass("hidden")
                 for (i; i < list.length; i++) {
                     var list_data = $(list[i]).attr("data-val")

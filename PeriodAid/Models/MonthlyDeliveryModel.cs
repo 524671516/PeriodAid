@@ -52,7 +52,6 @@ namespace PeriodAid.Models
         public string receiver_tel { get; set; }
         [StringLength(128)]
         public string receiver_name { get; set; }
-
         [StringLength(128)]
         public string express_information { get; set; }
         [StringLength(128)]
@@ -65,10 +64,12 @@ namespace PeriodAid.Models
         public int receiver_times { get; set; }
         // 邮寄状态
         public int delivery_state { get; set; }
-        //  0 分批 1 合并
+        //  0 未合并 1 已合并
         public int order_status { get; set; }
         // 0 未推送 1已推送
         public int upload_status { get; set; }
+        // 0 未创建 1 已创建
+        public int createSub_status { get; set; }
 
         public int product_id { get; set; }
 

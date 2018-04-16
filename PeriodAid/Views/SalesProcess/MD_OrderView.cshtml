@@ -20,11 +20,15 @@
         </td>
     </tr>
 </table>
-<div class="h2 text-center">订单列表</div>
+<ul class="nav nav-tabs" style="margin-top:20px" role="tablist">
+    <li role="presentation" class="order-list-li active"><a class="order_btn" aria-controls="home" role="tab" data-toggle="tab" data-cstatus="-1" style="cursor:pointer">全部订单</a></li>
+    <li role="presentation" class="order-list-li"><a class="order_btn" aria-controls="profile" role="tab" data-toggle="tab" data-cstatus="1" style="cursor:pointer">已生成复购的订单</a></li>
+    <li role="presentation" class="order-list-li"><a class="order_btn" aria-controls="profile" role="tab" data-toggle="tab" data-cstatus="0" style="cursor:pointer">未生成复购的订单</a></li>
+</ul>
 <div class="tm-veiw-loading text-center" id="tm-view-loading" style="height:100%">
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请勿刷新界面！</h4>
 </div>
-<div id="order_list_content" style="margin-top:20px">
+<div id="order_list_content">
 </div>
 @section scripts{
     <script>
@@ -35,7 +39,8 @@
                 url: "/SalesProcess/MD_OrderPartialView/",
                 data: {
                     page:1,
-                    query: $("#order_query").val()
+                    query: $("#order_query").val(),
+                    create_status: "-1",
                 },
                 success: function (data) {
                     $("#order_list_content").html(data)
@@ -55,7 +60,8 @@
                     type:"post",
                     data: {
                         page: 1,
-                        query: $("#order_query").val()
+                        query: $("#order_query").val(),
+                        create_status: $(".active").children(".order_btn").attr("data-cstatus")
                     },
                     success: function (data) {
                         $("#order_list_content").html(data)
@@ -77,7 +83,8 @@
                                 type: "post",
                                 data: {
                                     page: 1,
-                                    query: $("#order_query").val()
+                                    query: $("#order_query").val(),
+                                    create_status: $(".active").children(".order_btn").attr("data-cstatus")
                                 },
                                 success: function (data) {
                                     $("#order_list_content").html(data)
@@ -117,6 +124,21 @@
                                 type: 'red',
                             });
                         }
+                    }
+                })
+            })
+            // 订单选择
+            $(".order_btn").on("click", function () {
+                var that = $(this)
+                $.ajax({
+                    url: "/SalesProcess/MD_OrderPartialView/",
+                    data: {
+                        page: 1,
+                        query: $("#order_query").val(),
+                        create_status: that.attr("data-cstatus")
+                    },
+                    success: function (data) {
+                        $("#order_list_content").html(data)
                     }
                 })
             })

@@ -1319,28 +1319,53 @@ namespace PeriodAid.Controllers
             return View();
         }
         
-        public ActionResult MD_OrderPartialView(int? page,string query)
+        public ActionResult MD_OrderPartialView(int? page,string query,int create_status)
         {
             int _page = page ?? 1;
-            var order = from m in md_db.MD_Order
-                        where m.order_status != -1 && m.receiver_times == 1
-                        select m;
-            if (query != "")
+            if(create_status == -1)
             {
-                var SearchResult = (from m in order
-                                    where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
-                                    orderby m.receiver_date descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
-            }
-            else
+                if (query != "")
+                {
+                    var order = from m in md_db.MD_Order
+                                where m.receiver_times == 1
+                                select m;
+                    var SearchResult = (from m in order
+                                        where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
+                                        orderby m.receiver_date descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in md_db.MD_Order
+                                        where m.receiver_times == 1
+                                        orderby m.receiver_date descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+            }else
             {
-                var SearchResult = (from m in md_db.MD_Order
-                                    where m.order_status != -1 && m.receiver_times == 1
-                                    orderby m.receiver_date descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
+                if (query != "")
+                {
+                    var order = from m in md_db.MD_Order
+                                where m.receiver_times == 1 && m.createSub_status == create_status
+                                select m;
+                    var SearchResult = (from m in order
+                                        where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
+                                        orderby m.receiver_date descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
+                else
+                {
+                    var SearchResult = (from m in md_db.MD_Order
+                                        where m.receiver_times == 1 && m.createSub_status == create_status
+                                        orderby m.receiver_date descending
+                                        select m).ToPagedList(_page, 15);
+                    return PartialView(SearchResult);
+                }
             }
+            
         }
 
         public int ReceiverTimes(int order_id)
@@ -1375,7 +1400,7 @@ namespace PeriodAid.Controllers
             foreach (var oId in order_id)
             {
                 var order = from m in md_db.MD_Order
-                            where m.Id == oId && m.order_status == 0 && m.delivery_state == 0 && m.receiver_times != 1
+                            where m.Id == oId && m.delivery_state == 0 && m.receiver_times != 1
                             select m;
                 md_db.MD_Order.RemoveRange(order);
             }
@@ -1395,7 +1420,6 @@ namespace PeriodAid.Controllers
                 OrderDetail.qty = total_quantity;
                 OrderDetail.receiver_date = Order.receiver_date.Value;
                 OrderDetail.delivery_state = 0;
-                OrderDetail.order_status = 1;
                 OrderDetail.receiver_area = Order.receiver_area;
                 OrderDetail.receiver_address = Order.receiver_address;
                 OrderDetail.parentOrder_id = Order.parentOrder_id;
@@ -1405,6 +1429,7 @@ namespace PeriodAid.Controllers
                 OrderDetail.receiver_times = Order.receiver_times;
                 OrderDetail.express_information = " ";
                 OrderDetail.receiver_name = Order.receiver_name;
+                OrderDetail.order_status = 1;
                 md_db.MD_Order.Add(OrderDetail);
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
@@ -1598,7 +1623,7 @@ namespace PeriodAid.Controllers
             return PartialView(order);
         }
         [HttpPost]
-        public ActionResult CreateSubOrders(MD_Order model,int order_qty,int times)
+        public ActionResult CreateSubOrders(MD_Order model,int order_qty,int times,int product_id)
         {
             var order = md_db.MD_Order.SingleOrDefault(m => m.Id == model.Id);
             for(int i = 1; i< times+1; i++)
@@ -1614,17 +1639,13 @@ namespace PeriodAid.Controllers
                 subOrder.receiver_area = order.receiver_area;
                 subOrder.receiver_times = i+1;
                 subOrder.qty = order_qty;
-                subOrder.product_id = order.product_id;
-                if (order.product_id == 1)
-                {
-                    subOrder.product_id = 2;
-                }
+                subOrder.product_id = product_id;
                 subOrder.parentOrder_id = order.Id;
                 subOrder.receiver_name = order.receiver_name;
                 subOrder.express_information = "";
                 md_db.MD_Order.Add(subOrder);
             }
-            order.order_status = 1;
+            order.createSub_status = 1;
             md_db.Entry(order).State = System.Data.Entity.EntityState.Modified;
             md_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
