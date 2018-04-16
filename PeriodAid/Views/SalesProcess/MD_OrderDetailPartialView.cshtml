@@ -23,7 +23,7 @@
             <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
                 <td>
                     <label class="checkbox-custom">
-                        <input type="checkbox" class="btn checkbox" data-val="@item.Id" data-upstatus="@item.upload_status" data-ostatus="@item.order_status">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.Id" data-upstatus ="@item.upload_status" data-ostatus ="@item.order_status">
                     </label>
                 </td>
                 <td>@item.order_code</td>
@@ -36,7 +36,7 @@
                 </td>
                 <td>
                     <div style="width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div>
-
+               
                 </td>
                 <td>
                     <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.delivery_state" data-toggle="modal" data-target="#myModal">编辑</a>
@@ -189,4 +189,4 @@
             }
         });
     })
-</script>
+</script>            
