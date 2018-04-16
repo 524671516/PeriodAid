@@ -1484,6 +1484,7 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool Order = md_db.MD_Order.Any(m => m.receiver_date != model.receiver_date);
                 MD_Order Orders = new MD_Order();
                 if (TryUpdateModel(Orders))
                 {
@@ -1491,7 +1492,7 @@ namespace PeriodAid.Controllers
                     MD_Record Editlogs = new MD_Record();
                     Editlogs.record_date = DateTime.Now;
                     Editlogs.record_type = "Edit";
-                    Editlogs.record_detail = Orders.order_code +"新增修改信息";
+                    Editlogs.record_detail = Orders.order_code + "新增修改信息";
                     md_db.MD_Record.Add(Editlogs);
                     md_db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
