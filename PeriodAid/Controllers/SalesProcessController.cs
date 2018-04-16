@@ -1456,9 +1456,15 @@ namespace PeriodAid.Controllers
             var order = from m in md_db.MD_Order
                         where m.parentOrder_id == order_id  && m.delivery_state == 0 && m.upload_status != 1 && m.receiver_times != 1
                         select m;
+            var singleOrder = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
             if(order.Count() != 0)
             {
                 md_db.MD_Order.RemoveRange(order);
+                MD_Record successlogs = new MD_Record();
+                successlogs.record_date = DateTime.Now;
+                successlogs.record_type = "Cancel";
+                successlogs.record_detail = singleOrder.order_code +"已取消复购订单发送";
+                md_db.MD_Record.Add(successlogs);
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }else
@@ -1591,6 +1597,11 @@ namespace PeriodAid.Controllers
                                 md_order.payment = r.orders[0].payment;
                                 md_order.receiver_name = r.orders[0].receiver_name;
                                 md_db.MD_Order.Add(md_order);
+                                MD_Record successlogs = new MD_Record();
+                                successlogs.record_date = DateTime.Now;
+                                successlogs.record_type = "Success";
+                                successlogs.record_detail = r.orders[0].platform_code;
+                                md_db.MD_Record.Add(successlogs);
                                 md_db.SaveChanges();
                                 md_order.parentOrder_id = md_order.Id;
                                 md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
@@ -1610,14 +1621,14 @@ namespace PeriodAid.Controllers
             catch (Exception)
             {
                 streamWriter.Close();
-                MD_Record logs = new MD_Record();
+                MD_Record errorlogs = new MD_Record();
                 try_times++;
                 if (try_times >= 5)
                 {
-                    logs.record_date = DateTime.Now;
-                    logs.record_type = "[ErpOrder]获取失败";
-                    logs.record_detail = "FAIL";
-                    md_db.MD_Record.Add(logs);
+                    errorlogs.record_date = DateTime.Now;
+                    errorlogs.record_type = "FAIL";
+                    errorlogs.record_detail = "[ErpOrder]获取失败";
+                    md_db.MD_Record.Add(errorlogs);
                     md_db.SaveChanges();
                     try_times = 0;
                     return Json(new { result = "SYSTEMERROR" });
@@ -1657,7 +1668,6 @@ namespace PeriodAid.Controllers
                 md_db.MD_Order.Add(subOrder);
             }
             order.createSub_status = 1;
-            md_db.Entry(order).State = System.Data.Entity.EntityState.Modified;
             md_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
