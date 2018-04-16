@@ -9,8 +9,8 @@
 <div>
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
-            <th style="width:15%">平台单号</th>
-            <th style="width:5%">代码</th>
+            <th style="width:10%">平台单号</th>
+            <th style="width:8%">代码</th>
             <th style="width:5%">数量</th>
             <th style="width:10%">客户名称</th>
             <th style="width:10%">发货日期</th>
@@ -21,7 +21,7 @@
         {
             <tr class="times_view" data-id="@item.Id" data-toggle="tooltip" data-placement="left">
                 <td>
-                    <div style="width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.order_code</div>
+                    <div style="width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.order_code</div>
                 </td>
                 <td>@item.MD_Product.product_code</td>
                 <td style="text-indent:7px">@item.qty</td>
@@ -30,12 +30,12 @@
                 </td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
-                    <div style="width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"  data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">
-                     @item.receiver_area @item.receiver_address
+                    <div style="width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">
+                        @item.receiver_area @item.receiver_address
                     </div>
                 </td>
                 <td>
-                    <a class="btn btn-xs btn-success create_btn select_btn" role="button" data-id="@item.Id" data-pid="@item.parentOrder_id" data-ostatus="@item.order_status" data-toggle="modal" data-target="#myModal">生成复购订单</a>
+                    <a class="btn btn-xs btn-success create_btn select_btn" role="button" data-id="@item.Id" data-pid="@item.parentOrder_id" data-cstatus="@item.createSub_status" data-toggle="modal" data-target="#myModal">生成复购订单</a>
                     <a class="btn btn-xs btn-danger cancel_btn select_btn" role="button" data-id="@item.Id" data-ostatus="@item.order_status">取消发送</a>
                     <a class="btn btn-xs btn-info orderDetail_btn" role="button" data-id="@item.Id">复购订单</a>
                 </td>
@@ -66,8 +66,8 @@
         })
     })
     $(function () {
-        $('.create_btn[data-ostatus="1"]').addClass("disabled")
-        $('.create_btn[data-ostatus="0"]').removeClass("disabled")
+        $('.create_btn[data-cstatus="1"]').addClass("disabled")
+        $('.create_btn[data-cstatus="0"]').removeClass("disabled")
         $(".times_view").trigger("mouseover").unbind("mouseover")
         $('[data-toggle="tooltip"]').tooltip();
         $(".pagination > li > a").click(function () {
