@@ -1488,6 +1488,11 @@ namespace PeriodAid.Controllers
                 if (TryUpdateModel(Orders))
                 {
                     md_db.Entry(Orders).State = System.Data.Entity.EntityState.Modified;
+                    MD_Record Editlogs = new MD_Record();
+                    Editlogs.record_date = DateTime.Now;
+                    Editlogs.record_type = "Edit";
+                    Editlogs.record_detail = Orders.order_code +"新增修改信息";
+                    md_db.MD_Record.Add(Editlogs);
                     md_db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
                 }
@@ -1668,6 +1673,11 @@ namespace PeriodAid.Controllers
                 md_db.MD_Order.Add(subOrder);
             }
             order.createSub_status = 1;
+            MD_Record successlogs = new MD_Record();
+            successlogs.record_date = DateTime.Now;
+            successlogs.record_type = "Create";
+            successlogs.record_detail = order.order_code + "生成复购订单数:"+ times;
+            md_db.MD_Record.Add(successlogs);
             md_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
