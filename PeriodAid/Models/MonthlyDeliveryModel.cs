@@ -53,21 +53,22 @@ namespace PeriodAid.Models
         [StringLength(128)]
         public string receiver_name { get; set; }
 
-        public int delivery_state { get; set; }
-        // -1 取消 0 分批 1 合并
-        public int order_status { get; set; }
         [StringLength(128)]
         public string express_information { get; set; }
         [StringLength(128)]
         public string remark { get; set; }
-        // 0 未推送 1已推送
-        public int upload_status { get; set; }
         [StringLength(256)]
         public string vip_code { get; set; }
         
         public int parentOrder_id { get; set; }
 
         public int receiver_times { get; set; }
+        // 邮寄状态
+        public int delivery_state { get; set; }
+        //  0 分批 1 合并
+        public int order_status { get; set; }
+        // 0 未推送 1已推送
+        public int upload_status { get; set; }
 
         public int product_id { get; set; }
 
