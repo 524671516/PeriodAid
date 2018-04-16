@@ -96,17 +96,24 @@
                                 content: '订单已存在!',
                                 type: 'red',
                             });
-                        } 
+                        }
                         else if (data.result == "NOTFOUND") {
                             $.alert({
                                 title: '提示!',
                                 content: '请输入正确的ERP单号!',
                                 type: 'red',
                             });
-                        } else {
+                        }
+                        else if (data.result == "FAIL") {
                             $.alert({
                                 title: '提示!',
                                 content: '请输入月月送单号!',
+                                type: 'red',
+                            });
+                        } else {
+                            $.alert({
+                                title: '提示!',
+                                content: '系统错误,请刷新后重试!',
                                 type: 'red',
                             });
                         }
@@ -115,4 +122,4 @@
             })
         })
     </script>
-    }
+}
