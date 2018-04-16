@@ -1396,18 +1396,29 @@ namespace PeriodAid.Controllers
         public JsonResult Amalgamate_Order(int[] order_id)
         {
             var FirstOid = order_id[0];
+            var LastOid = order_id[order_id.Count()-1];
+            DateTime? receiverDate = null;
             var Order = md_db.MD_Order.SingleOrDefault(m => m.Id == FirstOid && m.upload_status == 0);
+            var Orders = md_db.MD_Order.SingleOrDefault(m => m.Id == LastOid && m.upload_status == 0);
+            var t1 = DateTime.Parse(Order.receiver_date.Value.ToString("yyyy-MM-dd"));
+            var t2 = DateTime.Parse(Orders.receiver_date.Value.ToString("yyyy-MM-dd"));
+            int total_quantity = 0;
+            if (t1 > t2)
+            {
+                receiverDate = t2;
+            }else
+            {
+                receiverDate = t1;
+            }
             foreach (var oId in order_id)
             {
-                var order = from m in md_db.MD_Order
-                            where m.Id == oId && m.delivery_state == 0 && m.receiver_times != 1
-                            select m;
-                md_db.MD_Order.RemoveRange(order);
+                var order = md_db.MD_Order.SingleOrDefault(m => m.Id == oId && m.delivery_state == 0 && m.receiver_times != 1);
+                total_quantity += order.qty;
+                md_db.MD_Order.Remove(order);
             }
             var count = order_id.Count();
             if (count != 0)
             {
-                var total_quantity = count * Order.qty;
                 var OrderDetail = new MD_Order();
                 if (Order.order_code.Contains("MD"))
                 {
@@ -1418,7 +1429,7 @@ namespace PeriodAid.Controllers
                     OrderDetail.order_code = "MD" + Order.order_code;
                 }
                 OrderDetail.qty = total_quantity;
-                OrderDetail.receiver_date = Order.receiver_date.Value;
+                OrderDetail.receiver_date = receiverDate;
                 OrderDetail.delivery_state = 0;
                 OrderDetail.receiver_area = Order.receiver_area;
                 OrderDetail.receiver_address = Order.receiver_address;
