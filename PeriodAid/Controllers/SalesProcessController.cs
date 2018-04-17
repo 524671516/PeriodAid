@@ -1332,7 +1332,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in order
                                         where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
                 else
@@ -1340,7 +1340,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in md_db.MD_Order
                                         where m.receiver_times == 1
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
             }else
@@ -1353,7 +1353,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in order
                                         where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
                 else
@@ -1361,7 +1361,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in md_db.MD_Order
                                         where m.receiver_times == 1 && m.createSub_status == create_status
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
             }
@@ -1484,8 +1484,7 @@ namespace PeriodAid.Controllers
         {
             if (ModelState.IsValid)
             {
-                bool OrderDate = md_db.MD_Order.Any(m => m.receiver_date == model.receiver_date);
-                //bool OrderAddress = md_db.MD_Order.Any(m => m.receiver_area == model.receiver_area || m.receiver_address == model.receiver_address);
+                var SingleOrder = md_db.MD_Order.AsNoTracking().SingleOrDefault(m => m.Id == model.Id);
                 MD_Order Orders = new MD_Order();
                 if (TryUpdateModel(Orders))
                 {
@@ -1493,13 +1492,20 @@ namespace PeriodAid.Controllers
                     MD_Record Editlogs = new MD_Record();
                     Editlogs.record_date = DateTime.Now;
                     Editlogs.record_type = "Edit";
-                    if (OrderDate == false)
+                    try
                     {
-                        Editlogs.record_detail = Orders.order_code + " 新增日期修改: " + model.receiver_date;
+                        if (SingleOrder.receiver_date != model.receiver_date)
+                            Editlogs.record_detail = Orders.order_code + " 新增日期修改: " + model.receiver_date;
+                        if (SingleOrder.receiver_address != model.receiver_address)
+                            Editlogs.record_detail = Orders.order_code + " 新增地址修改: " + model.receiver_area + "  " + model.receiver_address;
+                        if (SingleOrder.receiver_date != model.receiver_date && SingleOrder.receiver_address != model.receiver_address)
+                            Editlogs.record_detail = Orders.order_code + " 新增修改: " + model.receiver_date + "  " + model.receiver_area + "  " + model.receiver_address;
+                        if(SingleOrder.receiver_date == model.receiver_date && SingleOrder.receiver_address == model.receiver_address && SingleOrder.receiver_date == model.receiver_date)
+                            return Json(new { result = "ERROR" });
                     }
-                    else
+                    catch
                     {
-                        Editlogs.record_detail = Orders.order_code + " 新增修改信息";
+                        return Json(new { result = "FAIL" });
                     }
                     md_db.MD_Record.Add(Editlogs);
                     md_db.SaveChanges();

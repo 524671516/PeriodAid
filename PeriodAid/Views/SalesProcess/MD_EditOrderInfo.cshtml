@@ -161,9 +161,52 @@
                                 },
                             }
                         });
-
-                    } else {
-                        errorAlert('保存失败')
+                    }
+                    else if (data.result == "ERROR") {
+                        $("#myModal").modal('hide');
+                        $.confirm({
+                            title: '提示!',
+                            content: '暂无修改',
+                            type: 'green',
+                            buttons: {
+                                确定: function () {
+                                    $.ajax({
+                                        url: "/SalesProcess/MD_OrderDetailPartialView/",
+                                        data: {
+                                            parentOrder_id: $("#orderId_show").attr("data-id")
+                                        },
+                                        success: function (data) {
+                                            $("#orderdetail_list_content").html(data)
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    })
+                                },
+                            }
+                        });
+                    }
+                    else {
+                        $("#myModal").modal('hide');
+                        $.confirm({
+                            title: '提示!',
+                            content: '保存失败,请重试!',
+                            type: 'green',
+                            buttons: {
+                                确定: function () {
+                                    $.ajax({
+                                        url: "/SalesProcess/MD_OrderDetailPartialView/",
+                                        data: {
+                                            parentOrder_id: $("#orderId_show").attr("data-id")
+                                        },
+                                        success: function (data) {
+                                            $("#orderdetail_list_content").html(data)
+                                            $('.modal-backdrop.in').remove()
+                                            $('body').removeClass('modal-open')
+                                        }
+                                    })
+                                },
+                            }
+                        });
                     }
                 }
             })
