@@ -1559,9 +1559,12 @@ namespace PeriodAid.Controllers
                         {
                             if (md_order == null)
                             {
-
                                 md_order = new MD_Order();
                                 if (r.orders[0].details[0].note.Contains("sqz333"))
+                                {
+                                    md_order.product_id = 1;
+                                }
+                                else if (r.orders[0].details[0].note.Contains("sqz187"))
                                 {
                                     md_order.product_id = 1;
                                 }
@@ -1596,7 +1599,7 @@ namespace PeriodAid.Controllers
                                 md_order.order_status = 0;
                                 if (r.orders[0].deliverys.Count != 0)
                                 {
-                                    md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
+                                    md_order.express_information = r.orders[0].deliverys[0].express_name + " : " +r.orders[0].deliverys[0].mail_no;
                                 }
                                 else
                                 {
