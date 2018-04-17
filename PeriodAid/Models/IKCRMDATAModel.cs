@@ -590,6 +590,8 @@ namespace PeriodAid.Models
     public partial class details_List
     {
         public string note { get; set; }
+
+        public string item_code { get; set; }
     }
 
     public partial class deliverys_Result
