@@ -75,7 +75,8 @@
             $.ajax({
                 url: l,
                 data: {
-                    query: $("#order_query").val()
+                    query: $("#order_query").val(),
+                    create_status: $(".active").children(".order_btn").attr("data-cstatus")
                 },
                 success: function (data) {
                     $("#order_list_content").html(data);
