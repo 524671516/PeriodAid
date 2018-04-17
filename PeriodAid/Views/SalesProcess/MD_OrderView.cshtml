@@ -5,9 +5,18 @@
 <table class="offline-search-box" style="margin-bottom:10px">
     <tr>
         <td class="float-right">
-            <label>手工录入：</label>
+            <label>手工录入(最近7天)：</label>
             <input class="form-control input-sm offline-search-inline" style="height:30px" id="select_erporder" placeholder="请输入ERP平台单号" />
             <a class="btn btn-danger btn-sm" id="erporder_search"><i class="fa fa-search"></i>&nbsp;&nbsp;录入</a>
+        </td>
+    </tr>
+</table>
+<table class="offline-search-box" style="margin-bottom:10px">
+    <tr>
+        <td class="float-right">
+            <label>历史录入(7天以前)：</label>
+            <input class="form-control input-sm offline-search-inline" style="height:30px" id="select_history_erporder" placeholder="请输入历史ERP平台单号" />
+            <a class="btn btn-danger btn-sm" id="history_erporder_search"><i class="fa fa-search"></i>&nbsp;&nbsp;录入</a>
         </td>
     </tr>
 </table>
@@ -70,6 +79,7 @@
             })
             // 手工录入ERP订单信息
             $("#erporder_search").on("click", function () {
+                $(this).unbind("click")
                 $.ajax({
                     url: "/SalesProcess/getSingleErpOrder/",
                     type: "post",
@@ -103,7 +113,67 @@
                                 content: '订单已存在!',
                                 type: 'red',
                             });
-                        } 
+                        }
+                        else if (data.result == "NOTFOUND") {
+                            $.alert({
+                                title: '提示!',
+                                content: '请输入正确的ERP单号!',
+                                type: 'red',
+                            });
+                        }
+                        else if (data.result == "FAIL") {
+                            $.alert({
+                                title: '提示!',
+                                content: '请输入月月送单号!',
+                                type: 'red',
+                            });
+                        } else {
+                            $.alert({
+                                title: '提示!',
+                                content: '系统错误,请刷新后重试!',
+                                type: 'red',
+                            });
+                        }
+                    }
+                })
+            })
+            // 历史订单录入
+            $("#history_erporder_search").on("click", function () {
+                $(this).unbind("click")
+                $.ajax({
+                    url: "/SalesProcess/getSingleHistoryErpOrder/",
+                    type: "post",
+                    data: {
+                        platform_code: $("#select_history_erporder").val()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/SalesProcess/MD_OrderPartialView/",
+                                type: "post",
+                                data: {
+                                    page: 1,
+                                    query: $("#order_query").val(),
+                                    create_status: $(".active").children(".order_btn").attr("data-cstatus")
+                                },
+                                success: function (data) {
+                                    $("#order_list_content").html(data)
+                                    $("#select_history_erporder").val("")
+                                    $.alert({
+                                        title: '提示!',
+                                        content: '录入成功!',
+                                        type: 'green',
+                                    });
+                                }
+                            })
+                        }
+                        else if (data.result == "ERROR") {
+                            $.alert({
+                                title: '提示!',
+                                content: '订单已存在!',
+                                type: 'red',
+                            });
+                        }
                         else if (data.result == "NOTFOUND") {
                             $.alert({
                                 title: '提示!',
@@ -144,4 +214,4 @@
             })
         })
     </script>
-    }
+}
