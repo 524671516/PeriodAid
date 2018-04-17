@@ -1544,10 +1544,6 @@ namespace PeriodAid.Controllers
                                 {
                                     md_order.product_id = 1;
                                 }
-                                else if (r.orders[0].details[0].note.Contains("sqz187"))
-                                {
-                                    md_order.product_id = 1;
-                                }
                                 else if (r.orders[0].details[0].note.Contains("sqz444"))
                                 {
                                     md_order.product_id = 3;

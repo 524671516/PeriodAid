@@ -63,7 +63,7 @@
                 }
             });
             // 查询
-            $("#order_search").on("click", function () {
+            $("#order_search").click(function () {
                 $.ajax({
                     url: "/SalesProcess/MD_OrderPartialView/",
                     type:"post",
@@ -79,7 +79,8 @@
             })
             // 手工录入ERP订单信息
             $("#erporder_search").on("click", function () {
-                $(this).unbind("click")
+                var that = $(this)
+                that.addClass("disabled")
                 $.ajax({
                     url: "/SalesProcess/getSingleErpOrder/",
                     type: "post",
@@ -113,6 +114,7 @@
                                 content: '订单已存在!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         }
                         else if (data.result == "NOTFOUND") {
                             $.alert({
@@ -120,6 +122,7 @@
                                 content: '请输入正确的ERP单号!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         }
                         else if (data.result == "FAIL") {
                             $.alert({
@@ -127,19 +130,22 @@
                                 content: '请输入月月送单号!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         } else {
                             $.alert({
                                 title: '提示!',
                                 content: '系统错误,请刷新后重试!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         }
                     }
                 })
             })
             // 历史订单录入
             $("#history_erporder_search").on("click", function () {
-                $(this).unbind("click")
+                var that = $(this)
+                that.addClass("disabled")
                 $.ajax({
                     url: "/SalesProcess/getSingleHistoryErpOrder/",
                     type: "post",
@@ -173,6 +179,7 @@
                                 content: '订单已存在!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         }
                         else if (data.result == "NOTFOUND") {
                             $.alert({
@@ -180,6 +187,7 @@
                                 content: '请输入正确的ERP单号!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         }
                         else if (data.result == "FAIL") {
                             $.alert({
@@ -187,12 +195,15 @@
                                 content: '请输入月月送单号!',
                                 type: 'red',
                             });
-                        } else {
+                            that.removeClass("disabled")
+                        }
+                        else {
                             $.alert({
                                 title: '提示!',
                                 content: '系统错误,请刷新后重试!',
                                 type: 'red',
                             });
+                            that.removeClass("disabled")
                         }
                     }
                 })
