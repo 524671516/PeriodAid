@@ -43,7 +43,7 @@
         }
     </table>
     <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("MD_OrderPartialView?create_status=-1", new { page }))
+        @Html.PagedListPager(Model, page => Url.Action("MD_OrderPartialView", new { page }))
     </div>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
