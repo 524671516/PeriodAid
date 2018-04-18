@@ -25,7 +25,7 @@ namespace PeriodAid.Models
             modelBuilder.Entity<MD_Product>().HasMany(m => m.MD_Order).WithRequired(m => m.MD_Product).HasForeignKey(m => m.product_id).WillCascadeOnDelete(false);
         }
     }
-    
+
     [Table("MD_Order")]
     public partial class MD_Order
     {
@@ -58,7 +58,7 @@ namespace PeriodAid.Models
         public string remark { get; set; }
         [StringLength(256)]
         public string vip_code { get; set; }
-        
+
         public int parentOrder_id { get; set; }
 
         public int receiver_times { get; set; }
