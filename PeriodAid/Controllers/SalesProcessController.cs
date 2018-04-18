@@ -528,7 +528,7 @@ namespace PeriodAid.Controllers
                             check_data.total_amount = (double)total_amount;
                             check_data.unreceived_amount = (double)unreceived_amount;
                             check_data.contract_status = item.status;
-                            check_data.warehouse_code = "110";
+                            check_data.warehouse_code = "107";
                             check_data.express_code = "STO";
                             if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
                             {
@@ -1254,6 +1254,7 @@ namespace PeriodAid.Controllers
                 ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
                 {
                     pay_type_code = "zhifubao",
+                    //payment = 0
                     payment = (decimal)item.CRM_Contract.total_amount
                 };
                 order.payments.Add(payments);
