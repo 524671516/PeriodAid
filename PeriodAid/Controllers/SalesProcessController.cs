@@ -1542,29 +1542,36 @@ namespace PeriodAid.Controllers
                                 if (md_order == null)
                                 {
                                     md_order = new MD_Order();
-                                    if (r.orders[0].details[0].note != null)
+                                    for(int x = 0; x < r.orders[0].details.Count();x++)
                                     {
-                                        if (r.orders[0].details[0].note.Length != 0)
+                                        if (r.orders[0].details[x].note != null)
                                         {
-                                            if (r.orders[0].details[0].note.Contains("sqz333"))
+                                            if (r.orders[0].details[x].note.Length != 0)
+                                            {
+                                                if (r.orders[0].details[x].note.Contains("sqz333"))
+                                                {
+                                                    md_order.product_id = 1;
+                                                    break;
+                                                }
+                                                else if (r.orders[0].details[x].note.Contains("sqz444"))
+                                                {
+                                                    md_order.product_id = 3;
+                                                    break;
+                                                }
+                                            }
+                                            if (r.orders[0].details[x].item_code.Contains("sqz187"))
                                             {
                                                 md_order.product_id = 1;
-                                            }
-                                            else if (r.orders[0].details[0].note.Contains("sqz444"))
-                                            {
-                                                md_order.product_id = 3;
+                                                break;
                                             }
                                         }
-                                        if (r.orders[0].details[0].item_code.Contains("sqz187"))
+                                        if (r.orders[0].details[x].item_code.Contains("sqz187"))
                                         {
                                             md_order.product_id = 1;
+                                            break;
                                         }
                                     }
-                                    if (r.orders[0].details[0].item_code.Contains("sqz187"))
-                                    {
-                                        md_order.product_id = 1;
-                                    }
-                                    else
+                                    if(md_order.product_id == 0)
                                     {
                                         return Json(new { result = "FAIL" });
                                     }
@@ -1697,29 +1704,36 @@ namespace PeriodAid.Controllers
                                 if (md_order == null)
                                 {
                                     md_order = new MD_Order();
-                                    if (r.orders[0].details[0].note != null)
+                                    for (int x = 0; x < r.orders[0].details.Count(); x++)
                                     {
-                                        if (r.orders[0].details[0].note.Length != 0)
+                                        if (r.orders[0].details[x].note != null)
                                         {
-                                            if (r.orders[0].details[0].note.Contains("sqz333"))
+                                            if (r.orders[0].details[x].note.Length != 0)
+                                            {
+                                                if (r.orders[0].details[x].note.Contains("sqz333"))
+                                                {
+                                                    md_order.product_id = 1;
+                                                    break;
+                                                }
+                                                else if (r.orders[0].details[x].note.Contains("sqz444"))
+                                                {
+                                                    md_order.product_id = 3;
+                                                    break;
+                                                }
+                                            }
+                                            if (r.orders[0].details[x].item_code.Contains("sqz187"))
                                             {
                                                 md_order.product_id = 1;
-                                            }
-                                            else if (r.orders[0].details[0].note.Contains("sqz444"))
-                                            {
-                                                md_order.product_id = 3;
+                                                break;
                                             }
                                         }
-                                        if (r.orders[0].details[0].item_code.Contains("sqz187"))
+                                        if (r.orders[0].details[x].item_code.Contains("sqz187"))
                                         {
                                             md_order.product_id = 1;
+                                            break;
                                         }
                                     }
-                                    if (r.orders[0].details[0].item_code.Contains("sqz187"))
-                                    {
-                                        md_order.product_id = 1;
-                                    }
-                                    else
+                                    if (md_order.product_id == 0)
                                     {
                                         return Json(new { result = "FAIL" });
                                     }
