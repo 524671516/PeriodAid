@@ -1492,294 +1492,302 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult getSingleErpOrder(string platform_code)
         {
-            var md_order = md_db.MD_Order.SingleOrDefault(m => m.order_code == platform_code);
-            string json = "{" +
-                   "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.get\"," +
-                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
-                    "\"platform_code\":\"" + platform_code + "\"," +
-                    //"\"platform_code\":\"" + platform_code + "\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"" +
-                    "}";
-            string signature = sign(json, AppSecret);
-            string info = "{" +
-                   "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.get\"," +
-                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
-                    "\"platform_code\":\"" + platform_code + "\"," +
-                    //"\"platform_code\":\"" + platform_code + "\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"," +
-                    "\"sign\":\"" + signature + "\"" +
-                "}";
-            var request = WebRequest.Create(API_Url) as HttpWebRequest;
-            request.ContentType = "text/json";
-            request.Method = "post";
-            string result = "";
-            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
-            try
+            if (platform_code != "")
             {
-                streamWriter.Write(info);
-                streamWriter.Flush();
-                streamWriter.Close();
-                var response = request.GetResponse();
-                using (var reader = new StreamReader(response.GetResponseStream()))
+                var md_order = md_db.MD_Order.SingleOrDefault(m => m.order_code == platform_code);
+                string json = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.get\"," +
+                        //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                        "\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"" +
+                        "}";
+                string signature = sign(json, AppSecret);
+                string info = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.get\"," +
+                        //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                        "\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"," +
+                        "\"sign\":\"" + signature + "\"" +
+                    "}";
+                var request = WebRequest.Create(API_Url) as HttpWebRequest;
+                request.ContentType = "text/json";
+                request.Method = "post";
+                string result = "";
+                StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+                try
                 {
-                    result = reader.ReadToEnd();
-                    StringBuilder sb = new StringBuilder(result);
-                    orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
-                    if (r.success)
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = request.GetResponse();
+                    using (var reader = new StreamReader(response.GetResponseStream()))
                     {
-                        if (r.orders.Count() != 0)
+                        result = reader.ReadToEnd();
+                        StringBuilder sb = new StringBuilder(result);
+                        orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
+                        if (r.success)
                         {
-                            if (md_order == null)
+                            if (r.orders.Count() != 0)
                             {
-                                md_order = new MD_Order();
-                                if (r.orders[0].details[0].note.Contains("sqz333"))
+                                if (md_order == null)
                                 {
-                                    md_order.product_id = 1;
-                                }
-                                else if (r.orders[0].details[0].note.Contains("sqz187"))
-                                {
-                                    md_order.product_id = 1;
-                                }
-                                else if (r.orders[0].details[0].note.Contains("sqz444"))
-                                {
-                                    md_order.product_id = 3;
+                                    md_order = new MD_Order();
+                                    if (r.orders[0].details[0].note.Contains("sqz333"))
+                                    {
+                                        md_order.product_id = 1;
+                                    }
+                                    else if (r.orders[0].details[0].note.Contains("sqz187"))
+                                    {
+                                        md_order.product_id = 1;
+                                    }
+                                    else if (r.orders[0].details[0].note.Contains("sqz444"))
+                                    {
+                                        md_order.product_id = 3;
+                                    }
+                                    else
+                                    {
+                                        return Json(new { result = "FAIL" });
+                                    }
+                                    var strAddre = r.orders[0].receiver_address;
+                                    var indexAddre1 = strAddre.IndexOf(" ");
+                                    var indexAddre2 = strAddre.IndexOf(" ", indexAddre1 + 1);
+                                    var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1) + 1;
+                                    var strReceiver_address = strAddre.Substring(indexAddre3, strAddre.Length - indexAddre3);
+                                    var strArea = r.orders[0].receiver_area;
+                                    var strReceiver_area = strArea;
+                                    if (strArea == null)
+                                    {
+                                        strReceiver_area = strAddre.Substring(0, indexAddre3 - 1);
+                                        strReceiver_area = strReceiver_area.Replace(" ", "-");
+                                    }
+                                    string[] t = strReceiver_area.Split('-');
+                                    var findT = (t.Length - 1);
+                                    if (findT < 2)
+                                    {
+                                        strReceiver_area = strReceiver_area + "-";
+                                    }
+                                    md_order.order_code = r.orders[0].platform_code;
+                                    md_order.receiver_date = r.orders[0].createtime.Date;
+                                    md_order.order_status = 0;
+                                    if (r.orders[0].deliverys.Count != 0)
+                                    {
+                                        md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
+                                    }
+                                    else
+                                    {
+                                        md_order.express_information = "";
+                                    }
+                                    md_order.remark = r.orders[0].buyer_memo;
+                                    md_order.receiver_address = strReceiver_address;
+                                    md_order.receiver_area = strReceiver_area;
+                                    md_order.upload_status = 1;
+                                    md_order.receiver_tel = r.orders[0].receiver_mobile;
+                                    md_order.vip_code = r.orders[0].vip_code;
+                                    md_order.receiver_times = 1;
+                                    md_order.qty = (int)r.orders[0].qty / 3;
+                                    md_order.amount = r.orders[0].amount;
+                                    md_order.discount_fee = r.orders[0].discount_fee;
+                                    md_order.payment_amount = r.orders[0].payment_amount;
+                                    md_order.delivery_state = r.orders[0].delivery_state;
+                                    md_order.payment = r.orders[0].payment;
+                                    md_order.receiver_name = r.orders[0].receiver_name;
+                                    md_db.MD_Order.Add(md_order);
+                                    md_db.SaveChanges();
+                                    md_order.parentOrder_id = md_order.Id;
+                                    md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
                                 }
                                 else
                                 {
-                                    return Json(new { result = "FAIL" });
+                                    return Json(new { result = "ERROR" });
                                 }
-                                var strAddre = r.orders[0].receiver_address;
-                                var indexAddre1 = strAddre.IndexOf(" ");
-                                var indexAddre2 = strAddre.IndexOf(" ", indexAddre1 + 1);
-                                var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1) + 1;
-                                var strReceiver_address = strAddre.Substring(indexAddre3, strAddre.Length - indexAddre3);
-                                var strArea = r.orders[0].receiver_area;
-                                var strReceiver_area = strArea;
-                                if (strArea == null)
-                                {
-                                    strReceiver_area = strAddre.Substring(0, indexAddre3 - 1);
-                                    strReceiver_area = strReceiver_area.Replace(" ", "-");
-                                }
-                                string[] t = strReceiver_area.Split('-');
-                                var findT = (t.Length - 1);
-                                if (findT < 2)
-                                {
-                                    strReceiver_area = strReceiver_area + "-";
-                                }
-                                md_order.order_code = r.orders[0].platform_code;
-                                md_order.receiver_date = r.orders[0].createtime.Date;
-                                md_order.order_status = 0;
-                                if (r.orders[0].deliverys.Count != 0)
-                                {
-                                    md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
-                                }
-                                else
-                                {
-                                    md_order.express_information = "";
-                                }
-                                md_order.remark = r.orders[0].buyer_memo;
-                                md_order.receiver_address = strReceiver_address;
-                                md_order.receiver_area = strReceiver_area;
-                                md_order.upload_status = 1;
-                                md_order.receiver_tel = r.orders[0].receiver_mobile;
-                                md_order.vip_code = r.orders[0].vip_code;
-                                md_order.receiver_times = 1;
-                                md_order.qty = (int)r.orders[0].qty / 3;
-                                md_order.amount = r.orders[0].amount;
-                                md_order.discount_fee = r.orders[0].discount_fee;
-                                md_order.payment_amount = r.orders[0].payment_amount;
-                                md_order.delivery_state = r.orders[0].delivery_state;
-                                md_order.payment = r.orders[0].payment;
-                                md_order.receiver_name = r.orders[0].receiver_name;
-                                md_db.MD_Order.Add(md_order);
-                                md_db.SaveChanges();
-                                md_order.parentOrder_id = md_order.Id;
-                                md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
                             }
                             else
                             {
-                                return Json(new { result = "ERROR" });
+                                return Json(new { result = "NOTFOUND" });
                             }
-                        }
-                        else
-                        {
-                            return Json(new { result = "NOTFOUND" });
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                streamWriter.Close();
-                MD_Record logs = new MD_Record();
-                try_times++;
-                if (try_times >= 5)
+                catch (Exception)
                 {
-                    logs.record_date = DateTime.Now;
-                    logs.record_type = "[ErpOrder]获取失败";
-                    logs.record_detail = "FAIL";
-                    md_db.MD_Record.Add(logs);
-                    md_db.SaveChanges();
-                    try_times = 0;
-                    return Json(new { result = "SYSTEMERROR" });
+                    streamWriter.Close();
+                    MD_Record logs = new MD_Record();
+                    try_times++;
+                    if (try_times >= 5)
+                    {
+                        logs.record_date = DateTime.Now;
+                        logs.record_type = "[ErpOrder]获取失败";
+                        logs.record_detail = "FAIL";
+                        md_db.MD_Record.Add(logs);
+                        md_db.SaveChanges();
+                        try_times = 0;
+                        return Json(new { result = "SYSTEMERROR" });
+                    }
+                    return getSingleErpOrder(platform_code);
                 }
-                return getSingleErpOrder(platform_code);
+                md_db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
             }
-            md_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "NOTFOUND" });
         }
         [HttpPost]
         public JsonResult getSingleHistoryErpOrder(string platform_code)
         {
-            var md_order = md_db.MD_Order.SingleOrDefault(m => m.order_code == platform_code);
-            string json = "{" +
-                   "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.history.get\"," +
-                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
-                    "\"platform_code\":\"" + platform_code + "\"," +
-                    //"\"platform_code\":\"" + platform_code + "\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"" +
-                    "}";
-            string signature = sign(json, AppSecret);
-            string info = "{" +
-                   "\"appkey\":\"" + AppId + "\"," +
-                    "\"method\":\"gy.erp.trade.history.get\"," +
-                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
-                    "\"platform_code\":\"" + platform_code + "\"," +
-                    //"\"platform_code\":\"" + platform_code + "\"," +
-                    "\"sessionkey\":\"" + SessionKey + "\"," +
-                    "\"sign\":\"" + signature + "\"" +
-                "}";
-            var request = WebRequest.Create(API_Url) as HttpWebRequest;
-            request.ContentType = "text/json";
-            request.Method = "post";
-            string result = "";
-            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
-            try
+            if(platform_code!= "")
             {
-                streamWriter.Write(info);
-                streamWriter.Flush();
-                streamWriter.Close();
-                var response = request.GetResponse();
-                using (var reader = new StreamReader(response.GetResponseStream()))
+                var md_order = md_db.MD_Order.SingleOrDefault(m => m.order_code == platform_code);
+                string json = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.history.get\"," +
+                        //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                        "\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"" +
+                        "}";
+                string signature = sign(json, AppSecret);
+                string info = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.history.get\"," +
+                        //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                        "\"platform_code\":\"" + platform_code + "\"," +
+                        //"\"platform_code\":\"" + platform_code + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"," +
+                        "\"sign\":\"" + signature + "\"" +
+                    "}";
+                var request = WebRequest.Create(API_Url) as HttpWebRequest;
+                request.ContentType = "text/json";
+                request.Method = "post";
+                string result = "";
+                StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+                try
                 {
-                    result = reader.ReadToEnd();
-                    StringBuilder sb = new StringBuilder(result);
-                    orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
-                    if (r.success)
+                    streamWriter.Write(info);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                    var response = request.GetResponse();
+                    using (var reader = new StreamReader(response.GetResponseStream()))
                     {
-                        if (r.orders.Count() != 0)
+                        result = reader.ReadToEnd();
+                        StringBuilder sb = new StringBuilder(result);
+                        orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
+                        if (r.success)
                         {
-                            if (md_order == null)
+                            if (r.orders.Count() != 0)
                             {
-                                md_order = new MD_Order();
-                                if (r.orders[0].details[0].note != null)
+                                if (md_order == null)
                                 {
-                                    if (r.orders[0].details[0].note.Length != 0)
+                                    md_order = new MD_Order();
+                                    if (r.orders[0].details[0].note != null)
                                     {
-                                        if (r.orders[0].details[0].note.Contains("sqz333"))
+                                        if (r.orders[0].details[0].note.Length != 0)
+                                        {
+                                            if (r.orders[0].details[0].note.Contains("sqz333"))
+                                            {
+                                                md_order.product_id = 1;
+                                            }
+                                            else if (r.orders[0].details[0].note.Contains("sqz444"))
+                                            {
+                                                md_order.product_id = 3;
+                                            }
+                                        }
+                                        if (r.orders[0].details[0].item_code.Contains("sqz187"))
                                         {
                                             md_order.product_id = 1;
-                                        }
-                                        else if (r.orders[0].details[0].note.Contains("sqz444"))
-                                        {
-                                            md_order.product_id = 3;
                                         }
                                     }
                                     if (r.orders[0].details[0].item_code.Contains("sqz187"))
                                     {
                                         md_order.product_id = 1;
                                     }
-                                }
-                                if (r.orders[0].details[0].item_code.Contains("sqz187"))
-                                {
-                                    md_order.product_id = 1;
+                                    else
+                                    {
+                                        return Json(new { result = "FAIL" });
+                                    }
+                                    var strAddre = r.orders[0].receiver_address;
+                                    var indexAddre1 = strAddre.IndexOf(" ");
+                                    var indexAddre2 = strAddre.IndexOf(" ", indexAddre1 + 1);
+                                    var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1) + 1;
+                                    var strReceiver_address = strAddre.Substring(indexAddre3, strAddre.Length - indexAddre3);
+                                    var strArea = r.orders[0].receiver_area;
+                                    var strReceiver_area = strArea;
+                                    if (strArea == null)
+                                    {
+                                        strReceiver_area = strAddre.Substring(0, indexAddre3 - 1);
+                                        strReceiver_area = strReceiver_area.Replace(" ", "-");
+                                    }
+                                    string[] t = strReceiver_area.Split('-');
+                                    var findT = (t.Length - 1);
+                                    if (findT < 2)
+                                    {
+                                        strReceiver_area = strReceiver_area + "-";
+                                    }
+                                    md_order.order_code = r.orders[0].platform_code;
+                                    md_order.receiver_date = r.orders[0].createtime.Date;
+                                    md_order.order_status = 0;
+                                    if (r.orders[0].deliverys.Count != 0)
+                                    {
+                                        md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
+                                    }
+                                    else
+                                    {
+                                        md_order.express_information = "";
+                                    }
+                                    md_order.remark = r.orders[0].buyer_memo;
+                                    md_order.receiver_address = strReceiver_address;
+                                    md_order.receiver_area = strReceiver_area;
+                                    md_order.upload_status = 1;
+                                    md_order.receiver_tel = r.orders[0].receiver_mobile;
+                                    md_order.vip_code = r.orders[0].vip_code;
+                                    md_order.receiver_times = 1;
+                                    md_order.qty = (int)r.orders[0].qty / 3;
+                                    md_order.amount = r.orders[0].amount;
+                                    md_order.discount_fee = r.orders[0].discount_fee;
+                                    md_order.payment_amount = r.orders[0].payment_amount;
+                                    md_order.delivery_state = r.orders[0].delivery_state;
+                                    md_order.payment = r.orders[0].payment;
+                                    md_order.receiver_name = r.orders[0].receiver_name;
+                                    md_db.MD_Order.Add(md_order);
+                                    md_db.SaveChanges();
+                                    md_order.parentOrder_id = md_order.Id;
+                                    md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
                                 }
                                 else
                                 {
-                                    return Json(new { result = "FAIL" });
+                                    return Json(new { result = "ERROR" });
                                 }
-                                var strAddre = r.orders[0].receiver_address;
-                                var indexAddre1 = strAddre.IndexOf(" ");
-                                var indexAddre2 = strAddre.IndexOf(" ", indexAddre1 + 1);
-                                var indexAddre3 = strAddre.IndexOf(" ", indexAddre2 + 1) + 1;
-                                var strReceiver_address = strAddre.Substring(indexAddre3, strAddre.Length - indexAddre3);
-                                var strArea = r.orders[0].receiver_area;
-                                var strReceiver_area = strArea;
-                                if (strArea == null)
-                                {
-                                    strReceiver_area = strAddre.Substring(0, indexAddre3 - 1);
-                                    strReceiver_area = strReceiver_area.Replace(" ", "-");
-                                }
-                                string[] t = strReceiver_area.Split('-');
-                                var findT = (t.Length - 1);
-                                if (findT < 2)
-                                {
-                                    strReceiver_area = strReceiver_area + "-";
-                                }
-                                md_order.order_code = r.orders[0].platform_code;
-                                md_order.receiver_date = r.orders[0].createtime.Date;
-                                md_order.order_status = 0;
-                                if (r.orders[0].deliverys.Count != 0)
-                                {
-                                    md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
-                                }
-                                else
-                                {
-                                    md_order.express_information = "";
-                                }
-                                md_order.remark = r.orders[0].buyer_memo;
-                                md_order.receiver_address = strReceiver_address;
-                                md_order.receiver_area = strReceiver_area;
-                                md_order.upload_status = 1;
-                                md_order.receiver_tel = r.orders[0].receiver_mobile;
-                                md_order.vip_code = r.orders[0].vip_code;
-                                md_order.receiver_times = 1;
-                                md_order.qty = (int)r.orders[0].qty / 3;
-                                md_order.amount = r.orders[0].amount;
-                                md_order.discount_fee = r.orders[0].discount_fee;
-                                md_order.payment_amount = r.orders[0].payment_amount;
-                                md_order.delivery_state = r.orders[0].delivery_state;
-                                md_order.payment = r.orders[0].payment;
-                                md_order.receiver_name = r.orders[0].receiver_name;
-                                md_db.MD_Order.Add(md_order);
-                                md_db.SaveChanges();
-                                md_order.parentOrder_id = md_order.Id;
-                                md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
                             }
                             else
                             {
-                                return Json(new { result = "ERROR" });
+                                return Json(new { result = "NOTFOUND" });
                             }
-                        }
-                        else
-                        {
-                            return Json(new { result = "NOTFOUND" });
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                streamWriter.Close();
-                MD_Record logs = new MD_Record();
-                try_times++;
-                if (try_times >= 5)
+                catch (Exception)
                 {
-                    logs.record_date = DateTime.Now;
-                    logs.record_type = "[ErpOrder]获取失败";
-                    logs.record_detail = "FAIL";
-                    md_db.MD_Record.Add(logs);
-                    md_db.SaveChanges();
-                    try_times = 0;
-                    return Json(new { result = "SYSTEMERROR" });
+                    streamWriter.Close();
+                    MD_Record logs = new MD_Record();
+                    try_times++;
+                    if (try_times >= 5)
+                    {
+                        logs.record_date = DateTime.Now;
+                        logs.record_type = "[ErpOrder]获取失败";
+                        logs.record_detail = "FAIL";
+                        md_db.MD_Record.Add(logs);
+                        md_db.SaveChanges();
+                        try_times = 0;
+                        return Json(new { result = "SYSTEMERROR" });
+                    }
+                    return getSingleErpOrder(platform_code);
                 }
-                return getSingleErpOrder(platform_code);
+                md_db.SaveChanges();
+                return Json(new { result = "SUCCESS" });
             }
-            md_db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            return Json(new { result = "NOTFOUND" });
         }
         // 生成子订单
         public ActionResult CreateSubOrders(int order_id)
