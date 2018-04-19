@@ -1470,6 +1470,7 @@ namespace PeriodAid.Controllers
                 logs.record_date = DateTime.Now;
                 logs.record_type = "Cancel";
                 logs.record_detail = Order.order_code + " 取消发货";
+                logs.record_amount = 1;
                 md_db.MD_Record.Add(logs);
                 Order.order_status = -1;
                 md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
@@ -1508,6 +1509,7 @@ namespace PeriodAid.Controllers
                         logs.record_detail = order.order_code + " 新增修改 :"+" " + model.receiver_date + " " + model.receiver_area + " " + model.receiver_address;
                     if(order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address)
                         return Json(new { result = "ERROR" });
+                    logs.record_amount = 1;
                     md_db.MD_Record.Add(logs);
                     md_db.Entry(Orders).State = System.Data.Entity.EntityState.Modified;
                     md_db.SaveChanges();
@@ -1648,6 +1650,7 @@ namespace PeriodAid.Controllers
                                     logs.record_date = DateTime.Now;
                                     logs.record_type = "Create";
                                     logs.record_detail ="导入订单 :" + " " + md_order.order_code;
+                                    logs.record_amount = 1;
                                     md_db.MD_Record.Add(logs);
                                 }
                                 else
@@ -1670,8 +1673,8 @@ namespace PeriodAid.Controllers
                     if (try_times >= 5)
                     {
                         logs.record_date = DateTime.Now;
-                        logs.record_type = "[ErpOrder]获取失败";
-                        logs.record_detail = "FAIL";
+                        logs.record_type = "Fail";
+                        logs.record_detail = "ErpOrder获取失败";
                         md_db.MD_Record.Add(logs);
                         md_db.SaveChanges();
                         try_times = 0;
@@ -1815,6 +1818,7 @@ namespace PeriodAid.Controllers
                                     logs.record_date = DateTime.Now;
                                     logs.record_type = "Create";
                                     logs.record_detail = "导入订单 :" + " " + md_order.order_code;
+                                    logs.record_amount = 1;
                                     md_db.MD_Record.Add(logs);
                                 }
                                 else
@@ -1837,8 +1841,8 @@ namespace PeriodAid.Controllers
                     if (try_times >= 5)
                     {
                         logs.record_date = DateTime.Now;
-                        logs.record_type = "[ErpOrder]获取失败";
-                        logs.record_detail = "FAIL";
+                        logs.record_type = "Fail";
+                        logs.record_detail = "ErpOrder获取失败";
                         md_db.MD_Record.Add(logs);
                         md_db.SaveChanges();
                         try_times = 0;
@@ -1885,7 +1889,8 @@ namespace PeriodAid.Controllers
             MD_Record logs = new MD_Record();
             logs.record_date = DateTime.Now;
             logs.record_type = "CreateSubOrders";
-            logs.record_detail = order.order_code + " 新增复购订单数 :" + " " + times;
+            logs.record_detail = order.order_code + " 新增复购订单";
+            logs.record_amount = times;
             md_db.MD_Record.Add(logs);
             md_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
