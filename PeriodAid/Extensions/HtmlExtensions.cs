@@ -181,7 +181,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        //CRM
+        // CRM
         public static string ContractStatus(this HtmlHelper helper, string status)
         {
             switch (status)
@@ -196,7 +196,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        // YYS
+        // MD
         public static string DeliveryStatus(this HtmlHelper helper, int status)
         {
             switch (status)

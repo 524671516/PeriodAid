@@ -1370,7 +1370,6 @@ namespace PeriodAid.Controllers
                     return PartialView(SearchResult);
                 }
             }
-
         }
 
         public int ReceiverTimes(int order_id)
@@ -1446,7 +1445,6 @@ namespace PeriodAid.Controllers
                 OrderDetail.receiver_times = Order.receiver_times;
                 OrderDetail.express_information = " ";
                 OrderDetail.receiver_name = Order.receiver_name;
-                OrderDetail.order_status = 1;
                 md_db.MD_Order.Add(OrderDetail);
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
@@ -1596,7 +1594,6 @@ namespace PeriodAid.Controllers
                                     }
                                     md_order.order_code = r.orders[0].platform_code;
                                     md_order.receiver_date = r.orders[0].createtime.Date;
-                                    md_order.order_status = 0;
                                     if (r.orders[0].deliverys.Count != 0)
                                     {
                                         md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
@@ -1758,7 +1755,6 @@ namespace PeriodAid.Controllers
                                     }
                                     md_order.order_code = r.orders[0].platform_code;
                                     md_order.receiver_date = r.orders[0].createtime.Date;
-                                    md_order.order_status = 0;
                                     if (r.orders[0].deliverys.Count != 0)
                                     {
                                         md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
@@ -1835,7 +1831,6 @@ namespace PeriodAid.Controllers
                 var subOrder = new MD_Order();
                 subOrder.order_code = "MD" + order.order_code + "-" + i;
                 subOrder.receiver_date = order.receiver_date.Value.AddDays(+i * 30);
-                subOrder.order_status = 0;
                 subOrder.remark = order.remark;
                 subOrder.receiver_address = order.receiver_address;
                 subOrder.receiver_tel = order.receiver_tel;

@@ -64,7 +64,7 @@ namespace PeriodAid.Models
         public int receiver_times { get; set; }
         // 邮寄状态
         public int delivery_state { get; set; }
-        //  0 未合并 1 已合并
+        // -1 已取消 0 正常 1 已完成
         public int order_status { get; set; }
         // 0 未推送 1已推送
         public int upload_status { get; set; }
