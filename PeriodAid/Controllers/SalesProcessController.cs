@@ -1504,7 +1504,7 @@ namespace PeriodAid.Controllers
                     if (order.receiver_date != model.receiver_date)
                         logs.record_detail = order.order_code + " 发货日期由: " + " " + order.receiver_date + " 修改至 :" + " " + model.receiver_date;
                     if (order.receiver_address != model.receiver_address)
-                        logs.record_detail = order.order_code + " 发货地址由: " + " " + order.receiver_area + order.receiver_address + " 修改至 :" + " " + model.receiver_area + " " + model.receiver_address;
+                        logs.record_detail = order.order_code + " 发货地址由: " + " " + order.receiver_area + " " + order.receiver_address + " 修改至 :" + " " + model.receiver_area + " " + model.receiver_address;
                     if (order.receiver_date != model.receiver_date && order.receiver_address != model.receiver_address)
                         logs.record_detail = order.order_code + " 新增修改 :" + " " + model.receiver_date + " " + model.receiver_area + " " + model.receiver_address;
                     if (order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address)
