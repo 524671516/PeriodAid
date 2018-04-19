@@ -1336,7 +1336,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in order
                                         where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
                 else
@@ -1344,7 +1344,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in md_db.MD_Order
                                         where m.receiver_times == 1
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
             }
@@ -1358,7 +1358,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in order
                                         where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
                 else
@@ -1366,10 +1366,11 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in md_db.MD_Order
                                         where m.receiver_times == 1 && m.createSub_status == create_status
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
             }
+
         }
 
         public int ReceiverTimes(int order_id)
@@ -1445,6 +1446,7 @@ namespace PeriodAid.Controllers
                 OrderDetail.receiver_times = Order.receiver_times;
                 OrderDetail.express_information = " ";
                 OrderDetail.receiver_name = Order.receiver_name;
+                OrderDetail.order_status = 1;
                 md_db.MD_Order.Add(OrderDetail);
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
@@ -1460,9 +1462,18 @@ namespace PeriodAid.Controllers
             var order = from m in md_db.MD_Order
                         where m.parentOrder_id == order_id && m.delivery_state == 0 && m.upload_status != 1 && m.receiver_times != 1
                         select m;
+            var Order = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
             if (order.Count() != 0)
             {
                 md_db.MD_Order.RemoveRange(order);
+                MD_Record logs = new MD_Record();
+                logs.record_date = DateTime.Now;
+                logs.record_type = "Cancel";
+                logs.record_detail = Order.order_code + " 取消发货";
+                logs.record_amount = 1;
+                md_db.MD_Record.Add(logs);
+                Order.order_status = -1;
+                md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }
@@ -1481,11 +1492,25 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult MD_EditOrderInfo(MD_Order model)
         {
+            var order = md_db.MD_Order.AsNoTracking().SingleOrDefault(m => m.Id == model.Id);
             if (ModelState.IsValid)
             {
                 MD_Order Orders = new MD_Order();
                 if (TryUpdateModel(Orders))
                 {
+                    MD_Record logs = new MD_Record();
+                    logs.record_date = DateTime.Now;
+                    logs.record_type = "Edit";
+                    if (order.receiver_date != model.receiver_date)
+                        logs.record_detail = order.order_code + " 发货日期由: " + " " + order.receiver_date + " 修改至 :" + " " + model.receiver_date;
+                    if (order.receiver_address != model.receiver_address)
+                        logs.record_detail = order.order_code + " 发货地址由: " + " " + order.receiver_area + order.receiver_address + " 修改至 :" + " " + model.receiver_area + " " + model.receiver_address;
+                    if (order.receiver_date != model.receiver_date && order.receiver_address != model.receiver_address)
+                        logs.record_detail = order.order_code + " 新增修改 :" + " " + model.receiver_date + " " + model.receiver_area + " " + model.receiver_address;
+                    if (order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address)
+                        return Json(new { result = "ERROR" });
+                    logs.record_amount = 1;
+                    md_db.MD_Record.Add(logs);
                     md_db.Entry(Orders).State = System.Data.Entity.EntityState.Modified;
                     md_db.SaveChanges();
                     return Json(new { result = "SUCCESS" });
@@ -1541,7 +1566,7 @@ namespace PeriodAid.Controllers
                                 if (md_order == null)
                                 {
                                     md_order = new MD_Order();
-                                    for(int x = 0; x < r.orders[0].details.Count();x++)
+                                    for (int x = 0; x < r.orders[0].details.Count(); x++)
                                     {
                                         if (r.orders[0].details[x].note != null)
                                         {
@@ -1570,7 +1595,7 @@ namespace PeriodAid.Controllers
                                             break;
                                         }
                                     }
-                                    if(md_order.product_id == 0)
+                                    if (md_order.product_id == 0)
                                     {
                                         return Json(new { result = "FAIL" });
                                     }
@@ -1594,6 +1619,7 @@ namespace PeriodAid.Controllers
                                     }
                                     md_order.order_code = r.orders[0].platform_code;
                                     md_order.receiver_date = r.orders[0].createtime.Date;
+                                    md_order.order_status = 0;
                                     if (r.orders[0].deliverys.Count != 0)
                                     {
                                         md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
@@ -1620,6 +1646,12 @@ namespace PeriodAid.Controllers
                                     md_db.SaveChanges();
                                     md_order.parentOrder_id = md_order.Id;
                                     md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
+                                    MD_Record logs = new MD_Record();
+                                    logs.record_date = DateTime.Now;
+                                    logs.record_type = "Create";
+                                    logs.record_detail = "导入订单 :" + " " + md_order.order_code;
+                                    logs.record_amount = 1;
+                                    md_db.MD_Record.Add(logs);
                                 }
                                 else
                                 {
@@ -1641,8 +1673,8 @@ namespace PeriodAid.Controllers
                     if (try_times >= 5)
                     {
                         logs.record_date = DateTime.Now;
-                        logs.record_type = "[ErpOrder]获取失败";
-                        logs.record_detail = "FAIL";
+                        logs.record_type = "Fail";
+                        logs.record_detail = "ErpOrder获取失败";
                         md_db.MD_Record.Add(logs);
                         md_db.SaveChanges();
                         try_times = 0;
@@ -1755,6 +1787,7 @@ namespace PeriodAid.Controllers
                                     }
                                     md_order.order_code = r.orders[0].platform_code;
                                     md_order.receiver_date = r.orders[0].createtime.Date;
+                                    md_order.order_status = 0;
                                     if (r.orders[0].deliverys.Count != 0)
                                     {
                                         md_order.express_information = r.orders[0].deliverys[0].express_name + r.orders[0].deliverys[0].mail_no;
@@ -1781,6 +1814,12 @@ namespace PeriodAid.Controllers
                                     md_db.SaveChanges();
                                     md_order.parentOrder_id = md_order.Id;
                                     md_db.Entry(md_order).State = System.Data.Entity.EntityState.Modified;
+                                    MD_Record logs = new MD_Record();
+                                    logs.record_date = DateTime.Now;
+                                    logs.record_type = "Create";
+                                    logs.record_detail = "导入订单 :" + " " + md_order.order_code;
+                                    logs.record_amount = 1;
+                                    md_db.MD_Record.Add(logs);
                                 }
                                 else
                                 {
@@ -1802,8 +1841,8 @@ namespace PeriodAid.Controllers
                     if (try_times >= 5)
                     {
                         logs.record_date = DateTime.Now;
-                        logs.record_type = "[ErpOrder]获取失败";
-                        logs.record_detail = "FAIL";
+                        logs.record_type = "Fail";
+                        logs.record_detail = "ErpOrder获取失败";
                         md_db.MD_Record.Add(logs);
                         md_db.SaveChanges();
                         try_times = 0;
@@ -1831,6 +1870,7 @@ namespace PeriodAid.Controllers
                 var subOrder = new MD_Order();
                 subOrder.order_code = "MD" + order.order_code + "-" + i;
                 subOrder.receiver_date = order.receiver_date.Value.AddDays(+i * 30);
+                subOrder.order_status = 0;
                 subOrder.remark = order.remark;
                 subOrder.receiver_address = order.receiver_address;
                 subOrder.receiver_tel = order.receiver_tel;
@@ -1846,6 +1886,12 @@ namespace PeriodAid.Controllers
             }
             order.createSub_status = 1;
             md_db.Entry(order).State = System.Data.Entity.EntityState.Modified;
+            MD_Record logs = new MD_Record();
+            logs.record_date = DateTime.Now;
+            logs.record_type = "CreateSubOrders";
+            logs.record_detail = order.order_code + " 新增复购订单";
+            logs.record_amount = times;
+            md_db.MD_Record.Add(logs);
             md_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
