@@ -181,7 +181,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        //CRM
+        // CRM
         public static string ContractStatus(this HtmlHelper helper, string status)
         {
             switch (status)
@@ -196,7 +196,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        // YYS
+        // MD
         public static string DeliveryStatus(this HtmlHelper helper, int status)
         {
             switch (status)
@@ -205,6 +205,19 @@ namespace System.Web.Mvc
                     return "待发货";
                 case 2:
                     return "已发货";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string UploadStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "未推送";
+                case 1:
+                    return "已推送";
                 default:
                     return "未知";
             }

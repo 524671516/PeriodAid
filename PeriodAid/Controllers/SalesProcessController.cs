@@ -1471,6 +1471,8 @@ namespace PeriodAid.Controllers
                 logs.record_type = "Cancel";
                 logs.record_detail = Order.order_code + " 取消发货";
                 md_db.MD_Record.Add(logs);
+                Order.order_status = -1;
+                md_db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }

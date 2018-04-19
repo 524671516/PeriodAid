@@ -8,8 +8,8 @@
                 </label>
             </th>
             <th style="width:20%">平台单号</th>
-            <th style="width:8%">代码</th>
-            <th style="width:7%">数量</th>
+            <th style="width:9%">推送状态</th>
+            <th style="width:6%">数量</th>
             <th style="width:10%">发货状态</th>
             <th style="width:10%">发货时间</th>
             <th style="width:20%">邮寄地址</th>
@@ -27,7 +27,7 @@
                     </label>
                 </td>
                 <td>@item.order_code</td>
-                <td>@item.MD_Product.product_code</td>
+                <td>@Html.UploadStatus(item.upload_status)</td>
                 <td style="text-indent:10px">@item.qty</td>
                 <td>@Html.DeliveryStatus(item.delivery_state)</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
