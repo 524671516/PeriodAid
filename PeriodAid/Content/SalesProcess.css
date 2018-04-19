@@ -1407,5 +1407,26 @@ a.btn_subtask_detail{
      padding:0 5px;
 
 }
-
- /*同步ERP*/
+/*侧边栏开始*/
+.tm_control_panel_show{
+    color:#fff;
+    display:block;
+    opacity:1;
+    z-index:999999;
+    position:fixed;
+    top:53px;
+    background-color:#3da8f5;
+    width:80px;
+    left:630px;
+    line-height:20px;
+    height:20px;
+    border-bottom-left-radius:5px;
+    border-bottom-right-radius:5px;
+    word-break:break-word;
+    cursor:pointer;
+    text-align:center;
+    transition:  all 300ms ease;
+   -moz-transition:  all 300ms ease;	
+   -webkit-transition:  all 300ms ease;	
+   -o-transition:  all 300ms ease;	
+}
