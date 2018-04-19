@@ -1336,7 +1336,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in order
                                         where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
                 else
@@ -1344,7 +1344,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in md_db.MD_Order
                                         where m.receiver_times == 1
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
             }
@@ -1358,7 +1358,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in order
                                         where m.order_code.Contains(query) || m.MD_Product.product_code.Contains(query)
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
                 else
@@ -1366,7 +1366,7 @@ namespace PeriodAid.Controllers
                     var SearchResult = (from m in md_db.MD_Order
                                         where m.receiver_times == 1 && m.createSub_status == create_status
                                         orderby m.receiver_date descending
-                                        select m).ToPagedList(_page, 15);
+                                        select m).ToPagedList(_page, 20);
                     return PartialView(SearchResult);
                 }
             }
@@ -1462,9 +1462,15 @@ namespace PeriodAid.Controllers
             var order = from m in md_db.MD_Order
                         where m.parentOrder_id == order_id && m.delivery_state == 0 && m.upload_status != 1 && m.receiver_times != 1
                         select m;
+            var Order = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id);
             if (order.Count() != 0)
             {
                 md_db.MD_Order.RemoveRange(order);
+                MD_Record logs = new MD_Record();
+                logs.record_date = DateTime.Now;
+                logs.record_type = "Cancel";
+                logs.record_detail = Order.order_code + " 取消发货";
+                md_db.MD_Record.Add(logs);
                 md_db.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }
