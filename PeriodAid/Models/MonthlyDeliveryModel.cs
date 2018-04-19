@@ -103,7 +103,7 @@ namespace PeriodAid.Models
 
         public DateTime? record_date { get; set; }
         
-        public int amount { get; set; }
+        public int record_amount { get; set; }
     }
 
     public static class OrderInfo
