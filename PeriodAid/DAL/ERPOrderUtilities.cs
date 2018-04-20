@@ -1125,6 +1125,10 @@ namespace PeriodAid.DAL
 
                     strword = strword.Replace(":", " ");
 
+                if (str.Contains("："))
+
+                    strword = strword.Replace("：", " ");
+
                 if (str.Contains(","))
 
                     strword = strword.Replace(",", ".");
