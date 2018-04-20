@@ -79,7 +79,7 @@
         $(".edit_btn").on("click", function () {
             var that = $(this)
             $.ajax({
-                url: "/SalesProcess/MD_EditOrderInfo/",
+                url: "/MonthlyDelivery/MD_EditOrderInfo/",
                 data: {
                     order_id: that.attr("data-id")
                 },
@@ -151,7 +151,7 @@
             buttons: {
                 确定: function () {
                     $.ajax({
-                        url: "/SalesProcess/Amalgamate_Order/",
+                        url: "/MonthlyDelivery/Amalgamate_Order/",
                         type: "post",
                         data: {
                             order_id: orderarry.sort((a,b)=>a-b)
@@ -164,7 +164,7 @@
                                     type: 'green',
                                 });
                                 $.ajax({
-                                    url: "/SalesProcess/MD_OrderDetailPartialView/",
+                                    url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
                                     data: {
                                         parentOrder_id: $(".checkbox").eq(0).attr("data-val")
                                     },

@@ -10,7 +10,7 @@
 </div>
 <div class="hidden" id="orderId_show"></div>
 <div class="modal-body" id="modal-body">
-    @using (Html.BeginForm("MD_EditOrderInfo", "SalesProcess", FormMethod.Post, new { @id = "order-form" }))
+    @using (Html.BeginForm("MD_EditOrderInfo", "MonthlyDelivery", FormMethod.Post, new { @id = "order-form" }))
     {
         @Html.AntiForgeryToken();
         <div class="form-horizontal">
@@ -136,7 +136,7 @@
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")
             $("#order-form").ajaxSubmit({
-                url: '/SalesProcess/MD_EditOrderInfo',
+                url: '/MonthlyDelivery/MD_EditOrderInfo',
                 type: 'post',
                 success: function (data) {
                     if (data.result == "SUCCESS") {
@@ -148,7 +148,7 @@
                             buttons: {
                                 确定: function () {
                                     $.ajax({
-                                        url: "/SalesProcess/MD_OrderDetailPartialView/",
+                                        url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
                                         data: {
                                             parentOrder_id: $("#orderId_show").attr("data-id")
                                         },
@@ -171,7 +171,7 @@
                             buttons: {
                                 确定: function () {
                                     $.ajax({
-                                        url: "/SalesProcess/MD_OrderDetailPartialView/",
+                                        url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
                                         data: {
                                             parentOrder_id: $("#orderId_show").attr("data-id")
                                         },
@@ -194,7 +194,7 @@
                             buttons: {
                                 确定: function () {
                                     $.ajax({
-                                        url: "/SalesProcess/MD_OrderDetailPartialView/",
+                                        url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
                                         data: {
                                             parentOrder_id: $("#orderId_show").attr("data-id")
                                         },

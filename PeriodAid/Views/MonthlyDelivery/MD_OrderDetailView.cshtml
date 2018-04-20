@@ -1,7 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "MD_OrderDetailView";
-    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+    Layout = "~/Views/Shared/_MonthlyDeliveryLayout.cshtml";
 }
 <style>
     .jconfirm-box-container {
@@ -20,8 +20,9 @@
 @section scripts{
     <script>
         $(function () {
+            $("#ul-hover").children("li").eq(0).addClass("current")
             $.ajax({
-                url: "/SalesProcess/MD_OrderDetailPartialView/",
+                url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
                 data: {
                     parentOrder_id: $("#orderId").attr("data-id")
                 },
@@ -31,7 +32,7 @@
                 }
             })
             $(".backBtn").on("click", function () {
-                $(this).attr("href", "/SalesProcess/MD_OrderView/")
+                $(this).attr("href", "/MonthlyDelivery/MD_OrderView/")
             })
         })
     </script>

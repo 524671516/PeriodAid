@@ -4,7 +4,7 @@
     <h2>复购订单信息</h2>
 </div>
 <div class="modal-body" id="modal-body">
-    @using (Html.BeginForm("CreateSubOrders", "SalesProcess", FormMethod.Post, new { @id = "subOrder-form" }))
+    @using (Html.BeginForm("CreateSubOrders", "MonthlyDelivery", FormMethod.Post, new { @id = "subOrder-form" }))
     {
         <div class="form-horizontal">
             @Html.HiddenFor(model => model.Id)
@@ -79,7 +79,7 @@
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")
             $("#subOrder-form").ajaxSubmit({
-                url: '/SalesProcess/CreateSubOrders',
+                url: '/MonthlyDelivery/CreateSubOrders',
                 type: 'post',
                 data:{
                     order_qty: $("#order_qty").val(),
@@ -88,7 +88,7 @@
                 },
                 success: function (data) {
                     $.ajax({
-                        url: "/SalesProcess/MD_OrderPartialView/",
+                        url: "/MonthlyDelivery/MD_OrderPartialView/",
                         type: "post",
                         data: {
                             page: 1,

@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "MD_OrderView";
-    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
+    Layout = "~/Views/Shared/_MonthlyDeliveryLayout.cshtml";
 }
 <table class="offline-search-box" style="margin-bottom:10px">
     <tr>
@@ -46,10 +46,10 @@
 @section scripts{
     <script>
         $(function () {
-            $("#ul-hover").children("li").eq(1).addClass("current")
+            $("#ul-hover").children("li").eq(0).addClass("current")
             $('[data-toggle="tooltip"]').tooltip();
             $.ajax({
-                url: "/SalesProcess/MD_OrderPartialView/",
+                url: "/MonthlyDelivery/MD_OrderPartialView/",
                 data: {
                     page:1,
                     query: $("#order_query").val(),
@@ -69,7 +69,7 @@
             // 查询
             $("#order_search").click(function () {
                 $.ajax({
-                    url: "/SalesProcess/MD_OrderPartialView/",
+                    url: "/MonthlyDelivery/MD_OrderPartialView/",
                     type:"post",
                     data: {
                         page: 1,
@@ -86,7 +86,7 @@
                 var that = $(this)
                 that.addClass("disabled")
                 $.ajax({
-                    url: "/SalesProcess/getSingleErpOrder/",
+                    url: "/MonthlyDelivery/getSingleErpOrder/",
                     type: "post",
                     data: {
                         platform_code: $("#select_erporder").val()
@@ -94,7 +94,7 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $.ajax({
-                                url: "/SalesProcess/MD_OrderPartialView/",
+                                url: "/MonthlyDelivery/MD_OrderPartialView/",
                                 type: "post",
                                 data: {
                                     page: 1,
@@ -152,7 +152,7 @@
                 var that = $(this)
                 that.addClass("disabled")
                 $.ajax({
-                    url: "/SalesProcess/getSingleHistoryErpOrder/",
+                    url: "/MonthlyDelivery/getSingleHistoryErpOrder/",
                     type: "post",
                     data: {
                         platform_code: $("#select_history_erporder").val()
@@ -160,7 +160,7 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $.ajax({
-                                url: "/SalesProcess/MD_OrderPartialView/",
+                                url: "/MonthlyDelivery/MD_OrderPartialView/",
                                 type: "post",
                                 data: {
                                     page: 1,
@@ -218,7 +218,7 @@
             $(".order_btn").on("click", function () {
                 var that = $(this)
                 $.ajax({
-                    url: "/SalesProcess/MD_OrderPartialView/",
+                    url: "/MonthlyDelivery/MD_OrderPartialView/",
                     data: {
                         page: 1,
                         query: $("#order_query").val(),

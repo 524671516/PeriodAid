@@ -17,7 +17,6 @@ namespace PeriodAid.Models
             : base("name=IKCRMDATAConnection")
         {
         }
-        //public virtual DbSet<CRM_Product> CRM_Product { get; set; }
         public virtual DbSet<CRM_Contract> CRM_Contract { get; set; }
         public virtual DbSet<CRM_ContractDetail> CRM_ContractDetail { get; set; }
         public virtual DbSet<CRM_User_Token> CRM_User_Token { get; set; }

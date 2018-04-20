@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>CRM销售管理系统</title>
+    <title>定期送管理系统</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
@@ -58,11 +58,11 @@
     <div class="navbar  navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/SalesProcess/CRM_show"><strong class="color-blue">销售管理</strong></a>
+                    <a class="navbar-brand" href="/MonthlyDelivery/MD_OrderView"><strong class="color-blue">定期送管理</strong></a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav" id="ul-hover">
-                        <li><a href="/SalesProcess/CRM_show">爱客订单管理</a></li>
+                        <li><a href="/MonthlyDelivery/MD_OrderView">定期送订单管理</a></li>
                     </ul>
                     @Html.Partial("_LoginPartial")
                 </div>
@@ -121,6 +121,7 @@
 </html>
 <script>
     var locUrl = window.location.pathname;
+    console.log(locUrl)
     $("#ul-hover li a").each(function (index, el) {
         var href = this.getAttribute("href");
         if( href == locUrl){
