@@ -1318,11 +1318,12 @@ namespace PeriodAid.Controllers
         }
 
         // MD
+        
         public ActionResult MD_OrderView()
         {
             return View();
         }
-
+        
         public ActionResult MD_OrderPartialView(int? page, string query, int create_status)
         {
             int _page = page ?? 1;
@@ -1380,14 +1381,14 @@ namespace PeriodAid.Controllers
                         select m;
             return count.Count();
         }
-
+        
         public ActionResult MD_OrderDetailView(int order_id)
         {
             var orderdetail = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id && m.receiver_times == 1);
             ViewBag.orderDetail = orderdetail.parentOrder_id;
             return View();
         }
-
+        
         public ActionResult MD_OrderDetailPartialView(int parentOrder_id)
         {
             var orderDetail = from m in md_db.MD_Order
