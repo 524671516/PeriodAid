@@ -34,10 +34,12 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private MonthlyDeliveryModel md_db;
+        private ApplicationDbContext me_db;
         int try_times = 0;
         public MonthlyDeliveryController()
         {
             md_db = new MonthlyDeliveryModel();
+            me_db = new ApplicationDbContext();
         }
         public ActionResult Index()
         {
@@ -67,6 +69,13 @@ namespace PeriodAid.Controllers
             //使用MD5加密(32位大写)
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
+
+        public CRM_User getUser(string username)
+        {
+            var user = crm_db.CRM_User.SingleOrDefault(m => m.email == username);
+            return user;
+        }
+
         // MD
         [Authorize(Roles = "MD")]
         public ActionResult MD_OrderView()
