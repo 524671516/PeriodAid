@@ -69,13 +69,7 @@ namespace PeriodAid.Controllers
             //使用MD5加密(32位大写)
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
-
-        public CRM_User getUser(string username)
-        {
-            var user = crm_db.CRM_User.SingleOrDefault(m => m.email == username);
-            return user;
-        }
-
+        
         // MD
         [Authorize(Roles = "MD")]
         public ActionResult MD_OrderView()
