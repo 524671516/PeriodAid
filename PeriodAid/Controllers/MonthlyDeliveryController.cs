@@ -68,6 +68,7 @@ namespace PeriodAid.Controllers
             return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
         }
         // MD
+        [Authorize(Roles = "MD")]
         public ActionResult MD_OrderView()
         {
             return View();
@@ -130,7 +131,7 @@ namespace PeriodAid.Controllers
                         select m;
             return count.Count();
         }
-        
+        [Authorize(Roles = "MD")]
         public ActionResult MD_OrderDetailView(int order_id)
         {
             var orderdetail = md_db.MD_Order.SingleOrDefault(m => m.Id == order_id && m.receiver_times == 1);
