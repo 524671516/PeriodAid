@@ -74,6 +74,7 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "MD")]
         public ActionResult MD_OrderView()
         {
+            var seller = User.Identity.Name;
             return View();
         }
         
