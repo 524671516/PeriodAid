@@ -6,21 +6,22 @@
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>库存管理系统</title>
+    <title>权限管理系统</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
-    <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
-    @Styles.Render("~/Content/css")    
-    @RenderSection("header", required: false)   
+    <link href="~/Content/SalesProcess.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/prettify.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
 </head>
-<body>
-    @RenderSection("menu", required:false)
+<body class="reset">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -33,17 +34,6 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            管理系统　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
-                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
-                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
-                        </ul>
-                    </li>
                     <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
                     <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
                     <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
@@ -52,6 +42,7 @@
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
                             工具　<span class="caret"></span>
                         </a>
+
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
                             <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
@@ -63,7 +54,8 @@
             </div>
         </div>
     </div>
-    <div class="container body-content" style="padding:20px">
+    <br /><br />
+    <div class="container">
         <div class="row">
             <div class="col-md-2">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -71,39 +63,32 @@
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    京东 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
+                                    官网内容 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li> 
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=1"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>  
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=1"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=1"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a></li> 
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=1"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传销售统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Index"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;上传下载分仓单</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/JD_Traffic?plattformId=1"><i class="fa fa-arrow-down"></i>&nbsp;&nbsp;上传下载渠道统计</a></li>
+                                    <li class="left-navbar"><a href="/WebContent/WebContentIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
+                        <div class="panel-heading" role="tab" id="headingEight">
                             <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    天猫超市 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
+                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                    券码 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingEight"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
+                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=2"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=2"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=2"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=2"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a></li>                
+                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupList"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
+                                    <li class="left-navbar"><a href="/WebContent/CheckCodeList"><i class="fa fa-search"></i>&nbsp;&nbsp;查看优惠券</a></li>
+                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;数据统计</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -111,13 +96,18 @@
                 </div>
             </div>
             <div class="col-md-10">
-                @RenderBody()
+                <div class="row">
+                    <div class="col-xs-12">
+                        @RenderBody()
+                    </div>
+                </div>
             </div>
         </div>
-        <footer>
-            @*<p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>*@
-        </footer>
     </div>
+    <input type="hidden" value="@ViewBag.Current" id="current_page" />
+    <a class="btn btn-default hidden scroll-fixed" id="to-top" aria-label="Left Align">
+        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
+    </a>
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
@@ -128,11 +118,13 @@
     <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
     <script src="~/Scripts/bootstrap-select.js"></script>
     <script src="~/Scripts/defaults-zh_CN.min.js"></script>
-    <script src="~/Scripts/TaskManagementCalendar.js"></script>
+    <script src="~/Scripts/SalesProcess.js"></script>
     <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
     <script src="~/Scripts/off-JavaScript.js"></script>
+    <script src="~/Scripts/bootstrap-typeahead.js"></script>
+    <script src="~/Scripts/kalendae.standalone.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
-
 

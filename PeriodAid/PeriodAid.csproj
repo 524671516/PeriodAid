@@ -244,6 +244,7 @@
     <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TaskManagementController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
+    <Compile Include="Controllers\AccountRights.cs" />
     <Compile Include="Controllers\WebContentController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
     <Compile Include="DAL\AliOSSUtilities.cs" />
@@ -1179,6 +1180,9 @@
     <Content Include="Views\MonthlyDelivery\MD_OrderPartialView.cshtml" />
     <Content Include="Views\MonthlyDelivery\MD_OrderView.cshtml" />
     <Content Include="Views\Shared\_MonthlyDeliveryLayout.cshtml" />
+    <Content Include="Views\Shared\_AccountRightsLayout.cshtml" />
+    <Content Include="Views\AccountRights\AccountRights_View.cshtml" />
+    <Content Include="Views\AccountRights\RightsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

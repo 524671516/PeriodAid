@@ -1,6 +1,8 @@
 ﻿using CsvHelper;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
@@ -34,13 +36,41 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private MonthlyDeliveryModel md_db;
-        private ApplicationDbContext me_db;
         int try_times = 0;
         public MonthlyDeliveryController()
         {
             md_db = new MonthlyDeliveryModel();
-            me_db = new ApplicationDbContext();
         }
+        public MonthlyDeliveryController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        {
+            UserManager = userManager;
+            SignInManager = signInManager;
+        }
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -74,7 +104,6 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "MD")]
         public ActionResult MD_OrderView()
         {
-            var seller = User.Identity.Name;
             return View();
         }
         
@@ -650,5 +679,7 @@ namespace PeriodAid.Controllers
             md_db.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
+        
+
     }
 }
