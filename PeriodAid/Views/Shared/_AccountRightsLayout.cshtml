@@ -22,6 +22,7 @@
     @RenderSection("header", required: false)
 </head>
 <body class="reset">
+    @RenderSection("menu", required: false)
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -34,6 +35,17 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                            管理系统　<span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
+                        </ul>
+                    </li>
                     <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
                     <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
                     <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
@@ -42,7 +54,6 @@
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
                             工具　<span class="caret"></span>
                         </a>
-
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
                             <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
@@ -58,7 +69,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-2">
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                @*<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
@@ -93,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>*@
             </div>
             <div class="col-md-10">
                 <div class="row">
@@ -104,10 +115,6 @@
             </div>
         </div>
     </div>
-    <input type="hidden" value="@ViewBag.Current" id="current_page" />
-    <a class="btn btn-default hidden scroll-fixed" id="to-top" aria-label="Left Align">
-        <i class="fa fa-angle-double-up" aria-hidden="true"></i>
-    </a>
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

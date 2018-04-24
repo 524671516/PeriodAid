@@ -1,4 +1,4 @@
-﻿@model PeriodAid.Models.Employee
+﻿
 @{
     ViewBag.Title = "AccountRights_View";
     Layout = "~/Views/Shared/_AccountRightsLayout.cshtml";
@@ -8,128 +8,25 @@
         修改权限 <small id="employee_id" data-id="@ViewBag.Nickname.Id">管理员姓名：@ViewBag.Nickname.NickName</small>
     </h3>
 </div>
-<div>
-    <div class="col-md-3">
-        <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:300px;font-size:14px">
-            <option>User</option>
-            <option>Admin</option>
-            <option>Seller</option>
-            <option>Manager</option>
-            <option>Administrator</option>
-            <option>Staff</option>
-            <option>QC</option>
-            <option>QC_Manager</option>
-            <option>Supervisor</option>
-            <option>SuperAdmin</option>
-            <option>CRM</option>
-            <option>MD</option>
-        </select>
-    </div>
-    <div class="col-md-2 text-center" style="height:300px;">
-        <ul class="list-unstyled text-center" style="margin-top:100px">
-            <li><a class="btn btn-default btn-sm btn-info" href="javascript:;" id="add_btn">添加</a></li>
-            <br />
-            <li><a class="btn btn-default btn-warning btn-sm" href="javascript:;" id="remove_btn">移除</a></li>
-        </ul>
-    </div>
-    <div class="col-md-3">
-        <select multiple id="selectList" name="selectList" class="form-control input-sm" style="height:300px;font-size:14px">
-            @foreach (var item in ViewBag.Roles)
-            {
-                <option>@item</option>
-            }
-        </select>
-    </div>
-</div><br />    
- 
+<ol class="breadcrumb" style="background-color:white">
+    当前位置：
+    <li class="active">权限详情</li>
+    <li><a style="cursor:pointer" class="backBtn">返回上一页</a></li>
+</ol>
+<div id="roles_list"></div>
 @section scripts{
-    <script>
-        var Carr = []
-        var carr = []
-        $("#StoreList option").each(function () {
-            var channlVal = $(this).text();
-            Carr.push(channlVal)
-        })
-        $("#selectList option").each(function () {
-            var channlval = $(this).text();
-            carr.push(channlval)
-        })
-        var long = Carr.length < carr.length ? carr : Carr;
-        var short = Carr.length < carr.length ? Carr : carr;
-        var str = "," + long.toString() + ",";
-        var result = [];
-        for (var i in short) {
-            if (str.indexOf("," + short[i] + ",") >= 0) {
-                result.push(short[i]);
-            }
-        }
-        for (var i = 0 ; i < result.length ; i++) {
-            $("#StoreList option").each(function () {
-                var that = $(this)
-                var channlVal = $(this).text();
-                if (channlVal == result[i]) {
-                    that.remove()
-                }
-            })
-        }
-        $("#add_btn").on("click", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                console.log($("#StoreList").children("option:selected").text())
-                $.ajax({
-                    url: "/AccountRights/Add_RoleAjax/",
-                    type: "post",
-                    data: {
-                        userId: $("#employee_id").attr("data-id"),
-                        Role: $("#StoreList").children("option:selected").text()
-                    },
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            $.alert({
-                                title: '提示!',
-                                content: '添加成功!',
-                                type: 'green',
-                            })
-                        }
-                        else {
-                            $.alert({
-                                title: '提示!',
-                                content: '添加失败!',
-                                type: 'red',
-                            })
-                        }
-                    }
-                })
-            }
-        })
-        $("#remove_btn").on("click", function () {
-            if (!$(this).hasClass("disabled")) {
-                $(this).addClass("disabled")
-                $.ajax({
-                    url: "/AccountRights/Remove_RoleAjax/",
-                    type: "post",
-                    data: {
-                        userId: $("#employee_id").attr("data-id"),
-                        Role: $("#selectList").children("option:selected").text()
-                    },
-                    success: function (data) {
-                        if (data.result == "SUCCESS") {
-                            $.alert({
-                                title: '提示!',
-                                content: '删除成功!',
-                                type: 'green',
-                            })
-                        }
-                        else {
-                            $.alert({
-                                title: '提示!',
-                                content: '删除失败!',
-                                type: 'red',
-                            })
-                        }
-                    }
-                })
-            }
-        })
-</script>
+   <script>
+       $(".backBtn").on("click", function () {
+           $(this).attr("href", "/AccountRights/RightsList/")
+       })
+       $.ajax({
+           url: "/AccountRights/AccountRights_PartialView",
+           data:{
+               userId: $("#employee_id").attr("data-id")
+           },
+           success: function (data) {
+               $("#roles_list").html(data)
+           }
+       });
+    </script>
 }

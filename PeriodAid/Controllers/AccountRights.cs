@@ -2,6 +2,7 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -29,15 +30,18 @@ using System.Xml;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize]
     public class AccountRightsController : Controller
     {
         // 权限管理
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private ProjectSchemeModels ar_db;
+        //private IdentityUser ac_db;
         public AccountRightsController()
         {
             ar_db = new ProjectSchemeModels();
+            //ac_db = new IdentityUser();
         }
 
         public AccountRightsController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -109,24 +113,78 @@ namespace PeriodAid.Controllers
             var user = UserManager.FindByName(employee.UserName);
             var Roles = UserManager.GetRoles(user.Id);
             ViewBag.Roles = Roles;
-            //var bbb = UserManager.RemoveFromRole(user.Id, "MD");
             return View();
+        }
+
+        public ActionResult AccountRights_PartialView(int userId)
+        {
+            var employee = ar_db.Employee.SingleOrDefault(m => m.Id == userId);
+            var user = UserManager.FindByName(employee.UserName);
+            var Roles = UserManager.GetRoles(user.Id);
+            ViewBag.Roles = Roles;
+            return PartialView();
         }
         [HttpPost]
         public JsonResult Add_RoleAjax(int userId,string Role)
         {
-            var employee = ar_db.Employee.SingleOrDefault(m => m.Id == userId);
-            var user = UserManager.FindByName(employee.UserName);
-            var add_role = UserManager.AddToRole(user.Id, Role);
-            return Json(new { result = "SUCCESS" });
+            var seller = User.Identity.Name;
+            var sellerType = ar_db.Employee.SingleOrDefault(m => m.UserName == seller);
+            if(sellerType.Type == 2)
+            {
+                var employee = ar_db.Employee.SingleOrDefault(m => m.Id == userId);
+                var user = UserManager.FindByName(employee.UserName);
+                if (Role != "")
+                {
+                    try
+                    {
+                        var add_role = UserManager.AddToRole(user.Id, Role);
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "ERROR" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
+            }else
+            {
+                return Json(new { result = "Permission_denied" });
+            }
+            
         }
         [HttpPost]
         public JsonResult Remove_RoleAjax(int userId, string Role)
         {
-            var employee = ar_db.Employee.SingleOrDefault(m => m.Id == userId);
-            var user = UserManager.FindByName(employee.UserName);
-            var add_role = UserManager.RemoveFromRole(user.Id, Role);
-            return Json(new { result = "SUCCESS" });
+            var seller = User.Identity.Name;
+            var sellerType = ar_db.Employee.SingleOrDefault(m => m.UserName == seller);
+            if (sellerType.Type == 2)
+            {
+                var employee = ar_db.Employee.SingleOrDefault(m => m.Id == userId);
+                var user = UserManager.FindByName(employee.UserName);
+                if (Role != "")
+                {
+                    try
+                    {
+                        var remove_role = UserManager.RemoveFromRole(user.Id, Role);
+                        return Json(new { result = "SUCCESS" });
+                    }
+                    catch
+                    {
+                        return Json(new { result = "ERROR" });
+                    }
+                }
+                else
+                {
+                    return Json(new { result = "FAIL" });
+                }
+            }
+            else
+            {
+                return Json(new { result = "Permission_denied" });
+            }
         }
     }
 }
