@@ -209,7 +209,22 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        
+        // AR
+        public static string UserInfoType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "业务";
+                case 1:
+                    return "主管";
+                case 2:
+                    return "超级管理员";
+                default:
+                    return "未知";
+            }
+        }
+
         public static string UploadStatus(this HtmlHelper helper, int status)
         {
             switch (status)

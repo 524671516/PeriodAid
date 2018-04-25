@@ -85,11 +85,10 @@ namespace PeriodAid
                     new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
             }
             return manager;
-            
         }
     }
 
-    // 配置要在此应用程序中使用的应用程序登录管理器。
+    // 配置要在此应用程序中使用的应用程序登录管理器。  
     public class ApplicationSignInManager : SignInManager<ApplicationUser, string>
     {
         public ApplicationSignInManager(ApplicationUserManager userManager, IAuthenticationManager authenticationManager)
@@ -107,4 +106,5 @@ namespace PeriodAid
             return new ApplicationSignInManager(context.GetUserManager<ApplicationUserManager>(), context.Authentication);
         }
     }
+    
 }

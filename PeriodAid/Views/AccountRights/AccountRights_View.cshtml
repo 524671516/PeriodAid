@@ -5,7 +5,7 @@
 }
 <div class="col-md-12">
     <h3 class="page-title">
-        修改权限 <small id="employee_id" data-id="@ViewBag.Nickname.Id">管理员姓名：@ViewBag.Nickname.NickName</small>
+        修改权限 <small id="user_id" data-id="@ViewBag.Nickname.Id">管理员姓名：@ViewBag.Nickname.NickName</small>
     </h3>
 </div>
 <ol class="breadcrumb" style="background-color:white">
@@ -22,7 +22,7 @@
        $.ajax({
            url: "/AccountRights/AccountRights_PartialView",
            data:{
-               userId: $("#employee_id").attr("data-id")
+               userId: $("#user_id").attr("data-id")
            },
            success: function (data) {
                $("#roles_list").html(data)

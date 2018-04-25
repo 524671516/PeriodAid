@@ -244,7 +244,7 @@
     <Compile Include="Controllers\SellerTaskController.cs" />
     <Compile Include="Controllers\TaskManagementController.cs" />
     <Compile Include="Controllers\TestAdminController.cs" />
-    <Compile Include="Controllers\AccountRights.cs" />
+    <Compile Include="Controllers\AccountRightsController.cs" />
     <Compile Include="Controllers\WebContentController.cs" />
     <Compile Include="Controllers\WxAccountController.cs" />
     <Compile Include="DAL\AliOSSUtilities.cs" />
@@ -273,6 +273,7 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IKCRMDATAModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\AccountRightsModel.cs" />
     <Compile Include="Models\OfflineSales.cs" />
     <Compile Include="Models\OfflineSalesViewModels.cs" />
     <Compile Include="Models\PeriodAidDataContext.cs" />
@@ -1185,6 +1186,7 @@
     <Content Include="Views\AccountRights\RightsList.cshtml" />
     <Content Include="Views\AccountRights\RightsListPartial.cshtml" />
     <Content Include="Views\AccountRights\AccountRights_PartialView.cshtml" />
+    <Content Include="Views\AccountRights\Add_UserInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

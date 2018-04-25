@@ -1,4 +1,4 @@
-﻿@model PeriodAid.Models.Employee
+﻿@model PeriodAid.Models.ApplicationUser
 <div>
     <div class="col-md-3">
         <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:300px;font-size:14px">
@@ -70,7 +70,7 @@
                     url: "/AccountRights/Add_RoleAjax/",
                     type: "post",
                     data: {
-                        userId: $("#employee_id").attr("data-id"),
+                        userId: $("#user_id").attr("data-id"),
                         Role: $("#StoreList").children("option:selected").text()
                     },
                     success: function (data) {
@@ -83,7 +83,7 @@
                             $.ajax({
                                 url: "/AccountRights/AccountRights_PartialView",
                                 data: {
-                                    userId: $("#employee_id").attr("data-id")
+                                    userId: $("#user_id").attr("data-id")
                                 },
                                 success: function (data) {
                                     $("#roles_list").html(data)
@@ -98,18 +98,10 @@
                             })
                             that.removeClass("disabled")
                         }
-                        else if (data.result == "Permission_denied") {
-                            $.alert({
-                                title: '提示!',
-                                content: '权限不足!',
-                                type: 'red',
-                            })
-                            that.removeClass("disabled")
-                        }
                         else {
                             $.alert({
                                 title: '提示!',
-                                content: '添加失败!',
+                                content: '权限不足!',
                                 type: 'red',
                             })
                             that.removeClass("disabled")
@@ -125,7 +117,7 @@
                     url: "/AccountRights/Remove_RoleAjax/",
                     type: "post",
                     data: {
-                        userId: $("#employee_id").attr("data-id"),
+                        userId: $("#user_id").attr("data-id"),
                         Role: $("#selectList").children("option:selected").text()
                     },
                     success: function (data) {
@@ -138,7 +130,7 @@
                             $.ajax({
                                 url: "/AccountRights/AccountRights_PartialView",
                                 data: {
-                                    userId: $("#employee_id").attr("data-id")
+                                    userId: $("#user_id").attr("data-id")
                                 },
                                 success: function (data) {
                                     $("#roles_list").html(data)
@@ -153,18 +145,10 @@
                             })
                             that.removeClass("disabled")
                         }
-                        else if (data.result == "Permission_denied") {
-                            $.alert({
-                                title: '提示!',
-                                content: '权限不足!',
-                                type: 'red',
-                            })
-                            that.removeClass("disabled")
-                        }
                         else {
                             $.alert({
                                 title: '提示!',
-                                content: '删除失败!',
+                                content: '权限不足!',
                                 type: 'red',
                             })
                             that.removeClass("disabled")

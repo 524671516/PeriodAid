@@ -12,14 +12,26 @@
         </td>
     </tr>
 </table>
+<a class="btn btn-info btn-sm" id="add_user" style="margin-bottom:20px" data-toggle="modal" data-target="#myModal"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;新增人员信息</a>
 <div id="manager_list">
+</div>
+<div class="tm-veiw-loading text-center" id="tm-view-loading" style="height:100%">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请勿刷新界面！</h4>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
 </div>
 @section scripts{
 <script>
     $(function () {
+        $("#tm-view-loading").show()
         $.ajax({
             url: "/AccountRights/RightsListPartial",
             success: function (data) {
+                $("#tm-view-loading").hide()
                 $("#manager_list").html(data)
             }
         });
@@ -37,6 +49,18 @@
                 }
             })
         });
+        // 新增人员信息
+        $("#add_user").on("click", function () {
+            $.ajax({
+                url: '/AccountRights/Add_UserInfo',
+                data: {
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
     })
 </script>
     }

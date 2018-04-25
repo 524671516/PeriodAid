@@ -105,10 +105,4 @@ namespace PeriodAid.Models
 
         public int record_amount { get; set; }
     }
-
-    public static class OrderInfo
-    {
-    }
-
-
 }
