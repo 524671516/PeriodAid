@@ -3,6 +3,9 @@
         .form-horizontal .control-label{
             padding-top:9px
         }
+        .has-error{
+            color:#de3838
+        }
     </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -31,37 +34,70 @@
 </div>
 <script>
     $(function () {
-        $('#add_user_form').ajaxForm(function (data) {
-            $("#tm-view-loading").show()
-            $("#manager_list").html("")
-            $("#add-submit").attr("disabled", true);
-            if (data.result == "SUCCESS") {
-                $.alert({
-                    title: '提示!',
-                    content: '添加成功!',
-                    type: 'green',
-                })
-                $('.modal-box').modal('hide');
-                $("#myModal").modal('hide')
-                $('.modal-backdrop.in').remove()
-                $('body').removeClass('modal-open')
-                $.ajax({
-                    url: "/AccountRights/RightsListPartial",
-                    success: function (data) {
-                        $("#manager_list").html(data)
-                        $("#tm-view-loading").hide()
+        $("#add_user_form").validate({
+            debug: true,
+            rules: {
+                UserName: {
+                    required: true
+                }
+            },
+            messages: {
+                UserName: {
+                    required: "用户名不能为空"
+                }
+            },
+            //验证通过的正式提交函数
+            submitHandler: function (form) {
+                $(form).ajaxSubmit(function (data) {
+                    $("#add-submit").attr("disabled", true);
+                    if (data.result == "SUCCESS") {
+                        $("#manager_list").html("")
+                        $("#tm-view-loading").show()
+                        $.alert({
+                            title: '提示!',
+                            content: '添加成功!',
+                            type: 'green',
+                        })
+                        $('.modal-box').modal('hide');
+                        $("#myModal").modal('hide')
+                        $('.modal-backdrop.in').remove()
+                        $('body').removeClass('modal-open')
+                        $.ajax({
+                            url: "/AccountRights/RightsListPartial",
+                            success: function (data) {
+                                $("#manager_list").html(data)
+                                $("#tm-view-loading").hide()
+                            }
+                        });
                     }
-                });
-                
-            }
-            else {
-                $.alert({
-                    title: '提示!',
-                    content: '权限不足!',
-                    type: 'red',
+                    else if(data.result == "FAIL"){
+                        $.alert({
+                            title: '提示!',
+                            content: '用户不存在!',
+                            type: 'green',
+                        })
+                        $('.modal-box').modal('hide');
+                        $("#myModal").modal('hide')
+                        $('.modal-backdrop.in').remove()
+                    }
+                    else {
+                        $.alert({
+                            title: '提示!',
+                            content: '权限不足!',
+                            type: 'red',
+                        })
+                        $('.modal-box').modal('hide');
+                        $("#myModal").modal('hide')
+                        $('.modal-backdrop.in').remove()
+                    }
                 })
+            },
+            errorClass: "has-error",
+            //验证失败
+            errorPlacement: function (error, element) {
+                error.appendTo(element.parent())
             }
-        });
+        })
     });
 </script>
 

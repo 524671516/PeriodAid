@@ -57,8 +57,6 @@
     })
     // 删除
     $(".remove_btn").on("click", function () {
-        $("#tm-view-loading").show()
-        $("#manager_list").html("")
         var that = $(this)
         if (!that.hasClass("disabled")) {
             that.addClass("disabled")
@@ -70,6 +68,8 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
+                        $("#tm-view-loading").show()
+                        $("#manager_list").html("")
                         $.alert({
                             title: '提示!',
                             content: '操作成功!',

@@ -37,6 +37,8 @@
         });
         //搜索
         $("#employee_search").click(function () {
+            $("#tm-view-loading").show()
+            $("#manager_list").html("")
             var query = $("#employee_name").val();
             var url = "/AccountRights/RightsListPartial"
             $.ajax({
@@ -46,6 +48,7 @@
                 },
                 success: function (data) {
                     $("#manager_list").html(data)
+                    $("#tm-view-loading").hide()
                 }
             })
         });

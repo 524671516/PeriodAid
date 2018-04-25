@@ -77,10 +77,9 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        
         public async Task<ActionResult> RightsListPartial(int? page, string query)
         {
-            int _page = page ?? 1;
             var ApplicationUsers = new List<ApplicationUser>();
             var UserList = await UserManager.Users.ToListAsync();
             foreach (var user in UserList)
@@ -93,6 +92,7 @@ namespace PeriodAid.Controllers
                     }
                 }
             }
+            int _page = page ?? 1;
             if (query == null || query.Trim() == "")
             {
                 var list = (from m in ApplicationUsers
@@ -121,17 +121,13 @@ namespace PeriodAid.Controllers
             var UserInfo = UserManager.Users.SingleOrDefault(m => m.UserName == model.UserName);
             if (UserInfo != null)
             {
-                if (ModelState.IsValid)
-                {
-                    var add_role = UserManager.AddToRole(UserInfo.Id, "Staff");
-                    return Json(new { result = "SUCCESS" });
-                }
-                else
-                {
-                    return Json(new { result = "FAIL" });
-                }
+                var add_role = UserManager.AddToRole(UserInfo.Id, "Staff");
+                return Json(new { result = "SUCCESS" });
             }
-            return Json(new { result = "ERROR" });
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
         [HttpPost]
         //[Authorize(Roles = "Admin")]
@@ -197,5 +193,19 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+
+        public class UserInfoList
+        {
+            public string Id { get; set; }
+
+            public string Email { get; set; }
+
+            public string UserName { get; set; }
+
+            public string PhoneNumber { get; set; }
+
+            public string NickName { get; set; }
+        }
+
     }
 }
