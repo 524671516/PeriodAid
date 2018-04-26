@@ -27,6 +27,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -59,6 +61,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -94,6 +98,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -125,6 +131,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -166,6 +174,26 @@
 </div>
 <script>
     $(function () {
+        //加载转化率图标
+        var productId_list = $(".select-a")
+        var i = 0;
+        for (i; i < productId_list.length; i++) {
+            var that = $(productId_list[i])
+            $.ajax({
+                url: "/PlattformInventory/ProductGrowthRate",
+                type:"post",
+                data: {
+                    productId: that.attr("data-val")
+                },
+                success: function (data) {
+                    if (data["rate"] == 0) {
+                        $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-blue").show()
+                    } else {
+                        $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-red").show()
+                    }
+                }
+            })
+        }
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");

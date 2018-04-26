@@ -36,6 +36,13 @@ namespace PeriodAid.Models
         public int salescount { get; set; }
     }
 
+    public class ProductStatisticViewModelAverage
+    {
+        public string salesdate { get; set; }
+
+        public int salescount { get; set; }
+    }
+
     public class EventStatisticViewModel
     {
         public int productId { get; set; }
