@@ -41,7 +41,7 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
                             <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
                             <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
                         </ul>
@@ -69,42 +69,27 @@
     <div class="container">
         <div class="row">
             <div class="col-md-2">
-                @*<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
                             <h4 class="panel-title">
                                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    官网内容 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
+                                    系统信息 <i class="fa fa-chevron-right pull-right text-muted panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
                                 </a>
                             </h4>
                         </div>
-                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/WebContent/WebContentIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
+                                    <li class="left-navbar"><a href="/TaskManagement/Index"><i class="fa fa-bars"></i>&nbsp;&nbsp;任务管理系统</a></li>
+                                    <li class="left-navbar"><a href="/PlattformInventory/PlattformInventory_form?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;线上库存管理系统</a></li>
+                                    <li class="left-navbar"><a href="/SalesProcess/CRM_show"><i class="fa fa-bars"></i>&nbsp;&nbsp;CRM销售管理系统</a></li>
+                                    <li class="left-navbar"><a href="/MonthlyDelivery/MD_OrderView"><i class="fa fa-bars"></i>&nbsp;&nbsp;月月送管理系统</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingEight">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                                    券码 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingEight"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupList"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
-                                    <li class="left-navbar"><a href="/WebContent/CheckCodeList"><i class="fa fa-search"></i>&nbsp;&nbsp;查看优惠券</a></li>
-                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;数据统计</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>*@
+                </div>
             </div>
             <div class="col-md-10">
                 <div class="row">
@@ -134,4 +119,3 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
-

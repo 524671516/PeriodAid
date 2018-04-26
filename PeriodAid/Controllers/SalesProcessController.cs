@@ -27,7 +27,7 @@ using System.Xml;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class SalesProcessController : Controller
     {
         // GET: SalesProcess
@@ -999,6 +999,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
+        [Authorize(Roles = "CRM")]
         public JsonResult getERPORDERS(int[] c_id)
         {
             //var platform_code = "IK20180316144326431356";
@@ -1173,6 +1174,7 @@ namespace PeriodAid.Controllers
             return success;
         }
         [HttpPost]
+        [Authorize(Roles = "CRM")]
         public JsonResult createOrder(int[] c_id, string province, string city, string district)
         {
             List<string> failList = new List<string>();

@@ -31,15 +31,16 @@ using System.Xml;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class AccountRightsController : Controller
     {
         // 权限管理
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private AccountRightsModel ar_db;
         public AccountRightsController()
         {
-            //ar_db = new AccountRightsModel();
+            ar_db = new AccountRightsModel();
         }
 
         public AccountRightsController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -72,27 +73,31 @@ namespace PeriodAid.Controllers
             }
         }
         
-
         public ActionResult RightsList()
         {
             return View();
         }
         
-        public async Task<ActionResult> RightsListPartial(int? page, string query)
+        public async Task<List<ApplicationUser>> Users()
         {
             var ApplicationUsers = new List<ApplicationUser>();
-            var UserList = await UserManager.Users.ToListAsync();
-            foreach (var user in UserList)
+            var userInfo = (from m in UserManager.Users
+                            where m.Email.Contains("@shouquanzhai.cn")
+                            select m).ToList();
+            foreach (var user in userInfo)
             {
-                if (user.UserName.Contains("@"))
+                if (await UserManager.IsInRoleAsync(user.Id, "Staff"))
                 {
-                    if (UserManager.IsInRole(user.Id, "Staff"))
-                    {
-                        ApplicationUsers.Add(user);
-                    }
+                    ApplicationUsers.Add(user);
                 }
             }
+            return ApplicationUsers;
+        }
+
+        public async Task<ActionResult> RightsListPartial(int? page, string query)
+        {
             int _page = page ?? 1;
+            var ApplicationUsers = await Users();
             if (query == null || query.Trim() == "")
             {
                 var list = (from m in ApplicationUsers
@@ -109,20 +114,27 @@ namespace PeriodAid.Controllers
                 return PartialView(list);
             }
         }
-
+        
         public ActionResult Add_UserInfo()
         {
             return PartialView();
         }
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public JsonResult Add_UserInfo(ApplicationUser model, FormCollection form)
         {
             var UserInfo = UserManager.Users.SingleOrDefault(m => m.UserName == model.UserName);
             if (UserInfo != null)
             {
-                var add_role = UserManager.AddToRole(UserInfo.Id, "Staff");
-                return Json(new { result = "SUCCESS" });
+                if (UserManager.IsInRole(UserInfo.Id, "Staff"))
+                {
+                    return Json(new { result = "ERROR" });
+                }
+                else
+                {
+                    var add_role = UserManager.AddToRole(UserInfo.Id, "Staff");
+                    return Json(new { result = "SUCCESS" });
+                }
             }
             else
             {
@@ -130,7 +142,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public JsonResult Remove_UserInfo(string userId)
         {
             var remove_roles = UserManager.RemoveFromRole(userId, "Staff");
@@ -146,13 +158,17 @@ namespace PeriodAid.Controllers
 
         public PartialViewResult AccountRights_PartialView(string userId)
         {
+            var rolelist = from m in ar_db.AR_Roles
+                           select m;
             var AcUser = UserManager.Users.SingleOrDefault(m => m.Id == userId);
             var Roles = UserManager.GetRoles(userId);
-            ViewBag.Roles = Roles;
+            var sameList = rolelist.Where(m => Roles.Contains(m.Key)).ToArray();
+            ViewBag.Roles = sameList;
+            ViewBag.UserRoles = rolelist;
             return PartialView(AcUser);
         }
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public JsonResult Add_RoleAjax(string userId, string Role)
         {
             if (Role != "")
@@ -173,7 +189,7 @@ namespace PeriodAid.Controllers
             }
         }
         [HttpPost]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "SuperAdmin")]
         public JsonResult Remove_RoleAjax(string userId, string Role)
         {
             if (Role != "")
@@ -193,19 +209,6 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
-
-        public class UserInfoList
-        {
-            public string Id { get; set; }
-
-            public string Email { get; set; }
-
-            public string UserName { get; set; }
-
-            public string PhoneNumber { get; set; }
-
-            public string NickName { get; set; }
-        }
-
+        
     }
 }

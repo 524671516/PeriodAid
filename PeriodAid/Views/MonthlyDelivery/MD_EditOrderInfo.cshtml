@@ -41,12 +41,6 @@
                 <input id="product_id" type="text" value="@Model.product_id" class="form-control" name="product_id" />
                 @Html.ValidationMessageFor(model => model.product_id, "", new { @class = "text-danger" })
 
-                <input id="receiver_tel" type="text" value="@Model.receiver_tel" class="form-control" name="receiver_tel" />
-                @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
-
-                <input id="receiver_name" type="text" value="@Model.receiver_name" class="form-control" name="receiver_name" />
-                @Html.ValidationMessageFor(model => model.receiver_name, "", new { @class = "text-danger" })
-
                 <input id="express_information" type="text" value=" " class="form-control" name="express_information" />
                 @Html.ValidationMessageFor(model => model.express_information, "", new { @class = "text-danger" })
             </div>
@@ -67,6 +61,20 @@
                 <div class="col-md-10">
                     <input id="receiver_address" type="text" value="@Model.receiver_address" class="form-control order_control" autocomplete="off" name="receiver_address" />
                     @Html.ValidationMessageFor(model => model.receiver_address, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">收件人</label>
+                <div class="col-md-10">
+                    <input id="receiver_name" type="text" value="@Model.receiver_name" class="form-control order_control" autocomplete="off" name="receiver_name" />
+                    @Html.ValidationMessageFor(model => model.receiver_name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">联系电话</label>
+                <div class="col-md-10">
+                    <input id="receiver_tel" type="text" value="@Model.receiver_tel" class="form-control order_control" autocomplete="off" name="receiver_tel" />
+                    @Html.ValidationMessageFor(model => model.receiver_tel, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">

@@ -21,7 +21,7 @@ using NPOI.SS.UserModel;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class TaskManagementController : Controller
     {
         private ApplicationSignInManager _signInManager;

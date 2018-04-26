@@ -17,7 +17,7 @@ using CsvHelper;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class OffSellerController : Controller
     {
         OfflineSales _offlineDB = new OfflineSales();

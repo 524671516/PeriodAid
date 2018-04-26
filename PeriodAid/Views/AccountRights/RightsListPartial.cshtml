@@ -38,6 +38,8 @@
 <script>
     //页码切换
     $(".pagination > li > a").click(function () {
+        $("#tm-view-loading").show()
+        $("#manager_list").html("")
         var l = $(this).attr("href");
         var query = $("#employee_name").val();
         $.ajax({
@@ -47,6 +49,7 @@
             },
             success: function (data) {
                 $("#manager_list").html(data)
+                $("#tm-view-loading").hide()
             }
         });
         return false;

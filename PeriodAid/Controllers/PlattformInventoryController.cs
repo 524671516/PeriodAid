@@ -22,7 +22,7 @@ using System.Data.SqlClient;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class PlattformInventoryController : Controller
     {
         // GET: PlattformInventory

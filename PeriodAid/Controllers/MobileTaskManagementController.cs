@@ -12,7 +12,7 @@ using System.Web.Mvc;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class MobileTaskManagementController : Controller
     {
         private ApplicationSignInManager _signInManager;

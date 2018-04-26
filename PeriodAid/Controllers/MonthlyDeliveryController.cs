@@ -29,7 +29,7 @@ using System.Xml;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class MonthlyDeliveryController : Controller
     {
         // GET: MonthlyDelivery
@@ -285,13 +285,17 @@ namespace PeriodAid.Controllers
                     MD_Record logs = new MD_Record();
                     logs.record_date = DateTime.Now;
                     logs.record_type = "Edit";
-                    if(order.receiver_date != model.receiver_date)
+                    if (order.receiver_name != model.receiver_name)
+                        logs.record_detail = order.order_code + " 收件人由: " + " " + order.receiver_name + " 修改为 :" + " " + model.receiver_name;
+                    if (order.receiver_tel != model.receiver_tel)
+                        logs.record_detail = order.order_code + " 联系电话由: " + " " + order.receiver_tel + " 修改为 :" + " " + model.receiver_tel;
+                    if (order.receiver_date != model.receiver_date)
                         logs.record_detail = order.order_code + " 发货日期由: " +" "+ order .receiver_date+ " 修改至 :" +" " + model.receiver_date;
                     if(order.receiver_address != model.receiver_address)
                         logs.record_detail = order.order_code + " 发货地址由: " + " " + order.receiver_area + " " + order.receiver_address + " 修改至 :" + " " + model.receiver_area + " " + model.receiver_address;
                     if (order.receiver_date != model.receiver_date && order.receiver_address != model.receiver_address)
                         logs.record_detail = order.order_code + " 新增修改 :"+" " + model.receiver_date + " " + model.receiver_area + " " + model.receiver_address;
-                    if(order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address)
+                    if(order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address && order.receiver_name == model.receiver_name && order.receiver_tel == model.receiver_tel)
                         return Json(new { result = "ERROR" });
                     logs.record_amount = 1;
                     md_db.MD_Record.Add(logs);
