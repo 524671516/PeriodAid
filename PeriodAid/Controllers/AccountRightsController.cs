@@ -78,36 +78,26 @@ namespace PeriodAid.Controllers
             return View();
         }
         
-        public async Task<List<ApplicationUser>> Users()
-        {
-            var ApplicationUsers = new List<ApplicationUser>();
-            var userInfo = (from m in UserManager.Users
-                            where m.Email.Contains("@shouquanzhai.cn")
-                            select m).ToList();
-            foreach (var user in userInfo)
-            {
-                if (await UserManager.IsInRoleAsync(user.Id, "Staff"))
-                {
-                    ApplicationUsers.Add(user);
-                }
-            }
-            return ApplicationUsers;
-        }
-
-        public async Task<ActionResult> RightsListPartial(int? page, string query)
+        public ActionResult RightsListPartial(int? page, string query)
         {
             int _page = page ?? 1;
-            var ApplicationUsers = await Users();
+            var memdb = new ApplicationDbContext();
+            var roles = memdb.Roles.SingleOrDefault(m => m.Name == "Staff");
+            var usersInfo = from m in roles.Users
+                            select m.UserId;
+            var users = from m in memdb.Users
+                        where usersInfo.Contains(m.Id)
+                        select m;
             if (query == null || query.Trim() == "")
             {
-                var list = (from m in ApplicationUsers
+                var list = (from m in users
                             orderby m.Id ascending
                             select m).ToPagedList(_page, 20);
                 return PartialView(list);
             }
             else
             {
-                var list = (from m in ApplicationUsers
+                var list = (from m in users
                             where m.UserName.Contains(query) || m.NickName.Contains(query)
                             orderby m.Id ascending
                             select m).ToPagedList(_page, 20);
