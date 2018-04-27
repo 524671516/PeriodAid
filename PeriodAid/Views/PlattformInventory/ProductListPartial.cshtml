@@ -186,6 +186,7 @@
                     productId: that.attr("data-val")
                 },
                 success: function (data) {
+                    console.log(data)
                     if (data["rate"] == 0) {
                         $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-blue").show()
                     } else {

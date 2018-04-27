@@ -8,8 +8,8 @@
 <input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
 <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px"/><br />
 <div class="text-center">
-    <input type="button" id="average_start" data-val="1" class="btn btn-primary" name="statistic_btn" value="开始时间" style="padding:1px 12px;margin-left:8px" />
-    <input type="button" id="average_end" data-val="0" class="btn btn-primary active" name="statistic_btn" value="结束时间" style="padding:1px 12px;margin-left:8px"/><br />
+    <input type="button" id="average_start" data-val="1" class="btn btn-primary average_type" name="statistic_btn" value="开始时间" style="padding:1px 12px;margin-left:8px" />
+    <input type="button" id="average_end" data-val="0" class="btn btn-primary average_type active" name="statistic_btn" value="结束时间" style="padding:1px 12px;margin-left:8px"/><br />
     <input type="button" id="statistic_btn_average7" class="btn btn-primary" name="statistic_btn" value="7天均值" style="padding:1px 12px;margin-left:8px" />
     <input type="button" id="statistic_btn_average15" class="btn btn-primary" name="statistic_btn" value="15天均值" style="padding:1px 12px;margin-left:8px"/>
 </div>
@@ -49,13 +49,17 @@
                     showstatistic(data);
                 }
             });
+            $(".average_type").click(function () {
+                $(".average_type.active").removeClass("active")
+                $(this).addClass("active")
+            })
             $("#statistic_btn_average7").click(function () {
                 ave_start = $("#start_time").val()
                 ave_end = $("#end_time").val()
                 var ave_start_day = new Date(ave_start);
                 var ave_end_day = new Date(ave_end);
                 var between_day = (ave_end_day.setDate(ave_end_day.getDate()) - ave_start_day.setDate(ave_start_day.getDate())) / 1000 / 60 / 60 / 24
-                console.log(between_day)
+                var a_type = $(".average_type.active").attr("data-val")
                 if (between_day < 6)//7天差值为6
                 {
                     ave_start_day.setDate(ave_start_day.getDate() + 6);
@@ -68,13 +72,14 @@
                             productId: getUrlParam('productId'),
                             start: ave_start,
                             end: set_end_day,
-                            type:1
+                            type: 1,
+                            a_type: a_type
                         }, success: function (data) {
                             showstatistic(data);
-                            console.log(data)
                         }
                     });
-                } else {
+                }
+                else {
                     $.ajax({
                         url: "/PlattformInventory/ViewProductStatisticPartial",
                         type: "post",
@@ -82,20 +87,21 @@
                             productId: getUrlParam('productId'),
                             start: ave_start,
                             end: ave_end,
-                            type: 1
+                            type: 1,
+                            a_type: a_type
                         }, success: function (data) {
                             showstatistic(data);
-                            console.log(data)
                         }
                     });
                 }
             })
             $("#statistic_btn_average15").click(function () {
-                ave_start = $("#start_time").val()
-                ave_end = $("#end_time").val()
+                var ave_start = $("#start_time").val()
+                var ave_end = $("#end_time").val()
                 var ave_start_day = new Date(ave_start);
                 var ave_end_day = new Date(ave_end);
                 var between_day = (ave_end_day.setDate(ave_end_day.getDate()) - ave_start_day.setDate(ave_start_day.getDate())) / 1000 / 60 / 60 / 24
+                var a_type = $(".average_type.active").attr("data-val")
                 if (between_day < 15) {
                     ave_start_day.setDate(ave_start_day.getDate() + 15);
                     var m = ave_start_day.getMonth() + 1;
@@ -107,12 +113,15 @@
                             productId: getUrlParam('productId'),
                             start: ave_start,
                             end: set_end_day,
-                            type: 2
+                            type: 2,
+                            a_type: a_type
                         }, success: function (data) {
                             showstatistic(data);
+                            console.log(data)
                         }
                     });
                 } else {
+                    console.log(ave_end)
                     $.ajax({
                         url: "/PlattformInventory/ViewProductStatisticPartial",
                         type: "post",
@@ -120,9 +129,11 @@
                             productId: getUrlParam('productId'),
                             start: ave_start,
                             end: ave_end,
-                            type: 2
+                            type: 2,
+                            a_type: a_type
                         }, success: function (data) {
                             showstatistic(data);
+                            console.log(data)
                         }
                     });
                 }
