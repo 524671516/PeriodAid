@@ -488,7 +488,7 @@ namespace PeriodAid.Controllers
                 DateTime start = end.AddDays(0 - _days);
                 var content = from m in _db.SS_SalesRecord
                               where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
-                              && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
+                              && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
                               group m by m.SS_Product into g
                               select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m=>m.Sales_Count), Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count)/ _days };
                 return PartialView(content);
