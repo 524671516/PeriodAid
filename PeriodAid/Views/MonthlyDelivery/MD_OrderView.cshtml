@@ -1,6 +1,6 @@
 ﻿@{
     ViewBag.Title = "MD_OrderView";
-    Layout = "~/Views/Shared/_MonthlyDeliveryLayout.cshtml";
+    Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
 <table class="offline-search-box" style="margin-bottom:10px">
     <tr>
@@ -30,9 +30,9 @@
     </tr>
 </table>
 @*<div class="select-btn">
-    <a class="btn btn-info btn-sm status-btn btn-danger" id="first_btn" data-val="0"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;未完结的订单</a>
-    <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="1"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已完结的订单</a>
-</div>*@
+        <a class="btn btn-info btn-sm status-btn btn-danger" id="first_btn" data-val="0"><i class="fa fa-times-circle"></i>&nbsp;&nbsp;未完结的订单</a>
+        <a class="btn btn-info btn-sm status-btn" id="second_btn" data-val="1"><i class="fa fa-check-circle"></i>&nbsp;&nbsp;已完结的订单</a>
+    </div>*@
 <ul class="nav nav-tabs" style="margin-top:20px" role="tablist">
     <li role="presentation" class="order-list-li active"><a class="order_btn" aria-controls="home" role="tab" data-toggle="tab" data-cstatus="-1" style="cursor:pointer">全部订单</a></li>
     <li role="presentation" class="order-list-li"><a class="order_btn" aria-controls="profile" role="tab" data-toggle="tab" data-cstatus="1" style="cursor:pointer">已生成复购的订单</a></li>
@@ -46,10 +46,10 @@
 @section scripts{
     <script>
         $(function () {
-            $("#ul-hover").children("li").eq(0).addClass("current")
+            $("#ul-hover").children("li").eq(1).addClass("current")
             $('[data-toggle="tooltip"]').tooltip();
             $.ajax({
-                url: "/MonthlyDelivery/MD_OrderPartialView/",
+                url: "/SalesProcess/MD_OrderPartialView/",
                 data: {
                     page:1,
                     query: $("#order_query").val(),
@@ -69,7 +69,7 @@
             // 查询
             $("#order_search").click(function () {
                 $.ajax({
-                    url: "/MonthlyDelivery/MD_OrderPartialView/",
+                    url: "/SalesProcess/MD_OrderPartialView/",
                     type:"post",
                     data: {
                         page: 1,
@@ -86,7 +86,7 @@
                 var that = $(this)
                 that.addClass("disabled")
                 $.ajax({
-                    url: "/MonthlyDelivery/getSingleErpOrder/",
+                    url: "/SalesProcess/getSingleErpOrder/",
                     type: "post",
                     data: {
                         platform_code: $("#select_erporder").val()
@@ -94,7 +94,7 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $.ajax({
-                                url: "/MonthlyDelivery/MD_OrderPartialView/",
+                                url: "/SalesProcess/MD_OrderPartialView/",
                                 type: "post",
                                 data: {
                                     page: 1,
@@ -152,7 +152,7 @@
                 var that = $(this)
                 that.addClass("disabled")
                 $.ajax({
-                    url: "/MonthlyDelivery/getSingleHistoryErpOrder/",
+                    url: "/SalesProcess/getSingleHistoryErpOrder/",
                     type: "post",
                     data: {
                         platform_code: $("#select_history_erporder").val()
@@ -160,7 +160,7 @@
                     success: function (data) {
                         if (data.result == "SUCCESS") {
                             $.ajax({
-                                url: "/MonthlyDelivery/MD_OrderPartialView/",
+                                url: "/SalesProcess/MD_OrderPartialView/",
                                 type: "post",
                                 data: {
                                     page: 1,
@@ -218,7 +218,7 @@
             $(".order_btn").on("click", function () {
                 var that = $(this)
                 $.ajax({
-                    url: "/MonthlyDelivery/MD_OrderPartialView/",
+                    url: "/SalesProcess/MD_OrderPartialView/",
                     data: {
                         page: 1,
                         query: $("#order_query").val(),
