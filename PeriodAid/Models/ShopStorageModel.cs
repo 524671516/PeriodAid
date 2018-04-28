@@ -294,7 +294,7 @@
     {
         public int Id { get; set; }
 
-        public DateTime StatisticTime { get; set; }
+        public DateTime? StatisticTime { get; set; }
 
         public int Product_Id { get; set; }
 

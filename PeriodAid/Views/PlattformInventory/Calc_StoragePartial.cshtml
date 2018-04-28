@@ -5,7 +5,7 @@
         <a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载完整预估表</a>
 
         <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
-            @Html.Hidden("calc_days", (int)ViewBag.Calc_Days)
+            @*@Html.Hidden("calc_days", (int)ViewBag.Calc_Days)*@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
@@ -24,54 +24,75 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.OrderByDescending(m=>m.Sales_Count))
-                    {
-                        if (item.Product.Product_Type == 1)
-                        {
-                            <tr>
-                                <th scope="row" style="position:relative" class="hot-product">@item.Product.System_Code<a class="fire-box"></a></th>
-                                <td>@Html.Encode(item.Product.Item_Code)</td>
-                                <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
-                                <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
-                                <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
-                                <td>
-                                    <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center"/>
-                                </td>
-                                <td>
-                                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
-                                </td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr>
-                                <th scope="row" style="position:relative" class="hot-product">@item.Product.System_Code<a></a></th>
-                                <td>@Html.Encode(item.Product.Item_Code)</td>
-                                <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
-                                <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
-                                <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
-                                <td>
-                                    <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
+                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
+            {
+                if (item.Product.Product_Type == 1)
+                {
+                    <tr>
+                        <th scope="row" style="position:relative" class="hot-product">@item.Product.System_Code<a class="fire-box"></a></th>
+                        <td>@Html.Encode(item.Product.Item_Code)</td>
+                        <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                        <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
+                        <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                        <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
+                        <td>
+                            <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
+                        </td>
+                        <td>
+                            <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
+                        </td>
+                    </tr>
+        }
+        else
+        {
+            <tr>
+                <th scope="row" style="position:relative" class="hot-product">@item.Product.System_Code<a></a></th>
+                <td>@Html.Encode(item.Product.Item_Code)</td>
+                <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
+                <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
+                <td>
+                    <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
 
-                                </td>
-                                <td>
-                                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center"/>
-                                </td>
-                                @*<td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>*@
-                            </tr>
-                        }
-                    }
+                </td>
+                <td>
+                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
+                </td>
+                @*<td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>*@
+            </tr>
+}
+}
                 </tbody>
             </table>
         </form>
     </div>
 </div>
 <script>
+    /*
     $('.calc_number').val($('#number-control').val())
     $('#number-control').change(function () {
         $('.calc_number').val($(this).val())
-    })
+    })*/
+    //系数改变
+    var productId_list = $(".product_id")
+    var i = 0;
+    for (i; i < productId_list.length; i++) {
+        var that = $(productId_list[i])
+        $.ajax({
+            url: "/PlattformInventory/ProductGrowthRate",
+            type: "post",
+            data: {
+                productId: that.attr("data-pid")
+            },
+            success: function (data) {
+                if (data["rate"] == 0) {
+                    $(".product_id[data-pid=" + data["p_id"] + "]").parent().parent().find(".calc_number").attr("value", "1.5")
+                } else {
+                    $(".product_id[data-pid=" + data["p_id"] + "]").parent().parent().find(".calc_number").attr("value", "1.5")
+                }
+            }
+        })
+    }
 </script>
 

@@ -19,6 +19,7 @@ using iTextSharp.text.pdf;
 using System.Configuration;
 using System.Diagnostics;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace PeriodAid.Controllers
 {
@@ -478,21 +479,37 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult Calc_StoragePartial(int plattformId, int? days)
+        public ActionResult Calc_StoragePartial(int plattformId)
         {
-            int _days = days ?? 15;//默认30天
             var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == plattformId).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
             if (upload_record != null)
             {
-                ViewBag.Calc_Days = _days;
                 DateTime end = upload_record.SalesRecord_Date;
-                DateTime start = end.AddDays(0 - _days);
-                var content = from m in _db.SS_SalesRecord
-                              where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
-                              && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
-                              group m by m.SS_Product into g
-                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m=>m.Sales_Count), Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count)/ _days };
-                return PartialView(content);
+                DateTime start_7 = end.AddDays(0 - 7);
+                DateTime start_15 = end.AddDays(0 - 15);
+                var content_7 = from m in _db.SS_SalesRecord
+                                where m.SalesRecord_Date > start_7 && m.SalesRecord_Date <= end
+                                && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
+                                group m by m.SS_Product into g
+                                select new CalcStorageViewModel { Product = g.Key, Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count) / 7 };
+                var content_15 = from m in _db.SS_SalesRecord
+                                 where m.SalesRecord_Date > start_15 && m.SalesRecord_Date <= end
+                                 && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
+                                 group m by m.SS_Product into g
+                                 select new CalcStorageViewModel { Product = g.Key, Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count)/15 };
+                List<CalcStorageViewModel> content_list = new List<CalcStorageViewModel>();
+                foreach (var data in content_15) {
+                    CalcStorageViewModel content = new CalcStorageViewModel();
+                    foreach (var avg in content_7) {
+                        if (data.Product.Id == avg.Product.Id) {
+                            content.Product = data.Product;
+                            content.Storage_Count = data.Storage_Count;
+                            content.Sales_Avg = (data.Sales_Avg + avg.Sales_Count) / 2;
+                            content_list.Add(content);
+                        }
+                    }
+                }
+                return PartialView(content_list.AsEnumerable());
             }
             return PartialView();
         }
@@ -588,9 +605,38 @@ namespace PeriodAid.Controllers
                 };
                 _db.SS_UploadRecord.Add(upload_record);
             }
+            GetSalesStatistic(date);
             _db.SaveChanges();
             return true;
         }
+
+        private bool GetSalesStatistic(DateTime date) {
+            var dateStatistic = from m in _db.SS_SalesRecord
+                                where m.SalesRecord_Date == date
+                                group m by m.Product_Id into g
+                                select g;
+            foreach (var data in dateStatistic) {
+                var recentDay = date.AddDays(-7);
+                var lastDay = date.AddDays(-14);
+                var recentData = (from m in _db.SS_SalesRecord
+                                  where m.Product_Id == data.Key && m.SalesRecord_Date <= date && m.SalesRecord_Date >= recentDay
+                                  group m by m.Product_Id into g
+                                  select g).SingleOrDefault();
+                var lastData = (from m in _db.SS_SalesRecord
+                                where m.Product_Id == data.Key && m.SalesRecord_Date <= recentDay && m.SalesRecord_Date >= lastDay
+                                group m by m.Product_Id into g
+                                select g).SingleOrDefault();
+                SS_SalesStatistic statistic = new SS_SalesStatistic();
+                statistic.Product_Id = data.Key;
+                statistic.StatisticTime = date;
+                statistic.SingeleDay_Count = data.Sum(m => m.Sales_Count);
+                statistic.Recent_Count = recentData.Sum(m => m.Sales_Count);
+                statistic.Last_Count = lastData == null ? 0 : lastData.Sum(m => m.Sales_Count);
+                _db.SS_SalesStatistic.Add(statistic);
+            }
+            return true;
+        }
+
         // 天猫
         private bool Read_TmFile(int plattformId, string filename, DateTime date)
         {
@@ -959,25 +1005,16 @@ namespace PeriodAid.Controllers
         {
             //增长率
             var growthRate = 0;
-            var recentDay = DateTime.Now.AddDays(-7);
-            var lastDay = DateTime.Now.AddDays(-14);
-            var findSql = "select (case when b.b=0 then 1 else a.a/b.b end) from " +
-                "(SELECT sum(Sales_Count) as a FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '"+productId+"'and SalesRecord_Date <= '"+DateTime.Now+"' and SalesRecord_Date > '"+recentDay+"' group by Product_Id) as a," +
-                "(SELECT sum(Sales_Count) as b FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '"+productId+"'and SalesRecord_Date <= '"+recentDay+"' and SalesRecord_Date > '"+lastDay+"' group by Product_Id) as b";
-            string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
-            SqlConnection mycon = new SqlConnection(constr);
-            mycon.Open();
-            SqlCommand mycom = new SqlCommand(findSql, mycon);
-            SqlDataReader mydr = mycom.ExecuteReader();
-            while (mydr.Read())
+            var date = DateTime.Now.Date;
+            var data = _db.SS_SalesStatistic.SingleOrDefault(m => m.StatisticTime == date && m.Product_Id == productId);
+            if (data != null && data.Last_Count != 0)
             {
-                if (int.Parse(mydr[0].ToString()) >= 2)
+                if (data.Recent_Count / data.Last_Count >= 2)
                 {
                     growthRate = 1;
                 }
-            };
-            mydr.Close();
-            mycon.Close();
+
+            }
             return Json(new { resule = "success", p_id = productId, rate = growthRate });
         }
 
