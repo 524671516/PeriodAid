@@ -489,9 +489,9 @@ namespace PeriodAid.Controllers
                 DateTime start = end.AddDays(0 - _days);
                 var content = from m in _db.SS_SalesRecord
                               where m.SalesRecord_Date > start && m.SalesRecord_Date <= end
-                              && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0
+                              && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
                               group m by m.SS_Product into g
-                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m=>m.Sales_Count), Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Average(m => m.Sales_Count) };
+                              select new CalcStorageViewModel { Product = g.Key, Sales_Count = g.Sum(m=>m.Sales_Count), Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count)/ _days };
                 return PartialView(content);
             }
             return PartialView();
@@ -954,6 +954,33 @@ namespace PeriodAid.Controllers
             }
         }
 
+        [HttpPost]
+        public JsonResult ProductGrowthRate(int productId)
+        {
+            //增长率
+            var growthRate = 0;
+            var recentDay = DateTime.Now.AddDays(-7);
+            var lastDay = DateTime.Now.AddDays(-14);
+            var findSql = "select (case when b.b=0 then 1 else a.a/b.b end) from " +
+                "(SELECT sum(Sales_Count) as a FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '"+productId+"'and SalesRecord_Date <= '"+DateTime.Now+"' and SalesRecord_Date > '"+recentDay+"' group by Product_Id) as a," +
+                "(SELECT sum(Sales_Count) as b FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '"+productId+"'and SalesRecord_Date <= '"+recentDay+"' and SalesRecord_Date > '"+lastDay+"' group by Product_Id) as b";
+            string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+            SqlConnection mycon = new SqlConnection(constr);
+            mycon.Open();
+            SqlCommand mycom = new SqlCommand(findSql, mycon);
+            SqlDataReader mydr = mycom.ExecuteReader();
+            while (mydr.Read())
+            {
+                if (int.Parse(mydr[0].ToString()) >= 2)
+                {
+                    growthRate = 1;
+                }
+            };
+            mydr.Close();
+            mycon.Close();
+            return Json(new { resule = "success", p_id = productId, rate = growthRate });
+        }
+
         public ActionResult EditProductInfo(int productId)
         {
             var item = _db.SS_Product.SingleOrDefault(m => m.Id == productId);
@@ -990,34 +1017,127 @@ namespace PeriodAid.Controllers
             return View();
         }
         [HttpPost]
-        public JsonResult ViewProductStatisticPartial(int productId, string start, string end)
+        public JsonResult ViewProductStatisticPartial(int productId, string start, string end,int? type,int? a_type)
         {
-            DateTime _start = Convert.ToDateTime(start);
-            DateTime _end = Convert.ToDateTime(end);
-            var info_data = from m in _db.SS_SalesRecord
-                            where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
-                            && m.Product_Id == productId
-                            group m by m.SalesRecord_Date into g
-                            orderby g.Key
-                            select new ProductStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
-            DateTime current_date = _start;
-            var data = new List<ProductStatisticViewModel>();
-            while (current_date <= _end)
+            int _type = type ?? 0;
+            int ave_type = a_type ?? 0;
+            if (_type == 0)
             {
-                int _salescount = 0;
-                var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
-                if (item != null)
+                DateTime _start = Convert.ToDateTime(start);
+                DateTime _end = Convert.ToDateTime(end);
+                var info_data = from m in _db.SS_SalesRecord
+                                where m.SalesRecord_Date >= _start && m.SalesRecord_Date <= _end
+                                && m.Product_Id == productId
+                                group m by m.SalesRecord_Date into g
+                                orderby g.Key
+                                select new ProductStatisticViewModel { salesdate = g.Key, salescount = g.Sum(m => m.Sales_Count) };
+                DateTime current_date = _start;
+                var data = new List<ProductStatisticViewModel>();
+                while (current_date <= _end)
                 {
-                    _salescount = item.salescount;
+                    int _salescount = 0;
+                    var item = info_data.SingleOrDefault(m => m.salesdate == current_date);
+                    if (item != null)
+                    {
+                        _salescount = item.salescount;
+                    }
+                    data.Add(new ProductStatisticViewModel()
+                    {
+                        salescount = _salescount,
+                        salesdate = current_date
+                    });
+                    current_date = current_date.AddDays(1);
                 }
-                data.Add(new ProductStatisticViewModel()
-                {
-                    salescount = _salescount,
-                    salesdate = current_date
-                });
-                current_date = current_date.AddDays(1);
+                return Json(new { result = "SUCCESS", data = data });
             }
-            return Json(new { result = "SUCCESS", data = data });
+            else if (_type == 1)//7日平均值
+            {
+                DateTime _start = Convert.ToDateTime(start);
+                DateTime _end = Convert.ToDateTime(end);
+                var sub_start = _start.DayOfYear - 1;
+                var sub_end = _end.DayOfYear;
+                var findSql = "";
+                if (ave_type == 1)//开始时间求均值
+                {
+                    findSql = "SELECT convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ")/7)*7,'" + start + "'),120)+ '~' + " +
+                        "convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ")/ 7) * 7 + 6, '" + start + "'), 120), " +
+                        "sum(Sales_Count)/7 FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '"+productId+"' and SalesRecord_Date>= \'" + start + "\' and  SalesRecord_Date<= \'" + end + "\'" +
+                        " group by convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 7) * 7, '" + start + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 7) * 7 + 6, '" + start + "'), 120) " +
+                        "order by convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 7) * 7, '" + start + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 7) * 7 + 6, '" + start + "'), 120)";
+                }
+                else {//结束时间求均值
+                    findSql = "SELECT convert(nvarchar(10), DATEADD(DAY,-(((abs(datepart(DAYOFYEAR, SalesRecord_Date)-" + sub_end + "))/7)*7+6),'" + end + "'),120) + '~'" +
+                        " + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7), '" + end + "'), 120), " +
+                        "sum(Sales_Count)/7 FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '" + productId + "' and SalesRecord_Date>= '" + start + "' and SalesRecord_Date<= '" + end + "'" +
+                        " group by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7 + 6), '" + end + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7), '" + end + "'), 120)" +
+                        " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7 + 6), '" + end + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7), '" + end + "'), 120)";
+                }
+                string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+                SqlConnection mycon = new SqlConnection(constr);
+                mycon.Open();
+                SqlCommand mycom = new SqlCommand(findSql, mycon);
+                SqlDataReader mydr = mycom.ExecuteReader();
+                List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
+                while (mydr.Read())
+                {
+
+                    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
+                    data.salesdate = mydr[0].ToString();
+                    data.salescount = int.Parse(mydr[1].ToString());
+                    data_list.Add(data);
+                };
+                mydr.Close();
+                mycon.Close();
+                return Json(new { result = "SUCCESS", data = data_list });
+            }
+            else {//15日平均值
+                DateTime _start = Convert.ToDateTime(start);
+                DateTime _end = Convert.ToDateTime(end);
+                var sub_start = _start.DayOfYear - 1;
+                var sub_end = _end.DayOfYear;
+                var findSql = "";
+                if (ave_type == 1)//开始时间求均值
+                {
+                    findSql = "SELECT convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ")/15)*15,'" + start + "'),120)+ '~' + " +
+                        "convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ")/ 15) * 15 + 14, '" + start + "'), 120), " +
+                        "sum(Sales_Count)/15 FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '" + productId + "' and SalesRecord_Date>= \'" + start + "\' and  SalesRecord_Date<= \'" + end + "\'" +
+                        " group by convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 15) * 15, '" + start + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 15) * 15 + 14, '" + start + "'), 120) " +
+                        "order by convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 15) * 15, '" + start + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY,((datepart(DAYOFYEAR, SalesRecord_Date)-1-" + sub_start + ") / 15) * 15 + 14, '" + start + "'), 120)";
+                }
+                else
+                {//结束时间求均值
+                    findSql = "SELECT convert(nvarchar(10), DATEADD(DAY,-(((abs(datepart(DAYOFYEAR, SalesRecord_Date)-" + sub_end + "))/15)*15+14),'" + end + "'),120) + '~'" +
+                        " + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15), '" + end + "'), 120), " +
+                        "sum(Sales_Count)/15 FROM[SHOPSTORAGE].[dbo].[SS_SalesRecord] where Product_Id = '" + productId + "' and SalesRecord_Date>= '" + start + "' and SalesRecord_Date<= '" + end + "'" +
+                        " group by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15 + 14), '" + end + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15), '" + end + "'), 120)" +
+                        " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15 + 14), '" + end + "'), 120)" +
+                        " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15), '" + end + "'), 120)";
+                }
+                string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+                SqlConnection mycon = new SqlConnection(constr);
+                mycon.Open();
+                SqlCommand mycom = new SqlCommand(findSql, mycon);
+                SqlDataReader mydr = mycom.ExecuteReader();
+                List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
+                while (mydr.Read())
+                {
+
+                    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
+                    data.salesdate = mydr[0].ToString();
+                    data.salescount = int.Parse(mydr[1].ToString());
+                    data_list.Add(data);
+                };
+                mydr.Close();
+                mycon.Close();
+                return Json(new { result = "SUCCESS", data = data_list });
+            }
         }
 
         // 活动打标
