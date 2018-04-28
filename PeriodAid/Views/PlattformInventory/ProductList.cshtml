@@ -12,7 +12,10 @@
         </td>
     </tr>
 </table>
-<h2>产品列表</h2>
+<ul class="nav nav-tabs" id="ul_view" style="border:0" role="tablist">
+    <li role="presentation" class="active"><a href="#" class="shop_select" data-id="1" aria-controls="profile" role="tab" data-toggle="tab">京东</a></li>
+    <li role="presentation"><a href="#" data-id="2" class="shop_select" aria-controls="messages" role="tab" data-toggle="tab">天猫</a></li>
+</ul>
 <div id="product_list_content"></div>
 
 @section scripts{
@@ -43,6 +46,20 @@
                 }
             })
         });
+        // 选择
+        $(".shop_select").click(function () {
+            $.ajax({
+                url: "/PlattformInventory/ProductListPartial",
+                data: {
+                    plattformId: $(this).attr("data-id"),
+                    page: 1,
+                    query: $("#storage-product-query").val()
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data);
+                }
+            })
+        })
     </script>
 }
 

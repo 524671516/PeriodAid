@@ -477,6 +477,7 @@ namespace PeriodAid.Controllers
             ViewBag.PlattformId = plattformId;
             return View();
         }
+
         public ActionResult Calc_StoragePartial(int plattformId, int? days)
         {
             int _days = days ?? 15;//默认30天
@@ -904,6 +905,12 @@ namespace PeriodAid.Controllers
             }
             
         }
+
+        public ActionResult SalesStatistics_View(int plattformId)
+        {
+            return View();
+        }
+
 
         public ActionResult ProductList(int plattformId)
         {

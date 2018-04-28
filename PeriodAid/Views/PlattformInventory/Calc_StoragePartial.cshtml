@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<PeriodAid.Models.CalcStorageViewModel>
-
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active">
 
@@ -16,7 +15,12 @@
                         <th><i style="font-style:normal" class="date-view-select"></i>销售数据</th>
                         <th>仓库库存</th>
                         <th>日均销量</th>
-                        <th style="width:26%"><i style="position:relative;top:5px;font-style:normal">周转数</i><input type="number" id="top-control" value="55" class="form-control calc_rate" style="font-weight:500;width:80%;position:relative;top:4px;margin-left:5px;display:inline-block;height:30px" /></th>
+                        <th style="width:15%">
+                            <i style="position:relative;top:5px;font-style:normal">周转数</i><input type="text" id="top-control" value="55" class="form-control calc_rate" readonly="readonly" style="font-weight:500;width:65%;position:relative;top:4px;margin-left:5px;display:inline-block;height:30px;padding-left: 27px;" />
+                        </th>
+                        <th style="width:15%">
+                            <i style="position:relative;top:5px;font-style:normal">系数</i><input type="number" id="number-control" value="1" class="form-control" style="font-weight:500;width:75%;position:relative;top:4px;margin-left:5px;display:inline-block;height:30px;padding-left:8px;text-align:center" />
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -31,7 +35,12 @@
                                 <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
-                                <td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                                <td>
+                                    <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center"/>
+                                </td>
+                                <td>
+                                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
+                                </td>
                             </tr>
                         }
                         else
@@ -43,10 +52,16 @@
                                 <td class="calc_sales">@Html.Encode(item.Sales_Count)</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
-                                <td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                                <td>
+                                    <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
+
+                                </td>
+                                <td>
+                                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center"/>
+                                </td>
+                                @*<td>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>*@
                             </tr>
                         }
-
                     }
                 </tbody>
             </table>
@@ -54,9 +69,9 @@
     </div>
 </div>
 <script>
-    $('.calc_rate').val($('#top-control').val())
-    $('#top-control').change(function () {
-        $('.calc_rate').val($(this).val())
+    $('.calc_number').val($('#number-control').val())
+    $('#number-control').change(function () {
+        $('.calc_number').val($(this).val())
     })
 </script>
 

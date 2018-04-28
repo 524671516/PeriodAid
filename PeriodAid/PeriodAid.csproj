@@ -1187,6 +1187,7 @@
     <Content Include="Views\AccountRights\RightsListPartial.cshtml" />
     <Content Include="Views\AccountRights\AccountRights_PartialView.cshtml" />
     <Content Include="Views\AccountRights\Add_UserInfo.cshtml" />
+    <Content Include="Views\PlattformInventory\SalesStatistics_View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
