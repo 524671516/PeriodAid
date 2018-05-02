@@ -910,7 +910,29 @@ namespace PeriodAid.Controllers
         {
             return View();
         }
-
+        public ActionResult SalesStatistics_PartialView(int plattformId, int? page, string query)
+        {
+            int _page = page ?? 1;
+            if (query != "")
+            {
+                var product = from m in _db.SS_SalesStatistic
+                              where m.SS_Product.Plattform_Id == plattformId
+                              select m;
+                var slaes = (from m in product
+                             where m.SS_Product.Item_Name.Contains(query)
+                             orderby m.SingeleDay_Count descending
+                             select m).ToPagedList(_page,20);
+                return PartialView(slaes);
+            }
+            else
+            {
+                var slaes = (from m in _db.SS_SalesStatistic
+                             where m.SS_Product.Plattform_Id == plattformId
+                             orderby m.SingeleDay_Count descending
+                             select m).ToPagedList(_page, 20);
+                return PartialView(slaes);
+            }
+        }
 
         public ActionResult ProductList(int plattformId)
         {

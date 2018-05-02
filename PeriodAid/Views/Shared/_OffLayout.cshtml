@@ -24,7 +24,7 @@
     <![endif]-->
     @RenderSection("header", required:false)
 </head>
-<body class="reset" style="padding-top:19px">
+<body class="reset" style="padding-top:19px;padding-bottom:0">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -36,20 +36,22 @@
                 @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            管理系统　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
+                <ul class="nav navbar-nav nav_relative_ul">
+                    <li>
+                    @Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
                             <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
                             <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
                             <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
                         </ul>
                     </li>
-                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
+                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                        </ul>
+                    </li>
                     <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
                     <li>@Html.ActionLink("系统权限", "RightsList", "AccountRights")</li>
                     <li role="presentation" class="dropdown">
@@ -69,27 +71,27 @@
         </div>
     </div>
     <br /><br />
-    <div class="container" id="container_view">
+    <div class="container" id="container_view" style="top:-2px">
         <div class="row">
             <div class="col-md-2" id="col_2_view">
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="fixed_ul ol-md-2">
                     <div class="panel panel-default" id="fixed_ul_color">
                         <div class="panel-body" id="panel-body-view">
                             <ul class="list-unstyled" id="ul_btn">
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px">
+                                    <a href="#" data-name="OffStore" style="text-indent: 16px;">
                                         <i class="fa fa-bars"></i>
                                         &nbsp;&nbsp;门店信息
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffStore/StoreSystemList"><i class="fa fa-search"></i>&nbsp;&nbsp;渠道列表</a></li>
                                             <li class="left-navbar"><a href="/OffStore/StoreIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;门店列表</a></li>
                                             <li class="left-navbar"><a href="/OffStore/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a></li>
-                                        </ul>                                                                                             
+                                        </ul>
                                     </a>
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px">
+                                    <a href="#" data-name="OffProduct" style="text-indent: 16px;">
                                         <i class="fa fa-line-chart"></i>
                                         &nbsp;&nbsp;产品系列
                                         <ul class="list-unstyled position_ul hidden">
@@ -99,7 +101,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;销售数据
+                                    <a href="#" data-name="OffSales" style="text-indent: 16px;">
+                                        <i class="fa fa-bar-chart"></i>&nbsp;&nbsp;销售数据
                                         <ul class="list-unstyled  position_ul hidden">
                                             <li class="left-navbar"><a href="/OffSales/DailySalesIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;日销售数据</a></li>
                                             <li class="left-navbar"><a href="/OffSales/MonthSalesList"><i class="fa fa-search"></i>&nbsp;&nbsp;月销售数据</a></li>
@@ -108,7 +111,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px"><i class="fa fa-search"></i>&nbsp;&nbsp;费用数据
+                                    <a href="#" data-name="OffExpenses" style="text-indent: 16px;">
+                                        <i class="fa fa-search"></i>&nbsp;&nbsp;费用数据
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffExpenses/ExpensesIndex"><i class="fa fa-money"></i>&nbsp;&nbsp;费用列表</a></li>
                                         </ul>
@@ -116,7 +120,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px"><i class="fa fa-tags"></i>&nbsp;&nbsp;人员信息
+                                    <a href="#" data-name="OffSeller" style="text-indent: 16px;">
+                                        <i class="fa fa-address-book-o"></i>&nbsp;&nbsp;人员信息
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffSeller/SellerIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
                                             <li class="left-navbar"><a href="/OffSeller/BindSellerIndex"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
@@ -127,7 +132,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;促销管理
+                                    <a href="#" data-name="OffCheckin" style="text-indent: 16px;">
+                                        <i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;促销管理
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffCheckin/ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看促销日程记录</a></li>
                                             <li class="left-navbar"><a href="/OffCheckin/SalesEventList"><i class="fa fa-tags"></i>&nbsp;&nbsp;查看活动签呈记录</a></li>
@@ -139,7 +145,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;督导管理
+                                    <a href="#" data-name="OffManager" style="text-indent: 16px;">
+                                        <i class="fa fa-user"></i>&nbsp;&nbsp;督导管理
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffManager/ManagerList"><i class="fa fa-user-secret"></i>&nbsp;&nbsp;管理员</a></li>
                                             <li class="left-navbar"><a href="/OffManager/TaskList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;督导签到管理</a></li>
@@ -151,7 +158,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px"><i class="fa fa-arrow-down"></i>&nbsp;&nbsp;数据图表
+                                    <a href="#" data-name="OffStatistic" style="text-indent: 16px;">
+                                        <i class="fa fa-image"></i>&nbsp;&nbsp;数据图表
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffStatistic/StoreSystemStatistic"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;区域数据图表</a></li>
                                             <li class="left-navbar"><a href="/OffStatistic/StoreStatistic"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;区域门店数据图表</a></li>
@@ -161,8 +169,8 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px">
-                                        <i class="fa fa-arrow-down"></i>&nbsp;&nbsp;红包管理
+                                    <a href="#" data-name="OffBonus" style="text-indent: 16px;">
+                                        <i class="fa fa-money"></i>&nbsp;&nbsp;红包管理
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffBonus/BonusList"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;红包列表</a></li>
                                         </ul>
@@ -170,203 +178,22 @@
                                     <div class="san_you hidden"></div>
                                 </li>
                                 <li class="left-navbar" style="cursor:pointer">
-                                    <a href="#" style="text-indent:18px">
+                                    <a href="#" data-name="OffSellerTask" style="text-indent: 16px;">
                                         <i class="fa fa-arrow-down"></i>&nbsp;&nbsp;暗促管理
                                         <ul class="list-unstyled position_ul hidden">
                                             <li class="left-navbar"><a href="/OffSellerTask/TaskSellerHome"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;暗促信息</a></li>
                                             <li class="left-navbar"><a href="/OffSellerTask/TaskSellerAlert"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;库存预警</a></li>
-                                         </ul>
+                                        </ul>
                                     </a>
                                     <div class="san_you hidden"></div>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    @*<div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    门店信息 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OffStore/StoreSystemList"><i class="fa fa-search"></i>&nbsp;&nbsp;渠道列表</a></li>
-                                    <li class="left-navbar"><a href="/OffStore/StoreIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;门店列表</a></li>
-                                    <li class="left-navbar"><a href="/OffStore/StoreMap"><i class="fa fa-map"></i>&nbsp;&nbsp;门店地图</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingEight">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                                    产品系列 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingEight"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-bars"></i>&nbsp;&nbsp;</a>@Html.ActionLink("产品列表", "ProductList", "OffProduct")</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    销售数据 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
-                                </a> 
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OffSales/DailySalesIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;日销售数据</a></li>
-                                    <li class="left-navbar"><a href="/OffSales/MonthSalesList"><i class="fa fa-search"></i>&nbsp;&nbsp;月销售数据</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingThree">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    费用数据 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingThree"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OffExpenses/ExpensesIndex"><i class="fa fa-money"></i>&nbsp;&nbsp;费用列表</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingFour">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                    人员信息 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingFour"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OffSeller/SellerIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;查看促销员</a></li>
-                                    <li class="left-navbar"><a href="/OffSeller/BindSellerIndex"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定促销员</a></li>
-                                    <li class="left-navbar"><a href="/OffSeller/BindTempSellerIndex"><i class="fa fa-retweet"></i>&nbsp;&nbsp;绑定暗促促销员</a></li>
-                                    <li class="left-navbar"><a href="/OffSeller/BindRecruitIndex"><i class="fa fa-retweet"></i>&nbsp;&nbsp;新招募促销员</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingFive">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                    促销管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingFive"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/OffCheckin/ScheduleList"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;查看促销日程记录</a></li>
-                                    <li class="left-navbar"><a href="/OffCheckin/SalesEventList"><i class="fa fa-tags"></i>&nbsp;&nbsp;查看活动签呈记录</a></li>
-                                    <li class="left-navbar"><a href="/OffCheckin/CheckinList"><i class="fa fa-check"></i>&nbsp;&nbsp;确认促销</a></li>
-                                    <li class="left-navbar"><a href="/OffCheckin/QueryCheckin"><i class="fa fa-search"></i>&nbsp;&nbsp;查询促销记录</a></li>
-                                    
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingSix">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                    督导管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingSix"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-user-secret"></i>&nbsp;&nbsp;</a>@Html.ActionLink("管理员", "ManagerList", "OffManager")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到管理", "TaskList", "OffManager")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-map"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导签到路线", "ManagerRouter", "OffManager")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar"></i>&nbsp;&nbsp;</a>@Html.ActionLink("督导日报", "AnnouncementList", "OffManager")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("需求提报", "RequestList", "OffManager")</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingSeven">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
-                                    数据图表 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingSeven"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseSeven" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSeven">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-line-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域数据图表", "StoreSystemStatistic", "OffStatistic")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("区域门店数据图表", "StoreStatistic", "OffStatistic")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-area-chart"></i>&nbsp;&nbsp;</a>@Html.ActionLink("促销员销售数据图", "SellerStatistic", "OffStatistic")</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingNine">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseNine" aria-expanded="false" aria-controls="collapseNine">
-                                    红包管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingNine"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseNine" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNine">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-money"></i>&nbsp;&nbsp;</a>@Html.ActionLink("红包列表", "BonusList", "OffBonus")</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTen">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTen" aria-expanded="false" aria-controls="collapseTen">
-                                    暗促管理 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTen"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTen" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTen">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("暗促信息", "TaskSellerHome", "OffSellerTask")</li>
-                                    <li class="left-navbar"><a><i class="fa fa-calendar-o"></i>&nbsp;&nbsp;</a>@Html.ActionLink("库存预警", "TaskSellerAlert", "OffSellerTask")</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>*@
                 </div>
             </div>
-            <div class="col-md-10" style="padding-top:10px">
-                <div class="row">
-                    <div class="col-xs-12">
-                        @RenderBody()
-                    </div>
-                </div>
+            <div class="col-md-10" id="col_10_style">
+                @RenderBody()
             </div>
         </div>
     </div>
@@ -389,6 +216,17 @@
 </body>
 </html>
 <script>
+    var locUrl = window.location.pathname;
+    var arrurl =locUrl.split("/"); 
+    $("#ul_btn li a").each(function (index, el) {
+        var href = $(this).attr("data-name")
+        if (href == arrurl[1]) {
+            $(this).parent("li").addClass('left-navba-background');
+            $(this).siblings(".san_you").removeClass("hidden")
+            $(this).addClass("click_a_color")
+        }
+    });
+
     $("#ul_btn li").mouseover(function () {
         $(this).children(".position_ul").removeClass("hidden")
         $(this).children(".san_you").removeClass("hidden")
@@ -396,5 +234,11 @@
     $("#ul_btn li").mouseout(function () {
         $(this).children(".position_ul").addClass("hidden")
         $(this).children(".san_you").addClass("hidden")
+    })
+    $(".nav_relative_ul li").mouseover(function () {
+        $(this).children(".nav_absolute_ul").removeClass("hidden")
+    })
+    $(".nav_relative_ul li").mouseout(function () {
+        $(this).children(".nav_absolute_ul").addClass("hidden")
     })
 </script>

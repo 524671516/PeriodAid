@@ -1,0 +1,67 @@
+﻿
+@model PagedList.IPagedList<PeriodAid.Models.SS_SalesStatistic>
+@using PagedList.Mvc;
+<div>
+    <table class="table table-bordered table-hover">
+        <tr>
+            <th>系统编码</th>
+            <th>产品名称</th>
+            <th>前1天销量<i class="fa fa-arrow-down color-blue" style="float:right"></i></th>
+            <th>近7天销量<i class="fa fa-arrow-down color-blue" style="float:right"></i></th>
+            <th>前7天销量<i class="fa fa-arrow-down color-blue" style="float:right"></i></th>
+            <th><a href="#" class="sales_sort" style="display:inline-block;width:100%;height:100%;position:relative">增比<i class="fa fa-arrow-down color-blue" style="position:absolute;right:0;"></i></a></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.SS_Product.System_Code</td>
+                <td>@item.SS_Product.Item_Name</td>
+                <td>@item.SingeleDay_Count</td>
+                <td>@item.Recent_Count</td>
+                <td>@item.Last_Count</td>
+                @if (item.Last_Count != 0)
+                {
+                    <td>@Math.Round(((decimal)item.Recent_Count / item.Last_Count), 4).ToString("p2")</td>
+                }else
+                {
+                    <td>0</td>
+                }
+
+            </tr>
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("SalesStatistics_PartialView", new { page }))
+    </div>
+</div>
+<script>
+    //页码
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                plattformId: $(".active").children(".shop_select").attr("data-id"),
+                query: $("#sales_product_query").val()
+            },
+            success: function (data) {
+                $("#salesstatistics_list_content").html(data);
+            }
+        });
+        return false;
+    });
+    //$(".sales_sort").on("click", function () {
+    //    if (!$(this).children("i").hasClass("fa-arrow-up")) {
+    //        $(this).children("i").removeClass("fa-arrow-down")
+    //        $(this).children("i").removeClass("color-blue")
+    //        $(this).children("i").addClass("fa-arrow-up")
+    //        $(this).children("i").addClass("color-red")
+    //    } else {
+    //        $(this).children("i").removeClass("fa-arrow-up")
+    //        $(this).children("i").removeClass("color-red")
+    //        $(this).children("i").addClass("fa-arrow-down")
+    //        $(this).children("i").addClass("color-blue")
+    //    }
+        
+    //})
+</script>

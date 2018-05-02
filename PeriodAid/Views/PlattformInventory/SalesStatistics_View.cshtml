@@ -3,6 +3,60 @@
     ViewBag.Title = "SalesStatistics_View";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-
-<h2>SalesStatistics_View</h2>
-
+<table class="offline-search-box">
+    <tr>
+        <td class="pull-right">
+            <label>产品名称：</label>
+            <input class="form-control input-sm offline-search-inline" id="sales_product_query" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="sales_product_search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<ul class="nav nav-tabs" id="ul_view" style="border:0" role="tablist">
+    <li role="presentation" class="active"><a href="#" class="shop_select" data-id="1" aria-controls="profile" role="tab" data-toggle="tab">京东</a></li>
+    <li role="presentation"><a href="#" data-id="2" class="shop_select" aria-controls="messages" role="tab" data-toggle="tab">天猫</a></li>
+</ul>
+<div id="salesstatistics_list_content"></div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/PlattformInventory/SalesStatistics_PartialView",
+                data: {
+                    plattformId: $(".active").children(".shop_select").attr("data-id"),
+                    query: $("#sales_product_query").val()
+                },
+                success: function (data) {
+                    $("#salesstatistics_list_content").html(data)
+                }
+            })
+            //搜索
+            $("#sales_product_search").click(function () {
+                $.ajax({
+                    url: "/PlattformInventory/SalesStatistics_PartialView",
+                    data: {
+                        plattformId: $(".active").children(".shop_select").attr("data-id"),
+                        page: 1,
+                        query: $("#sales_product_query").val()
+                    },
+                    success: function (data) {
+                        $("#salesstatistics_list_content").html(data);
+                    }
+                })
+            });
+            $(".shop_select").click(function () {
+                $.ajax({
+                    url: "/PlattformInventory/SalesStatistics_PartialView",
+                    data: {
+                        plattformId: $(this).attr("data-id"),
+                        page: 1,
+                        query: $("#sales_product_query").val()
+                    },
+                    success: function (data) {
+                        $("#salesstatistics_list_content").html(data);
+                    }
+                })
+            })
+        })
+    </script>
+    }

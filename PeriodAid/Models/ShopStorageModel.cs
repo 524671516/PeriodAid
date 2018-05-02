@@ -34,6 +34,7 @@
         public virtual DbSet<SS_TrafficSource> SS_TrafficSource { get; set; }
         public virtual DbSet<SS_TrafficData> SS_TrafficData { get; set; }
         public virtual DbSet<SS_UploadTraffic> SS_UploadTraffic { get; set; }
+        public virtual DbSet<SS_SalesStatistic> SS_SalesStatistic { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -50,7 +51,7 @@
             modelBuilder.Entity<SS_Plattform>().HasMany(m => m.SS_TrafficPlattform).WithRequired(m => m.SS_Plattform).HasForeignKey(m => m.Plattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.SS_TrafficData).WithRequired(m => m.SS_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<SS_TrafficPlattform>().HasMany(m => m.SS_UploadTraffic).WithRequired(m => m.SS_TrafficPlattform).HasForeignKey(m => m.TrafficPlattform_Id).WillCascadeOnDelete(false);
-
+            modelBuilder.Entity<SS_Product>().HasMany(m => m.SS_SalesStatistic).WithRequired(m => m.SS_Product).HasForeignKey(m => m.Product_Id).WillCascadeOnDelete(false);
         }
     }
     /// <summary>
@@ -118,6 +119,27 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SS_TrafficData> SS_TrafficData { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SS_SalesStatistic> SS_SalesStatistic { get; set; }
+    }
+
+    [Table("SS_SalesStatistic")]
+    public partial class SS_SalesStatistic
+    {
+        public int Id { get; set; }
+
+        public DateTime? StatisticTime { get; set; }
+
+        public int Product_Id { get; set; }
+
+        public virtual SS_Product SS_Product { get; set; }
+
+        public int SingeleDay_Count { get; set; }
+
+        public int Recent_Count { get; set; }
+
+        public int Last_Count { get; set; }
     }
     /// <summary>
     /// 仓库表

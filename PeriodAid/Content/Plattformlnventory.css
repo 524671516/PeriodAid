@@ -1727,3 +1727,11 @@ a.btn_subtask_detail{
     background: url(../../Content/images/fire.svg) center center;
     background-size: cover;
 }
+.sales_sort{
+    color:black;
+    text-decoration:none
+}
+.sales_sort:hover, .sales_sort:visited, .sales_sort:link, .sales_sort:active {
+    color:black;
+    text-decoration:none
+}

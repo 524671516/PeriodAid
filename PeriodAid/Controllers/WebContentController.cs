@@ -10,6 +10,7 @@ using PeriodAid.DAL;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize(Roles = "Staff")]
     public class WebContentController : Controller
     {
         /*活动列表*/
