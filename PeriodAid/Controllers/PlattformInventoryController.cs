@@ -954,9 +954,22 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesStatistics_View(int plattformId)
         {
+            var salesTime = from m in _db.SS_SalesStatistic
+                            select m;
+            ViewBag.SalesTime = salesTime;
             return View();
         }
-        public ActionResult SalesStatistics_PartialView(int plattformId, int? page, string query)
+
+        public ActionResult SalesStatistics_PartialView(int plattformId)
+        {
+            var slaes = (from m in _db.SS_SalesStatistic
+                         where m.SS_Product.Plattform_Id == plattformId
+                         orderby m.SingeleDay_Count descending
+                         select m).ToPagedList(1, 20);
+            return PartialView(slaes);
+
+        }
+        public ActionResult SalesStatisticsSort_PartialView(int plattformId, int? page, string query,string sortVal)
         {
             int _page = page ?? 1;
             if (query != "")
@@ -964,19 +977,42 @@ namespace PeriodAid.Controllers
                 var product = from m in _db.SS_SalesStatistic
                               where m.SS_Product.Plattform_Id == plattformId
                               select m;
-                var slaes = (from m in product
-                             where m.SS_Product.Item_Name.Contains(query)
-                             orderby m.SingeleDay_Count descending
-                             select m).ToPagedList(_page,20);
-                return PartialView(slaes);
+                if (sortVal == "dec")
+                {
+                    var slaes = (from m in product
+                                 where m.SS_Product.Item_Name.Contains(query)
+                                 orderby m.SingeleDay_Count descending
+                                 select m).ToPagedList(_page, 20);
+                    return PartialView(slaes);
+                }
+                else
+                {
+                    var slaes = (from m in product
+                                 where m.SS_Product.Item_Name.Contains(query)
+                                 orderby m.SingeleDay_Count ascending
+                                 select m).ToPagedList(_page, 20);
+                    return PartialView(slaes);
+                }
             }
             else
             {
-                var slaes = (from m in _db.SS_SalesStatistic
-                             where m.SS_Product.Plattform_Id == plattformId
-                             orderby m.SingeleDay_Count descending
-                             select m).ToPagedList(_page, 20);
-                return PartialView(slaes);
+                if (sortVal == "dec")
+                {
+                    var slaes = (from m in _db.SS_SalesStatistic
+                                 where m.SS_Product.Plattform_Id == plattformId
+                                 orderby m.SingeleDay_Count descending
+                                 select m).ToPagedList(_page, 20);
+                    return PartialView(slaes);
+                }
+                else
+                {
+                    var slaes = (from m in _db.SS_SalesStatistic
+                                 where m.SS_Product.Plattform_Id == plattformId
+                                 orderby m.SingeleDay_Count ascending
+                                 select m).ToPagedList(_page, 20);
+                    return PartialView(slaes);
+                }
+                
             }
         }
 

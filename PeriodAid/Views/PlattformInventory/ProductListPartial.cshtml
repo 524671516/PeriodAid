@@ -50,8 +50,6 @@
                 </td>
                 <td>
                     <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
-                    <a class="JD-Traffic" data-val="@item.Id" data-name="@item.Item_Name" style="cursor:pointer">来源分析</a>
                     @*<span class="JD-Traffic-Order">@Html.ActionLink("销量统计", "ViewTrafficStatistic", new { productId = item.Id })</span>*@
                 </td>
             </tr>
@@ -229,11 +227,5 @@
             })
         })
         
-        // TrafficView
-        $(".JD-Traffic").on("click", function () {
-            var product_Id = $(this).attr('data-val')
-            var product_Name = $(this).attr("data-name")
-            $(this).attr("href", "TrafficList?plattformId=" + getUrlParam('plattformId') + "&productId=" + product_Id)
-        })
     })
 </script>

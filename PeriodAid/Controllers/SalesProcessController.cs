@@ -604,6 +604,7 @@ namespace PeriodAid.Controllers
                 var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
                 check_data.contract_status = "-1";
                 crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
             }
             crm_db.SaveChanges();
             return Json(new { result = "SUCCESS" });

@@ -16,28 +16,28 @@
     <li role="presentation" class="active"><a href="#" class="shop_select" data-id="1" aria-controls="profile" role="tab" data-toggle="tab">京东</a></li>
     <li role="presentation"><a href="#" data-id="2" class="shop_select" aria-controls="messages" role="tab" data-toggle="tab">天猫</a></li>
 </ul>
-<div id="salesstatistics_list_content"></div>
+<div id="salesstatistics_list_content">
+    
+</div>
 @section scripts{
     <script>
         $(function () {
             $.ajax({
                 url: "/PlattformInventory/SalesStatistics_PartialView",
                 data: {
-                    plattformId: $(".active").children(".shop_select").attr("data-id"),
-                    query: $("#sales_product_query").val()
+                    plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
                 },
                 success: function (data) {
                     $("#salesstatistics_list_content").html(data)
                 }
             })
+
             //搜索
             $("#sales_product_search").click(function () {
                 $.ajax({
                     url: "/PlattformInventory/SalesStatistics_PartialView",
                     data: {
-                        plattformId: $(".active").children(".shop_select").attr("data-id"),
-                        page: 1,
-                        query: $("#sales_product_query").val()
+                        plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
                     },
                     success: function (data) {
                         $("#salesstatistics_list_content").html(data);
@@ -49,8 +49,6 @@
                     url: "/PlattformInventory/SalesStatistics_PartialView",
                     data: {
                         plattformId: $(this).attr("data-id"),
-                        page: 1,
-                        query: $("#sales_product_query").val()
                     },
                     success: function (data) {
                         $("#salesstatistics_list_content").html(data);

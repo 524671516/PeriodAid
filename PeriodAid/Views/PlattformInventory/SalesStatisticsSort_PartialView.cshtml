@@ -1,0 +1,24 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.SS_SalesStatistic>
+@using PagedList.Mvc;
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.SS_Product.System_Code</td>
+        <td>@item.SS_Product.Item_Name</td>
+        <td>@item.SingeleDay_Count</td>
+        <td>@item.Recent_Count</td>
+        <td>@item.Last_Count</td>
+        @if (item.Last_Count != 0)
+                {
+            <td>@Math.Round(((decimal)item.Recent_Count / item.Last_Count), 4).ToString("p2")</td>
+        }
+        else
+        {
+            <td>0</td>
+        }
+        <td>
+            <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
+            <a class="JD-Traffic" data-val="@item.Id" data-name="@item.SS_Product.Item_Name" style="cursor:pointer">来源分析</a>
+        </td>
+    </tr>
+}
