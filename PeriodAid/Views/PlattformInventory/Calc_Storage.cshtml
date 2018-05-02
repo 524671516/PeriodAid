@@ -38,6 +38,7 @@
                     $("#my-form-content").html(data);
                     $('.date-view-select').html($('.date-select').eq(1).attr('data-date') + '天')
                     $('.date-select').eq(1).addClass('active')
+                    $('#tm-view-loading').hide()
                 }
             })
             $('.date-select').on('click', function () {

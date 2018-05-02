@@ -775,8 +775,9 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("商品编码");
             foreach (var inventory in inventory_list)
             {
-                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "库存");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "日均销量");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "周转数");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "库存");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "补货");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "箱数");
             }
@@ -791,14 +792,18 @@ namespace PeriodAid.Controllers
                 single_row.CreateCell(cell_pos).SetCellValue(product.System_Code);
                 single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Name);
                 single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Code);
-                int total_count = 0;
+                double total_count = 0;
                 //日均销量
-                int avg_count = Convert.ToInt32(form["avg_count"].ToString());
+                var avg_data = form["p_avg_" + product.Id];
+                if (avg_data == null) {
+                    avg_data = 0.ToString();
+                }
+                double avg_count =double.Parse(avg_data);
                 // 最近库存
                 var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
-                if (form["p_avg_" + product.Id] != null)
+                if (form["p_rate_" + product.Id] != null)
                 {
-                    var _rate = Convert.ToInt32(form["p_avg_" + product.Id].ToString());
+                    var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
 
                     foreach (var inventory in inventory_list)
                     {
@@ -813,18 +818,19 @@ namespace PeriodAid.Controllers
                         {
                             storage_count = 0;
                         }
-                        int recommand_storage = avg_count * _rate - storage_count;
+                        double recommand_storage = avg_count * _rate - storage_count >= 0 ? avg_count * _rate - storage_count : 0;
                         int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
-                        int carton_count = (recommand_storage % cartonspec) == 0 ? recommand_storage / cartonspec : (recommand_storage / cartonspec) + 1;
-                        int final_storage = carton_count * cartonspec;
-                        single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
+                        double carton_count = (recommand_storage % cartonspec) == 0 ? recommand_storage / cartonspec : (int)(recommand_storage / cartonspec) + 1;
+                        double final_storage = carton_count * cartonspec;
+                        single_row.CreateCell(++cell_pos).SetCellValue(avg_data);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
+                        single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(carton_count);
                         total_count += final_storage;
                     }
                     single_row.CreateCell(++cell_pos).SetCellValue(total_count);
-                    single_row.CreateCell(++cell_pos).SetCellValue((double)(total_count * product.Purchase_Price));
+                    single_row.CreateCell(++cell_pos).SetCellValue((double)(decimal.Parse(total_count.ToString()) * product.Purchase_Price));
                     row_pos++;
                 }
             }
