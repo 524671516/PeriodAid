@@ -16,13 +16,14 @@
 
 <div id="storage_show" style="position:relative">
     <div class="btn-group" role="group" style="position:absolute;top:-10px;right:130px;z-index:999">
-        <button type="button" class="btn btn-primary date-select" data-date="7">7天</button>
-        <button type="button" class="btn btn-primary date-select" data-date="15">15天</button>
-        <button type="button" class="btn btn-primary date-select" data-date="30">30天</button>
+        
     </div>
     <div class="center-block" id="my-form-content">
         <!-- Tab panes -->
     </div>
+</div>
+<div class="tm-veiw-loading text-center" id="tm-view-loading" style="height:100%;">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请稍后...</h4>
 </div>
 @section scripts{
     <script>
@@ -37,6 +38,7 @@
                     $("#my-form-content").html(data);
                     $('.date-view-select').html($('.date-select').eq(1).attr('data-date') + '天')
                     $('.date-select').eq(1).addClass('active')
+                    $('#tm-view-loading').hide()
                 }
             })
             $('.date-select').on('click', function () {
