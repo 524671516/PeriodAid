@@ -820,7 +820,14 @@ namespace PeriodAid.Controllers
                         }
                         double recommand_storage = avg_count * _rate - storage_count >= 0 ? avg_count * _rate - storage_count : 0;
                         int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
-                        double carton_count = (recommand_storage % cartonspec) == 0 ? recommand_storage / cartonspec : (int)(recommand_storage / cartonspec) + 1;
+                        double carton_count = 0;
+                        if (product.Product_Type == 1)
+                        {
+                            carton_count = recommand_storage / cartonspec >= 0.3 ? 1 : 0;
+                        }
+                        else {
+                            carton_count = recommand_storage / cartonspec >= 0.5 ? 1 : 0;
+                        }
                         double final_storage = carton_count * cartonspec;
                         single_row.CreateCell(++cell_pos).SetCellValue(avg_data);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
