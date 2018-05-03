@@ -960,16 +960,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult SalesStatistics_PartialView(int plattformId)
-        {
-            var slaes = (from m in _db.SS_SalesStatistic
-                         where m.SS_Product.Plattform_Id == plattformId
-                         orderby m.SingeleDay_Count descending
-                         select m).ToPagedList(1, 20);
-            return PartialView(slaes);
-
-        }
-        public ActionResult SalesStatisticsSort_PartialView(int plattformId, int? page, string query,string sortVal)
+        public ActionResult SalesStatistics_PartialView(int plattformId, int? page, string query, string sortVal)
         {
             int _page = page ?? 1;
             if (query != "")
@@ -977,11 +968,11 @@ namespace PeriodAid.Controllers
                 var product = from m in _db.SS_SalesStatistic
                               where m.SS_Product.Plattform_Id == plattformId
                               select m;
-                if (sortVal == "dec")
+                if (sortVal == "asc")
                 {
                     var slaes = (from m in product
                                  where m.SS_Product.Item_Name.Contains(query)
-                                 orderby m.SingeleDay_Count descending
+                                 orderby m.SingeleDay_Count ascending
                                  select m).ToPagedList(_page, 20);
                     return PartialView(slaes);
                 }
@@ -989,22 +980,14 @@ namespace PeriodAid.Controllers
                 {
                     var slaes = (from m in product
                                  where m.SS_Product.Item_Name.Contains(query)
-                                 orderby m.SingeleDay_Count ascending
+                                 orderby m.SingeleDay_Count descending
                                  select m).ToPagedList(_page, 20);
                     return PartialView(slaes);
                 }
             }
             else
             {
-                if (sortVal == "dec")
-                {
-                    var slaes = (from m in _db.SS_SalesStatistic
-                                 where m.SS_Product.Plattform_Id == plattformId
-                                 orderby m.SingeleDay_Count descending
-                                 select m).ToPagedList(_page, 20);
-                    return PartialView(slaes);
-                }
-                else
+                if (sortVal == "asc")
                 {
                     var slaes = (from m in _db.SS_SalesStatistic
                                  where m.SS_Product.Plattform_Id == plattformId
@@ -1012,9 +995,64 @@ namespace PeriodAid.Controllers
                                  select m).ToPagedList(_page, 20);
                     return PartialView(slaes);
                 }
-                
+                else
+                {
+                    var slaes = (from m in _db.SS_SalesStatistic
+                                 where m.SS_Product.Plattform_Id == plattformId
+                                 orderby m.SingeleDay_Count descending
+                                 select m).ToPagedList(_page, 20);
+                    return PartialView(slaes);
+                }
+
             }
+
         }
+        //public ActionResult SalesStatisticsSort_PartialView(int plattformId, int? page, string query,string sortVal)
+        //{
+        //    int _page = page ?? 1;
+        //    if (query != "")
+        //    {
+        //        var product = from m in _db.SS_SalesStatistic
+        //                      where m.SS_Product.Plattform_Id == plattformId
+        //                      select m;
+        //        if (sortVal == "dec")
+        //        {
+        //            var slaes = (from m in product
+        //                         where m.SS_Product.Item_Name.Contains(query)
+        //                         orderby m.SingeleDay_Count descending
+        //                         select m).ToPagedList(_page, 20);
+        //            return PartialView(slaes);
+        //        }
+        //        else
+        //        {
+        //            var slaes = (from m in product
+        //                         where m.SS_Product.Item_Name.Contains(query)
+        //                         orderby m.SingeleDay_Count ascending
+        //                         select m).ToPagedList(_page, 20);
+        //            return PartialView(slaes);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (sortVal == "dec")
+        //        {
+        //            var slaes = (from m in _db.SS_SalesStatistic
+        //                         where m.SS_Product.Plattform_Id == plattformId
+        //                         orderby m.SingeleDay_Count descending
+        //                         select m).ToPagedList(_page, 20);
+        //            return PartialView(slaes);
+        //        }
+        //        else
+        //        {
+        //            var slaes = (from m in _db.SS_SalesStatistic
+        //                         where m.SS_Product.Plattform_Id == plattformId
+        //                         orderby m.SingeleDay_Count ascending
+        //                         select m).ToPagedList(_page, 20);
+        //            return PartialView(slaes);
+        //        }
+                
+        //    }
+        //}
 
         public ActionResult ProductList(int plattformId)
         {
