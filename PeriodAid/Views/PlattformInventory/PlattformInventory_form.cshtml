@@ -35,6 +35,7 @@
             <form method="post" id="Statistic_form" action="/PlattformInventory/getStatisticExcel">
                 <span hidden>@Html.TextBox("start_date", "", new { @class = "form-control input-sm", type = "text" })</span>
                 <span hidden>@Html.TextBox("end_date", "", new { @class = "form-control input-sm", type = "text" })</span>
+                <span hidden>@Html.TextBox("storage_id", "", new { @class = "form-control input-sm", type = "text" })</span>
             </form>
             <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#Statistic_form').submit();">导出数据</span>
             <label class="pull-left">日期区间：</label>
@@ -123,6 +124,7 @@
     $(function () {
         $("#start_date").attr("value", $('#start-date').val())
         $("#end_date").attr("value", $('#end-date').val())
+        $("#storage_id").attr("value", $(".storage_select_div select").children("option:selected").attr("data-ssid"))
         var last_date = $("#last_update").attr("data-val")
         $('#upload').click(function () {
             $('#file-name').trigger('click')
@@ -197,6 +199,7 @@
         // 选择仓库
         $(".storage_select_div select").change(function () {
             var that = $(this);
+            $("#storage_id").attr("value", that.children("option:selected").attr("data-ssid"))
             $('#file-loading').show();
             //$('#storage-select').text(that.text())
             //$('#show-storage').text($('#storage-select').text())

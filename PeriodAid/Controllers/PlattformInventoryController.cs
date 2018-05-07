@@ -786,11 +786,23 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("仓库库存");
             var startDate= form["start_date"];
             var endDate = form["end_date"];
-            var findSql = "select a.System_Code,a.Item_Code,a.Item_Name,b.salesCount,a.Purchase_Price,b.storageCount from " +
-                "(select id,System_Code,Item_Code,Item_Name,Purchase_Price from SS_Product) as a," +
-                "(SELECT Product_Id, sum(Sales_Count) as salesCount, sum(Storage_Count) as storageCount  FROM SS_SalesRecord " +
-                "where SalesRecord_Date >= '" + startDate + "' and SalesRecord_Date <= '" + endDate + "' and Storage_Id in " +
-                "(select Id from SS_Storage where Storage_Type = 1 and Plattform_Id = 1) group by Product_Id) as b where a.Id = b.Product_Id";
+            var findSql = "";
+            var storageId = form["storage_id"];
+            if (storageId == "0")
+            {
+                findSql = "select a.System_Code,a.Item_Code,a.Item_Name,b.salesCount,a.Purchase_Price,b.storageCount from " +
+                    "(select id,System_Code,Item_Code,Item_Name,Purchase_Price from SS_Product where Plattform_Id = 1) as a," +
+                    "(SELECT Product_Id, sum(Sales_Count) as salesCount, sum(Storage_Count) as storageCount  FROM SS_SalesRecord " +
+                    "where SalesRecord_Date >= '" + startDate + "' and SalesRecord_Date <= '" + endDate + "' and Storage_Id in (select Id from SS_Storage where Storage_Type=1 and Plattform_Id=1) " +
+                    " group by Product_Id) as b where a.Id = b.Product_Id";
+            }
+            else {
+                findSql = "select a.System_Code,a.Item_Code,a.Item_Name,b.salesCount,a.Purchase_Price,b.storageCount from " +
+                    "(select id,System_Code,Item_Code,Item_Name,Purchase_Price from SS_Product where Plattform_Id = 1) as a," +
+                    "(SELECT Product_Id, sum(Sales_Count) as salesCount, sum(Storage_Count) as storageCount  FROM SS_SalesRecord " +
+                    "where SalesRecord_Date >= '" + startDate + "' and SalesRecord_Date <= '" + endDate + "' and Storage_Id = '" + storageId + "'" +
+                    " group by Product_Id) as b where a.Id = b.Product_Id";
+            }
             var dataList = _db.Database.SqlQuery<StatisticExcelViewModel>(findSql);
             // 写产品列
             int row_pos = 1;
