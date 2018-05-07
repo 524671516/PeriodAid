@@ -141,20 +141,6 @@
             $("#start_date").attr("value", $('#start-date').val())
             $("#end_date").attr("value", $('#end-date').val())
         })
-        //导出数据
-        $("#download_btn").click(function () {
-            $.ajax({
-                url: "/PlattformInventory/getStatisticExcel/",
-                type: "post",
-                data: {
-                    startDate: $('#start-date').val(),
-                    endDate: $('#end-date').val()
-                },
-                success: function () {
-
-                }
-            })
-        })
         //日期格式改变
         $(".file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
