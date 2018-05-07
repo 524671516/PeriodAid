@@ -24,12 +24,6 @@
 }
 <div class="navbar-default tm_task-navbar" style="padding-top:10px;background-color:white">
     <div class="hidden" id="last_update" data-val="@ViewBag.DataDate"></div>
-    @*<div style="padding:20px 0;">
-        <div class="text-center h2">数据统计</div>
-        <div class="text-center h4">
-            <span id="start-time"></span>&nbsp;&nbsp;<span id="end-time"></span>&nbsp;&nbsp;<span id="show-storage"></span>
-        </div>
-    </div>*@
     <div id="select_condition">
         <div class="date_section_select select_condition_div">
             <span class="btn btn-primary float-right" id="download_btn" data-date="30">导出数据</span>
@@ -72,38 +66,6 @@
             </select>
         </div>
     </div>
-    @*<div class="form-view-header clear-float">
-        <div>
-            <div class="tm-view-control">
-                <ul class="nav nav-pills storage-nav" style="float:right">
-                    <li class="tm-view-control-sort dropdown" style="top:-4px">
-                        @*<span class="btn btn-primary select-date" data-date="7">7天</span>
-                        <span class="btn btn-primary select-date" data-date="15">15天</span>
-                        <span class="btn btn-primary select-date" data-date="30">30天</span>*@
-                        @*<span class="btn btn-primary" data-date="30">导出数据</span>
-                        <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
-                            <span class="tm-select-title active" id="storage-select" data-ssid="0" style="color:white;font-size:14px;">所有仓库</span>
-                            <span class="caret color-white"></span>
-                        </a>
-                        <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" id="nav-table-show" style="height:300px;overflow-y:auto">
-                            <li role="presentation" class="form-select-li all-form-select"><a href="#" role="tab" data-toggle="tab" data-ssid="0" class="form-select-a">所有仓库</a></li>
-                            @foreach (var item in ViewBag.storage)
-                            {
-                                <li>
-                                    <a href="#" role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a>
-                                </li>
-                            }
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
-                <input type="text"class="file-date" readonly="readonly" autocomplete="off" id="end-date" name="file-date" placeholder="请选择结束日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
-                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
-            </div>
-         </div>
-    </div>*@
     <table class="table table-bordered table-hover" id="sun_show"></table>
     <div id="storage_show"></div>
     <div class="tm-view-content-container  tm-view-container" id="file-loading" >
@@ -311,53 +273,5 @@
             }
         })
         })
-    /*TmDatePicker.Init({
-           container: "#tm-calendar-view-wrap",
-           onpagechanged: function (e) {
-               $.ajax({
-                   url: "/PlattformInventory/CustomUploadFilePartial",
-                   type: "post",
-                   data: {
-                       plattformId: getUrlParam('plattformId'),
-                       month: e.currentyear + "-" + e.currentmonth
-                   },
-                   success: function (data) {for (var i = 0; i < data.length; i++) {
-                       var record = data[i].record_date.ToString("yyyy-MM-dd");
-                   }
-                       $
-
-                   },
-                   error: function () {
-                       errorAlert("请求数据失败。");
-                   }
-               });
-           }
-       });*/
-    /*function data_date() {
-        for (i = 0; i < $(".date_show").length; i++) {
-            
-            var arrydata = arry[i].ToString('yyyy-MM-dd');
-            var year = arrydata.substring(0, 4);
-            var show_year = parseInt($(".ui-state-default").parent().attr("data-year"));
-            var show_month = parseInt($(".ui-state-default").parent().attr("data-month")) + 1;
-            var show_day = parseInt($(".ui-state-default").text())
-            if (show_month < 10) {
-                var _first = parseInt(arrydata.indexOf('-')) + 2;
-                var _end = parseInt(arrydata.indexOf('-')) + 3;
-                var month = arrydata.substring(_first, _end);
-            }
-            else {
-                var _first = parseInt(arrydata.indexOf('-')) + 1;
-                var _end = parseInt(arrydata.indexOf('-')) + 3;
-                var month = arrydata.substring(_first, _end);
-            }
-        }
-    }*/
-    /*$("#form-date-show").on("click", function() {
-        data_date()
-    })
-    $('.ui-corner-all').on('click',function(){
-        data_date()
-    })*/
 </script>
 }

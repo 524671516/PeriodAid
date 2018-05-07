@@ -136,7 +136,6 @@
     $("#ul_btn li a").each(function (index, el) {
         var href = this.getAttribute("href");
         $(this).removeClass("click_a_color")
-        //console.log(href)
         if (href == locUrl) {
             $(this).parent("li").addClass('left-navba-background');
             $(this).siblings(".san_you").removeClass("hidden")

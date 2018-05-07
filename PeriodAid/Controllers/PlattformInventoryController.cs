@@ -1280,23 +1280,23 @@ namespace PeriodAid.Controllers
                         " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7 + 6), '" + end + "'), 120)" +
                         " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7), '" + end + "'), 120)";
                 }
-                var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
-                //string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
-                //SqlConnection mycon = new SqlConnection(constr);
-                //mycon.Open();
-                //SqlCommand mycom = new SqlCommand(findSql, mycon);
-                //SqlDataReader mydr = mycom.ExecuteReader();
-                //List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
-                //while (mydr.Read())
-                //{
+                //var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
+                string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+                SqlConnection mycon = new SqlConnection(constr);
+                mycon.Open();
+                SqlCommand mycom = new SqlCommand(findSql, mycon);
+                SqlDataReader mydr = mycom.ExecuteReader();
+                List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
+                while (mydr.Read())
+                {
 
-                //    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
-                //    data.salesdate = mydr[0].ToString();
-                //    data.salescount = int.Parse(mydr[1].ToString());
-                //    data_list.Add(data);
-                //};
-                //mydr.Close();
-                //mycon.Close();
+                    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
+                    data.salesdate = mydr[0].ToString();
+                    data.salescount = int.Parse(mydr[1].ToString());
+                    data_list.Add(data);
+                };
+                mydr.Close();
+                mycon.Close();
                 return Json(new { result = "SUCCESS", data = data_list });
             }
             else {//15日平均值
@@ -1325,23 +1325,23 @@ namespace PeriodAid.Controllers
                         " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15 + 14), '" + end + "'), 120)" +
                         " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15), '" + end + "'), 120)";
                 }
-                var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
-                //string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
-                //SqlConnection mycon = new SqlConnection(constr);
-                //mycon.Open();
-                //SqlCommand mycom = new SqlCommand(findSql, mycon);
-                //SqlDataReader mydr = mycom.ExecuteReader();
-                //List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
-                //while (mydr.Read())
-                //{
+                //var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
+                string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+                SqlConnection mycon = new SqlConnection(constr);
+                mycon.Open();
+                SqlCommand mycom = new SqlCommand(findSql, mycon);
+                SqlDataReader mydr = mycom.ExecuteReader();
+                List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
+                while (mydr.Read())
+                {
 
-                //    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
-                //    data.salesdate = mydr[0].ToString();
-                //    data.salescount = int.Parse(mydr[1].ToString());
-                //    data_list.Add(data);
-                //};
-                //mydr.Close();
-                //mycon.Close();
+                    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
+                    data.salesdate = mydr[0].ToString();
+                    data.salescount = int.Parse(mydr[1].ToString());
+                    data_list.Add(data);
+                };
+                mydr.Close();
+                mycon.Close();
                 return Json(new { result = "SUCCESS", data = data_list });
             }
         }
