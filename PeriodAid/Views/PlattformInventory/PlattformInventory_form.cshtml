@@ -25,7 +25,12 @@
 <div class="navbar-default tm_task-navbar" style="padding-top:10px;background-color:white">
     <div class="hidden" id="last_update" data-val="@ViewBag.DataDate"></div>
     <div id="select_condition">
-        <span class="btn btn-primary float-right" id="download_btn" data-date="30" onclick="$('#statistics_form').submit();">导出数据</span>
+        <form method="post" id="Statistic_form" action="/PlattformInventory/getStatisticExcel">
+            <span hidden>@Html.TextBox("start_date", "", new { @class = "form-control input-sm", type = "text" })</span>
+            <span hidden>@Html.TextBox("end_date", "", new { @class = "form-control input-sm", type = "text" })</span>
+            <span hidden>@Html.TextBox("storage_id", "", new { @class = "form-control input-sm", type = "text" })</span>
+        </form>
+        <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#Statistic_form').submit();">导出数据</span>
         <div class="date_section_select select_condition_div">
             <label class="pull-left">平台选择：</label>
             <ul class="shop_section_ul">
@@ -43,7 +48,7 @@
                 <li class="dete_section_li_active">
                     <a class="select-date active" data-date="0">最新</a>
                 </li>
-                <li >
+                <li>
                     <a class="select-date" data-date="7">7天</a>
                 </li>
                 <li>
@@ -69,11 +74,11 @@
                     所有仓库
                 </option>
                 @foreach (var item in ViewBag.storage)
-                {
-                    <option data-ssid="@item.Id" class="form-select-a">
-                        @item.Storage_Name
-                    </option>
-                }
+            {
+                <option data-ssid="@item.Id" class="form-select-a">
+                    @item.Storage_Name
+                </option>
+        }
             </select>
         </div>
     </div>
@@ -89,43 +94,104 @@
 @section scripts{
 <script>
     // 初始化数据
-        $(function () {
-            var last_date = $("#last_update").attr("data-val")
-            $('#upload').click(function () {
-                $('#file-name').trigger('click')
-            })
-            $(".select-date").click(function () {
-                var that = $(this)
-                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
-                $(".select-date").removeClass("active")
-                that.addClass("active")
-                that.parent("li").addClass("dete_section_li_active")
-                var now = new Date(last_date)
-                $("#end-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
-                now.setDate(now.getDate() - that.attr("data-date"));
-                $("#start-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
-                $("#select-date-btn").trigger("click")
-            })
+    $(function () {
+        $("#start_date").attr("value", $('#start-date').val())
+        $("#end_date").attr("value", $('#end-date').val())
+        $("#storage_id").attr("value", $(".storage_select_div select").children("option:selected").attr("data-ssid"))
+        var last_date = $("#last_update").attr("data-val")
+        $('#upload').click(function () {
+            $('#file-name').trigger('click')
+        })
+        $(".select-date").click(function () {
+            var that = $(this)
+            $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+            $(".select-date").removeClass("active")
+            that.addClass("active")
+            that.parent("li").addClass("dete_section_li_active")
+            var now = new Date(last_date)
+            $("#end-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
+            now.setDate(now.getDate() - that.attr("data-date"));
+            $("#start-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
+            $("#select-date-btn").trigger("click")
+            $("#start_date").attr("value", $('#start-date').val())
+            $("#end_date").attr("value", $('#end-date').val())
+        })
         //日期格式改变
-            $(".file-date").datepicker({ dateFormat: "yy-mm-dd" });
+        $(".file-date").datepicker({ dateFormat: "yy-mm-dd" });
         //星期格式汉化
-            $(".file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+        $(".file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
         //月份格式汉化
-            $(".file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
-            $(".file-date").datepicker();
+        $(".file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+        $(".file-date").datepicker();
+        if ($("#start-date").val() == "" || $("#end-date").val() == "") {
+            errorAlert("请求数据失败。");
+        }
+        if (getUrlParam('plattformId') == 2) {
+            $.ajax({
+                url: '/PlattformInventory/TMS_StorageShow/',
+                type: 'post',
+                data: {
+                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    start: $('#start-date').val(),
+                    end: $('#end-date').val(),
+                },
+                success: function (data) {
+                    $.ajax({
+                        url: '/PlattformInventory/TMShow_StorageShow/',
+                        type: 'post',
+                        data: {
+                            plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                            Storage: $('#storage-select').attr('data-ssid'),
+                            start: $('#start-date').val(),
+                            end: $('#end-date').val(),
+                        },
+                        success: function (data) {
+
+                        }
+                    })
+                    $('#storage_show').html(data)
+                    $('#file-loading').hide()
+                }
+            })
+        }
+        else {
+            $.ajax({
+                url: '/PlattformInventory/StorageShow/',
+                data: {
+                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    start: $('#start-date').val(),
+                    end: $('#end-date').val()
+                },
+                success: function (data) {
+                    $('#sun_show').addClass('hidden')
+                    $('#storage_show').html(data)
+                    $('#file-loading').hide()
+                }
+            })
+        }
+        // 选择仓库
+        $(".storage_select_div select").change(function () {
+            var that = $(this);
+            $('#file-loading').show();
+            $("#storage_id").attr("value", that.children("option:selected").attr("data-ssid"))
+            //$('#storage-select').text(that.text())
+            //$('#show-storage').text($('#storage-select').text())
+            //$('#storage-select').attr('data-ssid', that.children('.form-select-a').attr('data-ssid'))
             if ($("#start-date").val() == "" || $("#end-date").val() == "") {
-                errorAlert("请求数据失败。");
+                errorAlert("请输入正确日期");
             }
             if (getUrlParam('plattformId') == 2) {
                 $.ajax({
-                    url: '/PlattformInventory/TMS_StorageShow/',
-                    type: 'post',
+                    url: "/PlattformInventory/TMS_StorageShow/",
                     data: {
                         plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                        Storage: that.children("option:selected").attr("data-ssid"),
                         start: $('#start-date').val(),
-                        end: $('#end-date').val(),
+                        end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#start-time').text($('#start-date').val())
+                        $('#end-time').text($('#end-date').val())
                         $.ajax({
                             url: '/PlattformInventory/TMShow_StorageShow/',
                             type: 'post',
@@ -133,60 +199,70 @@
                                 plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
                                 Storage: $('#storage-select').attr('data-ssid'),
                                 start: $('#start-date').val(),
-                                end: $('#end-date').val(),
+                                end: $('#end-date').val()
                             },
                             success: function (data) {
-                                
+                                $("#sun_show").html(data);
                             }
                         })
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
                     }
                 })
-            }
-            else {
+            } else {
                 $.ajax({
                     url: '/PlattformInventory/StorageShow/',
+                    type: 'post',
                     data: {
                         plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                        Storage: that.children("option:selected").attr("data-ssid"),
                         start: $('#start-date').val(),
                         end: $('#end-date').val()
                     },
                     success: function (data) {
+                        $('#start-time').text($('#start-date').val())
+                        $('#end-time').text($('#end-date').val())
                         $('#sun_show').addClass('hidden')
                         $('#storage_show').html(data)
                         $('#file-loading').hide()
                     }
                 })
             }
-            // 选择仓库
-            $(".storage_select_div select").change(function () {
-                var that = $(this);
-                $('#file-loading').show();
-                //$('#storage-select').text(that.text())
-                //$('#show-storage').text($('#storage-select').text())
-                //$('#storage-select').attr('data-ssid', that.children('.form-select-a').attr('data-ssid'))
-                if ($("#start-date").val() == "" || $("#end-date").val() == "") {
-                    errorAlert("请输入正确日期");
-                }
+        })
+        // 选择日期
+        $('#start-date').change(function () {
+            $("#start_date").attr("value", $('#start-date').val())
+            $('#start-time').text($(this).val())
+        })
+        $('#end-date').change(function () {
+            $("#end_date").attr("value", $('#end-date').val())
+            $('#end-time').text($(this).val())
+        })
+        $('#select-date-btn').click(function () {
+            var that = $(this)
+            if ($("#start-date").val() == "" || $("#end-date").val() == "") {
+                errorAlert("请输入正确日期");
+            }
+            else if ($('#start-date').val() <= $('#end-date').val()) {
+                $('#file-loading').show()
                 if (getUrlParam('plattformId') == 2) {
                     $.ajax({
                         url: "/PlattformInventory/TMS_StorageShow/",
                         data: {
                             plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
-                            Storage: that.children("option:selected").attr("data-ssid"),
+                            Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                             start: $('#start-date').val(),
                             end: $('#end-date').val()
                         },
                         success: function (data) {
                             $('#start-time').text($('#start-date').val())
                             $('#end-time').text($('#end-date').val())
+                            $("#show-storage").text($("#storage-select").text())
                             $.ajax({
                                 url: '/PlattformInventory/TMShow_StorageShow/',
-                                type: 'post',
                                 data: {
                                     plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
-                                    Storage: $('#storage-select').attr('data-ssid'),
+                                    Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                                     start: $('#start-date').val(),
                                     end: $('#end-date').val()
                                 },
@@ -201,100 +277,37 @@
                 } else {
                     $.ajax({
                         url: '/PlattformInventory/StorageShow/',
-                        type: 'post',
                         data: {
                             plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
-                            Storage: that.children("option:selected").attr("data-ssid"),
+                            Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                             start: $('#start-date').val(),
                             end: $('#end-date').val()
                         },
                         success: function (data) {
                             $('#start-time').text($('#start-date').val())
                             $('#end-time').text($('#end-date').val())
-                            $('#sun_show').addClass('hidden')
+                            $("#show-storage").text($("#storage-select").text())
                             $('#storage_show').html(data)
                             $('#file-loading').hide()
                         }
                     })
                 }
-            })
-            // 选择日期
-            $('#start-date').change(function () {
-                $('#start-time').text($(this).val())
-            })
-            $('#end-date').change(function () {
-                $('#end-time').text($(this).val())
-            })
-            $('#select-date-btn').click(function () {
-                var that = $(this)
-                if ($("#start-date").val() == "" || $("#end-date").val() == "") {
-                    errorAlert("请输入正确日期");
-                }
-                else if ($('#start-date').val() <= $('#end-date').val()) {
-                    $('#file-loading').show()
-                    if (getUrlParam('plattformId') == 2) {
-                        $.ajax({
-                            url: "/PlattformInventory/TMS_StorageShow/",
-                            data: {
-                                plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
-                                Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
-                                start: $('#start-date').val(),
-                                end: $('#end-date').val()
-                            },
-                            success: function (data) {
-                                $('#start-time').text($('#start-date').val())
-                                $('#end-time').text($('#end-date').val())
-                                $("#show-storage").text($("#storage-select").text())
-                                $.ajax({
-                                    url: '/PlattformInventory/TMShow_StorageShow/',
-                                    data: {
-                                        plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
-                                        Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
-                                        start: $('#start-date').val(),
-                                        end: $('#end-date').val()
-                                    },
-                                    success: function (data) {
-                                        $("#sun_show").html(data);
-                                    }
-                                })
-                                $('#storage_show').html(data)
-                                $('#file-loading').hide()
-                            }
-                        })
-                    } else {
-                        $.ajax({
-                            url: '/PlattformInventory/StorageShow/',
-                            data: {
-                                plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
-                                Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
-                                start: $('#start-date').val(),
-                                end: $('#end-date').val()
-                            },
-                            success: function (data) {
-                                $('#start-time').text($('#start-date').val())
-                                $('#end-time').text($('#end-date').val())
-                                $("#show-storage").text($("#storage-select").text())
-                                $('#storage_show').html(data)
-                                $('#file-loading').hide()
-                            }
-                        })
-                    }
-                } else {
-                    errorAlert('请选择正确日期')
-                }
-            })
+            } else {
+                errorAlert('请选择正确日期')
+            }
+        })
 
-            $(".shop_select").click(function () {
-                var that = $(this)
-                $(".shop_section_ul").children("li").removeClass("dete_section_li_active")
-                $(".shop_select").removeClass("active")
-                that.addClass("active")
-                that.parent("li").addClass("dete_section_li_active")
-            })
-            // 导出数据
-            $("#download_btn").on("click", function () {
-                console.log(1)
-            })
+        $(".shop_select").click(function () {
+            var that = $(this)
+            $(".shop_section_ul").children("li").removeClass("dete_section_li_active")
+            $(".shop_select").removeClass("active")
+            that.addClass("active")
+            that.parent("li").addClass("dete_section_li_active")
+        })
+        // 导出数据
+        $("#download_btn").on("click", function () {
+            console.log(1)
+        })
     })
 </script>
 }
