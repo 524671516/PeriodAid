@@ -177,6 +177,10 @@ namespace System.Web.Mvc
                     return "在售";
                 case 1:
                     return "爆款";
+                case 2:
+                    return "稳定款";
+                case 3:
+                    return "滞销款";
                 default:
                     return "未知";
             }

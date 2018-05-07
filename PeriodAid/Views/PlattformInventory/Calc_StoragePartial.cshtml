@@ -22,52 +22,52 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Count))
+                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Avg))
                     {
                         if (item.Product.Product_Type == 1)
                         {
-                    <tr>
-                        <th scope="row" style="position:relative" class="hot-product">
-                            @item.Product.System_Code
-                            <i class="fa fa-arrow-down color-blue" hidden></i>
-                            <i class="fa fa-arrow-up color-red" hidden></i>
-                            <a class="fire-box"></a>
-                        </th>
-                        <td>@Html.Encode(item.Product.Item_Code)</td>
-                        <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                        <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
-                        <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
-                        <td>
-                            <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
-                        </td>
-                        <td>
-                            <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
-                        </td>
-                        <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg, new { @class = "form-control calc_avgsales input-sm", type = "text" })</td>
-                        <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
-                    </tr>
+                            <tr>
+                                <th scope="row" style="position:relative" class="hot-product">
+                                    @item.Product.System_Code
+                                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                                    <i class="fa fa-arrow-up color-red" hidden></i>
+                                    <a class="fire-box"></a>
+                                </th>
+                                <td>@Html.Encode(item.Product.Item_Code)</td>
+                                <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
+                                <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                <td>
+                                    <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
+                                </td>
+                                <td>
+                                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
+                                </td>
+                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg, new { @class = "form-control calc_avgsales input-sm", type = "text" })</td>
+                                <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                            </tr>
                         }
                         else
                         {
-                    <tr>
-                        <th scope="row" style="position:relative" class="hot-product">
-                            @item.Product.System_Code
-                            <i class="fa fa-arrow-down color-blue" hidden></i>
-                            <i class="fa fa-arrow-up color-red" hidden></i>
-                        <td>@Html.Encode(item.Product.Item_Code)</td>
-                        <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                        <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
-                        <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
-                        <td>
-                            <input class="form-control calc_rate input-sm" readonly="readonly" value="30" type="text" style="text-align:center" />
+                            <tr>
+                                <th scope="row" style="position:relative" class="hot-product">
+                                    @item.Product.System_Code
+                                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                                    <i class="fa fa-arrow-up color-red" hidden></i>
+                                <td>@Html.Encode(item.Product.Item_Code)</td>
+                                <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
+                                <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                <td>
+                                    <input class="form-control calc_rate input-sm" readonly="readonly" value="30" type="text" style="text-align:center" />
 
-                        </td>
-                        <td>
-                            <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
-                        </td>
-                        <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg, new { @class = "form-control calc_avgsales input-sm", type = "text" })</td>
-                        <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
-                    </tr>
+                                </td>
+                                <td>
+                                    <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
+                                </td>
+                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg, new { @class = "form-control calc_avgsales input-sm", type = "text" })</td>
+                                <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                            </tr>
                         }
                     }
                 </tbody>
@@ -86,7 +86,7 @@
             type: "post",
             data: {
                 productId: that.attr("data-pid"),
-                plattformId: 1
+                plattformId: getUrlParam('plattformId'),
             },
             success: function (data) {
                 if (data["rate"] == 0) {

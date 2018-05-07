@@ -24,9 +24,9 @@
             $.ajax({
                 url: "/PlattformInventory/SalesStatistics_PartialView",
                 data: {
-                    plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
-                    query: $("#sales_product_query").val(),
-                    sortVal: $(".sort_i").eq(0).attr("data-sort")
+                    //plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+                    //query: $("#sales_product_query").val(),
+                    //sortVal: $(".sort_i").eq(0).attr("data-sort")
                 },
                 success: function (data) {
                     $("#salesstatistics_list_content").html(data)
@@ -38,9 +38,9 @@
                 $.ajax({
                     url: "/PlattformInventory/SalesStatistics_PartialView",
                     data: {
-                        plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
-                        query: $("#sales_product_query").val(),
-                        sortVal: $(".sort_i").eq(0).attr("data-sort")
+                        //plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+                        //query: $("#sales_product_query").val(),
+                        //sortVal: $(".sort_i").eq(0).attr("data-sort")
                     },
                     success: function (data) {
                         $("#salesstatistics_list_content").html(data);
@@ -51,9 +51,9 @@
                 $.ajax({
                     url: "/PlattformInventory/SalesStatistics_PartialView",
                     data: {
-                        plattformId: $(this).attr("data-id"),
-                        query: $("#sales_product_query").val(),
-                        sortVal: $(".sort_i").eq(0).attr("data-sort")
+                        //plattformId: $(this).attr("data-id"),
+                        //query: $("#sales_product_query").val(),
+                        //sortVal: $(".sort_i").eq(0).attr("data-sort")
                     },
                     success: function (data) {
                         $("#salesstatistics_list_content").html(data);

@@ -17,24 +17,70 @@
         .view-body-tr-1>td{
             font-size:15px
         }
+        label{
+            margin:0
+        }
     </style>
 }
 <div class="navbar-default tm_task-navbar" style="padding-top:10px;background-color:white">
-    <div style="padding:20px 0;">
+    <div class="hidden" id="last_update" data-val="@ViewBag.DataDate"></div>
+    @*<div style="padding:20px 0;">
         <div class="text-center h2">数据统计</div>
         <div class="text-center h4">
             <span id="start-time"></span>&nbsp;&nbsp;<span id="end-time"></span>&nbsp;&nbsp;<span id="show-storage"></span>
         </div>
+    </div>*@
+    <div id="select_condition">
+        <div class="date_section_select select_condition_div">
+            <span class="btn btn-primary float-right" id="download_btn" data-date="30">导出数据</span>
+            <label class="pull-left">日期区间：</label>
+            <ul class="date_section_ul">
+                <li class="dete_section_li_active">
+                    <a class="select-date active" data-date="0">最新</a>
+                </li>
+                <li >
+                    <a class="select-date" data-date="7">7天</a>
+                </li>
+                <li>
+                    <a class="select-date" data-date="15">15天</a>
+                </li>
+                <li>
+                    <a class="select-date" data-date="30">30天</a>
+                </li>
+            </ul>
+        </div>
+        <div class="select_condition_div date_select_div">
+            <label class="pull-left">选择日期：</label>
+            <div>
+                <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
+                <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="end-date" name="file-date" placeholder="请选择结束日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
+                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:0 12px;margin-left:8px" />
+            </div>
+        </div>
+        <div class="storage_select_div select_condition_div">
+            <label class="pull-left">仓库选择：</label>
+            <select>
+                <option data-ssid="0" class="form-select-a">
+                    所有仓库
+                </option>
+                @foreach (var item in ViewBag.storage)
+                {
+                    <option data-ssid="@item.Id" class="form-select-a">
+                        @item.Storage_Name
+                    </option>
+                }
+            </select>
+        </div>
     </div>
-    <div class="form-view-header clear-float">
+    @*<div class="form-view-header clear-float">
         <div>
             <div class="tm-view-control">
                 <ul class="nav nav-pills storage-nav" style="float:right">
                     <li class="tm-view-control-sort dropdown" style="top:-4px">
-                        <span class="btn btn-primary select-date" data-date="7">7天</span>
+                        @*<span class="btn btn-primary select-date" data-date="7">7天</span>
                         <span class="btn btn-primary select-date" data-date="15">15天</span>
-                        <span class="btn btn-primary select-date" data-date="30">30天</span>
-                        <span class="btn btn-primary" data-date="30">导出数据</span>
+                        <span class="btn btn-primary select-date" data-date="30">30天</span>*@
+                        @*<span class="btn btn-primary" data-date="30">导出数据</span>
                         <a data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="cursor:pointer;background-color:#337ab7;">
                             <span class="tm-select-title active" id="storage-select" data-ssid="0" style="color:white;font-size:14px;">所有仓库</span>
                             <span class="caret color-white"></span>
@@ -42,11 +88,11 @@
                         <ul class="dropdown-menu tm_dropdown" aria-labelledby="tm-view-dropdown-progress" id="nav-table-show" style="height:300px;overflow-y:auto">
                             <li role="presentation" class="form-select-li all-form-select"><a href="#" role="tab" data-toggle="tab" data-ssid="0" class="form-select-a">所有仓库</a></li>
                             @foreach (var item in ViewBag.storage)
-        {
-                    <li>
-                        <a href="#" role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a>
-                    </li>
-}
+                            {
+                                <li>
+                                    <a href="#" role="tab" data-toggle="tab" data-ssid="@item.Id" class="form-select-a" style="margin-right:0">@item.Storage_Name</a>
+                                </li>
+                            }
                         </ul>
                     </li>
                 </ul>
@@ -57,7 +103,7 @@
                 <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
             </div>
          </div>
-    </div>
+    </div>*@
     <table class="table table-bordered table-hover" id="sun_show"></table>
     <div id="storage_show"></div>
     <div class="tm-view-content-container  tm-view-container" id="file-loading" >
@@ -71,13 +117,19 @@
 <script>
     // 初始化数据
         $(function () {
+            var last_date = $("#last_update").attr("data-val")
             $('#upload').click(function () {
                 $('#file-name').trigger('click')
             })
             $(".select-date").click(function () {
-                var now = new Date()
+                var that = $(this)
+                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+                $(".select-date").removeClass("active")
+                that.addClass("active")
+                that.parent("li").addClass("dete_section_li_active")
+                var now = new Date(last_date)
                 $("#end-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
-                now.setDate(now.getDate() - $(this).attr("data-date"));
+                now.setDate(now.getDate() - that.attr("data-date"));
                 $("#start-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
                 $("#select-date-btn").trigger("click")
             })
@@ -135,12 +187,12 @@
                 })
             }
         // 选择仓库
-        $("#nav-table-show li").on("click", function () {
+            $(".storage_select_div select").change(function () {
             var that = $(this);
             $('#file-loading').show();
-            $('#storage-select').text(that.text())
-            $('#show-storage').text($('#storage-select').text())
-            $('#storage-select').attr('data-ssid', that.children('.form-select-a').attr('data-ssid'))
+            //$('#storage-select').text(that.text())
+            //$('#show-storage').text($('#storage-select').text())
+            //$('#storage-select').attr('data-ssid', that.children('.form-select-a').attr('data-ssid'))
             if ($("#start-date").val() == "" || $("#end-date").val() == "") {
                 errorAlert("请输入正确日期");
             }
@@ -149,7 +201,7 @@
                     url: "/PlattformInventory/TMS_StorageShow/",
                     data: {
                         plattformId: getUrlParam('plattformId'),
-                        Storage: that.children('.form-select-a').attr('data-ssid'),
+                        Storage: that.children("option:selected").attr("data-ssid"),
                         start:$('#start-date').val(),
                         end: $('#end-date').val()
                     },
@@ -179,7 +231,7 @@
                     type: 'post',
                     data: {
                         plattformId: getUrlParam('plattformId'),
-                        Storage: that.children('.form-select-a').attr('data-ssid'),
+                        Storage: that.children("option:selected").attr("data-ssid"),
                         start:$('#start-date').val(),
                         end: $('#end-date').val()
                     },
@@ -192,7 +244,6 @@
                     }
                 })
             }
-            
         })
         // 选择日期
         $('#start-date').change(function(){
@@ -213,7 +264,7 @@
                         url: "/PlattformInventory/TMS_StorageShow/",
                         data: {
                             plattformId: getUrlParam('plattformId'),
-                            Storage: $('#storage-select').attr('data-ssid'),
+                            Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                             start:$('#start-date').val(),
                             end: $('#end-date').val()
                         },
@@ -225,7 +276,7 @@
                                 url: '/PlattformInventory/TMShow_StorageShow/',
                                 data: {
                                     plattformId: getUrlParam('plattformId'),
-                                    Storage: $('#storage-select').attr('data-ssid'),
+                                    Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                                     start: $('#start-date').val(),
                                     end: $('#end-date').val()
                                 },
@@ -242,7 +293,7 @@
                         url: '/PlattformInventory/StorageShow/',
                         data: {
                             plattformId: getUrlParam('plattformId'),
-                            Storage: $('#storage-select').attr('data-ssid'),
+                            Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                             start: $('#start-date').val(),
                             end: $('#end-date').val()
                         },

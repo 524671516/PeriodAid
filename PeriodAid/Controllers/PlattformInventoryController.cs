@@ -487,26 +487,26 @@ namespace PeriodAid.Controllers
                 DateTime end = upload_record.SalesRecord_Date;
                 DateTime start_7 = end.AddDays(0 - 7);
                 DateTime start_15 = end.AddDays(0 - 15);
-                var content_7 = from m in _db.SS_SalesRecord
-                                where m.SalesRecord_Date > start_7 && m.SalesRecord_Date <= end
-                                && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
-                                group m by m.SS_Product into g
-                                select new CalcStorageViewModel { Product = g.Key, Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count) / 7 };
-                var content_15 = from m in _db.SS_SalesRecord
-                                 where m.SalesRecord_Date > start_15 && m.SalesRecord_Date <= end
-                                 && m.SS_Product.Plattform_Id == plattformId && m.SS_Product.Product_Type >= 0 && m.SS_Storage.Storage_Type == 1
-                                 group m by m.SS_Product into g
-                                 select new CalcStorageViewModel { Product = g.Key, Storage_Count = g.Sum(m => m.Storage_Count), Sales_Avg = g.Sum(m => m.Sales_Count)/15 };
+                var find_7 = "SELECT Product_Id,sum(Storage_Count) as Storage_Count,sum(Sales_Count) as Sales_Count FROM SS_SalesRecord" +
+                    " where SalesRecord_Date > \'" + start_7 + "\' and SalesRecord_Date<=\'" + end + "\'" +
+                    " and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')" +
+                    " and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id";
+                var data_list_7 = _db.Database.SqlQuery<CalcStorageViewModel>(find_7);
+                var find_15 = "SELECT Product_Id,sum(Storage_Count) as Storage_Count,sum(Sales_Count) as Sales_Count FROM SS_SalesRecord" +
+                    " where SalesRecord_Date > \'" + start_15 + "\' and SalesRecord_Date<=\'" + end + "\'" +
+                    " and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')" +
+                    " and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id";
+                var data_list_15 = _db.Database.SqlQuery<CalcStorageViewModel>(find_15);
                 List<CalcStorageViewModel> content_list = new List<CalcStorageViewModel>();
-                foreach (var data in content_15) {
+                foreach (var data in data_list_15) {
                     CalcStorageViewModel content = new CalcStorageViewModel();
-                    foreach (var avg in content_7) {
-                        if (data.Product.Id == avg.Product.Id) {
-                            content.Product = data.Product;
+                    foreach (var avg in data_list_7) {
+                        if (data.Product_id == avg.Product_id) {
+                            var product = _db.SS_Product.SingleOrDefault(m => m.Id == data.Product_id);
+                            content.Product = product;
                             content.Storage_Count = data.Storage_Count;
                             content.Sales_Avg = (data.Sales_Avg + avg.Sales_Count) / 2;
                             content_list.Add(content);
-                            var product = _db.SS_Product.SingleOrDefault(m => m.Id == data.Product.Id);
                             if ((data.Sales_Avg + avg.Sales_Count) / 2 > 30)
                             {
                                 product.Product_Type = 2;//稳定款
@@ -636,13 +636,25 @@ namespace PeriodAid.Controllers
                                 where m.Product_Id == data.Key && m.SalesRecord_Date <= recentDay && m.SalesRecord_Date >= lastDay
                                 group m by m.Product_Id into g
                                 select g).SingleOrDefault();
-                SS_SalesStatistic statistic = new SS_SalesStatistic();
-                statistic.Product_Id = data.Key;
-                statistic.StatisticTime = date;
-                statistic.SingeleDay_Count = data.Sum(m => m.Sales_Count);
-                statistic.Recent_Count = recentData.Sum(m => m.Sales_Count);
-                statistic.Last_Count = lastData == null ? 0 : lastData.Sum(m => m.Sales_Count);
-                _db.SS_SalesStatistic.Add(statistic);
+                var statistic = _db.SS_SalesStatistic.SingleOrDefault(m => m.Product_Id == data.Key);
+                if (statistic == null)
+                {
+                    statistic = new SS_SalesStatistic();
+                    statistic.Product_Id = data.Key;
+                    statistic.StatisticTime = date;
+                    statistic.SingeleDay_Count = data.Sum(m => m.Sales_Count);
+                    statistic.Recent_Count = recentData.Sum(m => m.Sales_Count);
+                    statistic.Last_Count = lastData == null ? 0 : lastData.Sum(m => m.Sales_Count);
+                    _db.SS_SalesStatistic.Add(statistic);
+                }else
+                {
+                    statistic.StatisticTime = date;
+                    statistic.SingeleDay_Count = data.Sum(m => m.Sales_Count);
+                    statistic.Recent_Count = recentData.Sum(m => m.Sales_Count);
+                    statistic.Last_Count = lastData == null ? 0 : lastData.Sum(m => m.Sales_Count);
+                    _db.Entry(statistic).State = System.Data.Entity.EntityState.Modified;
+                }
+                
             }
             return true;
         }
@@ -976,99 +988,132 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult SalesStatistics_PartialView(int plattformId, int? page, string query, string sortVal)
+        public ActionResult SalesStatistics_PartialView()
         {
-            int _page = page ?? 1;
+            return PartialView();
+        }
+
+        public ActionResult SalesStatisticsSort_PartialView(int plattformId, string query, string sortVal,int timeVal)
+        {
             if (query != "")
             {
                 var product = from m in _db.SS_SalesStatistic
                               where m.SS_Product.Plattform_Id == plattformId
                               select m;
-                if (sortVal == "asc")
+                if (sortVal == "dec")
                 {
-                    var slaes = (from m in product
-                                 where m.SS_Product.Item_Name.Contains(query)
-                                 orderby m.SingeleDay_Count ascending
-                                 select m).ToPagedList(_page, 20);
-                    return PartialView(slaes);
+                    if (timeVal ==1)
+                    {
+                        var slaes = (from m in product
+                                     where m.SS_Product.Item_Name.Contains(query)
+                                     orderby m.SingeleDay_Count descending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else if (timeVal == 2)
+                    {
+                        var slaes = (from m in product
+                                     where m.SS_Product.Item_Name.Contains(query)
+                                     orderby m.Recent_Count descending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else
+                    {
+                        var slaes = (from m in product
+                                     where m.SS_Product.Item_Name.Contains(query)
+                                     orderby m.Last_Count descending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    
                 }
                 else
                 {
-                    var slaes = (from m in product
-                                 where m.SS_Product.Item_Name.Contains(query)
-                                 orderby m.SingeleDay_Count descending
-                                 select m).ToPagedList(_page, 20);
-                    return PartialView(slaes);
+                    if (timeVal == 1)
+                    {
+                        var slaes = (from m in product
+                                     where m.SS_Product.Item_Name.Contains(query)
+                                     orderby m.SingeleDay_Count ascending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else if (timeVal == 2)
+                    {
+                        var slaes = (from m in product
+                                     where m.SS_Product.Item_Name.Contains(query)
+                                     orderby m.Recent_Count ascending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else
+                    {
+                        var slaes = (from m in product
+                                     where m.SS_Product.Item_Name.Contains(query)
+                                     orderby m.Last_Count ascending
+                                     select m);
+                        return PartialView(slaes);
+                    }
                 }
             }
             else
             {
-                if (sortVal == "asc")
+                if (sortVal == "dec")
                 {
-                    var slaes = (from m in _db.SS_SalesStatistic
-                                 where m.SS_Product.Plattform_Id == plattformId
-                                 orderby m.SingeleDay_Count ascending
-                                 select m).ToPagedList(_page, 20);
-                    return PartialView(slaes);
+                    if (timeVal == 1)
+                    {
+                        var slaes = (from m in _db.SS_SalesStatistic
+                                     where m.SS_Product.Plattform_Id == plattformId
+                                     orderby m.SingeleDay_Count descending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else if (timeVal == 2)
+                    {
+                        var slaes = (from m in _db.SS_SalesStatistic
+                                     where m.SS_Product.Plattform_Id == plattformId
+                                     orderby m.Recent_Count descending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else
+                    {
+                        var slaes = (from m in _db.SS_SalesStatistic
+                                     where m.SS_Product.Plattform_Id == plattformId
+                                     orderby m.Last_Count descending
+                                     select m);
+                        return PartialView(slaes); ;
+                    }
                 }
                 else
                 {
-                    var slaes = (from m in _db.SS_SalesStatistic
-                                 where m.SS_Product.Plattform_Id == plattformId
-                                 orderby m.SingeleDay_Count descending
-                                 select m).ToPagedList(_page, 20);
-                    return PartialView(slaes);
+                    if (timeVal == 1)
+                    {
+                        var slaes = (from m in _db.SS_SalesStatistic
+                                     where m.SS_Product.Plattform_Id == plattformId
+                                     orderby m.SingeleDay_Count ascending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else if (timeVal == 2)
+                    {
+                        var slaes = (from m in _db.SS_SalesStatistic
+                                     where m.SS_Product.Plattform_Id == plattformId
+                                     orderby m.Recent_Count ascending
+                                     select m);
+                        return PartialView(slaes);
+                    }
+                    else
+                    {
+                        var slaes = (from m in _db.SS_SalesStatistic
+                                     where m.SS_Product.Plattform_Id == plattformId
+                                     orderby m.Last_Count ascending
+                                     select m);
+                        return PartialView(slaes); ;
+                    }
                 }
-
             }
-
         }
-        //public ActionResult SalesStatisticsSort_PartialView(int plattformId, int? page, string query,string sortVal)
-        //{
-        //    int _page = page ?? 1;
-        //    if (query != "")
-        //    {
-        //        var product = from m in _db.SS_SalesStatistic
-        //                      where m.SS_Product.Plattform_Id == plattformId
-        //                      select m;
-        //        if (sortVal == "dec")
-        //        {
-        //            var slaes = (from m in product
-        //                         where m.SS_Product.Item_Name.Contains(query)
-        //                         orderby m.SingeleDay_Count descending
-        //                         select m).ToPagedList(_page, 20);
-        //            return PartialView(slaes);
-        //        }
-        //        else
-        //        {
-        //            var slaes = (from m in product
-        //                         where m.SS_Product.Item_Name.Contains(query)
-        //                         orderby m.SingeleDay_Count ascending
-        //                         select m).ToPagedList(_page, 20);
-        //            return PartialView(slaes);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (sortVal == "dec")
-        //        {
-        //            var slaes = (from m in _db.SS_SalesStatistic
-        //                         where m.SS_Product.Plattform_Id == plattformId
-        //                         orderby m.SingeleDay_Count descending
-        //                         select m).ToPagedList(_page, 20);
-        //            return PartialView(slaes);
-        //        }
-        //        else
-        //        {
-        //            var slaes = (from m in _db.SS_SalesStatistic
-        //                         where m.SS_Product.Plattform_Id == plattformId
-        //                         orderby m.SingeleDay_Count ascending
-        //                         select m).ToPagedList(_page, 20);
-        //            return PartialView(slaes);
-        //        }
-                
-        //    }
-        //}
 
         public ActionResult ProductList(int plattformId)
         {
@@ -1100,7 +1145,6 @@ namespace PeriodAid.Controllers
                                         select m).ToPagedList(_page, 15);
                     return PartialView(SearchResult);
                 }
-
             }
             else
             {
@@ -1146,6 +1190,8 @@ namespace PeriodAid.Controllers
             selectvalue.Add(new { Text = "下架", Value = -1 });
             selectvalue.Add(new { Text = "正常", Value = 0 });
             selectvalue.Add(new { Text = "爆款", Value = 1 });
+            selectvalue.Add(new { Text = "稳定款", Value = 2 });
+            selectvalue.Add(new { Text = "滞销款", Value = 3 });
             ViewBag.SelectList = new SelectList(selectvalue, "Value", "Text", item.Product_Type);
             return PartialView(item);
         }
@@ -1234,22 +1280,23 @@ namespace PeriodAid.Controllers
                         " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7 + 6), '" + end + "'), 120)" +
                         " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7), '" + end + "'), 120)";
                 }
-                string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
-                SqlConnection mycon = new SqlConnection(constr);
-                mycon.Open();
-                SqlCommand mycom = new SqlCommand(findSql, mycon);
-                SqlDataReader mydr = mycom.ExecuteReader();
-                List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
-                while (mydr.Read())
-                {
+                var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
+                //string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+                //SqlConnection mycon = new SqlConnection(constr);
+                //mycon.Open();
+                //SqlCommand mycom = new SqlCommand(findSql, mycon);
+                //SqlDataReader mydr = mycom.ExecuteReader();
+                //List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
+                //while (mydr.Read())
+                //{
 
-                    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
-                    data.salesdate = mydr[0].ToString();
-                    data.salescount = int.Parse(mydr[1].ToString());
-                    data_list.Add(data);
-                };
-                mydr.Close();
-                mycon.Close();
+                //    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
+                //    data.salesdate = mydr[0].ToString();
+                //    data.salescount = int.Parse(mydr[1].ToString());
+                //    data_list.Add(data);
+                //};
+                //mydr.Close();
+                //mycon.Close();
                 return Json(new { result = "SUCCESS", data = data_list });
             }
             else {//15日平均值
@@ -1278,22 +1325,23 @@ namespace PeriodAid.Controllers
                         " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15 + 14), '" + end + "'), 120)" +
                         " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15), '" + end + "'), 120)";
                 }
-                string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
-                SqlConnection mycon = new SqlConnection(constr);
-                mycon.Open();
-                SqlCommand mycom = new SqlCommand(findSql, mycon);
-                SqlDataReader mydr = mycom.ExecuteReader();
-                List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
-                while (mydr.Read())
-                {
+                var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
+                //string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+                //SqlConnection mycon = new SqlConnection(constr);
+                //mycon.Open();
+                //SqlCommand mycom = new SqlCommand(findSql, mycon);
+                //SqlDataReader mydr = mycom.ExecuteReader();
+                //List<ProductStatisticViewModelAverage> data_list = new List<ProductStatisticViewModelAverage>();
+                //while (mydr.Read())
+                //{
 
-                    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
-                    data.salesdate = mydr[0].ToString();
-                    data.salescount = int.Parse(mydr[1].ToString());
-                    data_list.Add(data);
-                };
-                mydr.Close();
-                mycon.Close();
+                //    ProductStatisticViewModelAverage data = new ProductStatisticViewModelAverage();
+                //    data.salesdate = mydr[0].ToString();
+                //    data.salescount = int.Parse(mydr[1].ToString());
+                //    data_list.Add(data);
+                //};
+                //mydr.Close();
+                //mycon.Close();
                 return Json(new { result = "SUCCESS", data = data_list });
             }
         }

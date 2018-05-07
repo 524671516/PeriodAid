@@ -1,5 +1,5 @@
-﻿@model PagedList.IPagedList<PeriodAid.Models.SS_SalesStatistic>
-@using PagedList.Mvc;
+﻿@*@model PagedList.IPagedList<PeriodAid.Models.SS_SalesStatistic>
+@using PagedList.Mvc;*@
 <table class="table table-hover">
     <thead>
         <tr>
@@ -13,47 +13,39 @@
         </tr>
     </thead>
     <tbody id="sort_partialView">
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.SS_Product.System_Code</td>
-                <td>@item.SS_Product.Item_Name</td>
-                <td>@item.SingeleDay_Count</td>
-                <td>@item.Recent_Count</td>
-                <td>@item.Last_Count</td>
-                @if (item.Last_Count != 0)
-                {
-                    <td>@Math.Round(((decimal)item.Recent_Count / item.Last_Count), 4).ToString("p2")</td>
-                }
-                else
-                {
-                    <td>0</td>
-                }
-                <td>
-                    <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
-                    <a class="JD-Traffic" data-val="@item.Id" data-name="@item.SS_Product.Item_Name" style="cursor:pointer">来源分析</a>
-                </td>
-            </tr>
-        }
     </tbody>
 </table>
-    <div class="text-right">@Html.PagedListPager(Model, page => Url.Action("SalesStatistics_PartialView", new { page }))</div>
+@*<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("SalesStatisticsSort_PartialView", new { page }))</div>*@
+
 <script>
-    $(".pagination > li > a").click(function () {
-        var l = $(this).attr("href");
-        $.ajax({
-            url: l,
-            data: {
-                plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
-                query: $("#sales_product_query").val(),
-                sortVal: $(".sort_i").eq(0).attr("data-sort")
-            },
-            success: function (data) {
-                $("#salesstatistics_list_content").html(data);
-            }
-        });
-        return false;
-    });
+    $.ajax({
+        url: "/PlattformInventory/SalesStatisticsSort_PartialView",
+        data: {
+            plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+            query: $("#sales_product_query").val(),
+            sortVal: $(".sort_i").eq(0).attr("data-sort"),
+            timeVal: $(".sales_sort").eq(0).attr("data-val")
+        },
+        success: function (data) {
+            $("#sort_partialView").html(data)
+        }
+    })
+    // 分页
+    //$(".pagination > li > a").click(function () {
+    //    var l = $(this).attr("href");
+    //    $.ajax({
+    //        url: l,
+    //        data: {
+    //            plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+    //            query: $("#sales_product_query").val(),
+    //            sortVal: $(".sort_i").eq(0).attr("data-sort")
+    //        },
+    //        success: function (data) {
+    //            $("#sort_partialView").html(data);
+    //        }
+    //    });
+    //    return false;
+    //});
     // 排序
     $(".sales_sort").on("click", function () {
         var that = $(this)
@@ -63,14 +55,15 @@
             that.children(".sort_i").addClass("fa-arrow-down color-blue")
             that.children(".sort_i").attr("data-sort", "dec")
             $.ajax({
-                url: "/PlattformInventory/SalesStatistics_PartialView",
+                url: "/PlattformInventory/SalesStatisticsSort_PartialView",
                 data: {
                     plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
                     query: $("#sales_product_query").val(),
-                    sortVal: that.children(".sort_i").attr("data-sort")
+                    sortVal: that.children(".sort_i").attr("data-sort"),
+                    timeVal: that.attr("data-val")
                 },
                 success: function (data) {
-                    $("#salesstatistics_list_content").html(data);
+                    $("#sort_partialView").html(data);
                 }
             })
         }
@@ -80,14 +73,15 @@
             that.children(".sort_i").addClass("fa-arrow-up color-red")
             that.children(".sort_i").attr("data-sort", "asc")
             $.ajax({
-                url: "/PlattformInventory/SalesStatistics_PartialView",
+                url: "/PlattformInventory/SalesStatisticsSort_PartialView",
                 data: {
                     plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
                     query: $("#sales_product_query").val(),
-                    sortVal: that.children(".sort_i").attr("data-sort")
+                    sortVal: that.children(".sort_i").attr("data-sort"),
+                    timeVal: that.attr("data-val")
                 },
                 success: function (data) {
-                    $("#salesstatistics_list_content").html(data);
+                    $("#sort_partialView").html(data);
                 }
             })
         }

@@ -49,7 +49,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                     @*<span class="JD-Traffic-Order">@Html.ActionLink("销量统计", "ViewTrafficStatistic", new { productId = item.Id })</span>*@
                 </td>
             </tr>
@@ -81,8 +81,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                     
                 </td>
             </tr>
@@ -118,9 +117,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
-                    <a class="JD-Traffic" data-val="@item.Id" data-name="@item.Item_Name" style="cursor:pointer">来源分析</a>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                 </td>
             </tr>
         }
@@ -151,8 +148,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                 </td>
             </tr>
         }
@@ -181,7 +177,8 @@
                 url: "/PlattformInventory/ProductGrowthRate",
                 type:"post",
                 data: {
-                    productId: that.attr("data-val")
+                    productId: that.attr("data-val"),
+                    plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
                 },
                 success: function (data) {
                     if (data["rate"] == 0) {
