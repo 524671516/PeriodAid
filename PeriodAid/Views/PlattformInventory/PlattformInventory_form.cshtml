@@ -24,8 +24,8 @@
 }
 <div class="navbar-default tm_task-navbar" style="padding-top:10px;background-color:white">
     <div class="hidden" id="last_update" data-val="@ViewBag.DataDate"></div>
+    <span class="btn float-right" id="download_btn" data-date="30" style="background:#eef1f5;color:#717171;border-color: #bfcad1;border-radius:0;margin:5px 5px" onclick="$('#statistics_form').submit();">导出数据</span>
     <div id="select_condition">
-        <span class="btn btn-primary float-right" id="download_btn" data-date="30" onclick="$('#statistics_form').submit();">导出数据</span>
         <div class="date_section_select select_condition_div">
             <label class="pull-left">平台选择：</label>
             <ul class="shop_section_ul">
@@ -59,7 +59,7 @@
             <div>
                 <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
                 <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="end-date" name="file-date" placeholder="请选择结束日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
-                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:0 12px;margin-left:8px" />
+                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询"style="background:#eef1f5;color:#717171;border-color: #bfcad1;border-radius:0;padding:2px 12px;margin-left:8px"/>
             </div>
         </div>
         <div class="storage_select_div select_condition_div">
