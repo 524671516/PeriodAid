@@ -45,6 +45,21 @@ namespace PeriodAid.Models
         public int salescount { get; set; }
     }
 
+    public class StatisticExcelViewModel
+    {
+        public string System_Code { get; set; }
+
+        public string Item_Code { get; set; }
+
+        public string Item_Name { get; set; }
+
+        public int salesCount { get; set; }
+
+        public decimal Purchase_Price { get; set; }
+
+        public int storageCount { get; set; }
+    }
+
     public class EventStatisticViewModel
     {
         public int productId { get; set; }
