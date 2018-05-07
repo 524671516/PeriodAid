@@ -768,6 +768,63 @@ namespace PeriodAid.Controllers
             _db.SaveChanges();
             return true;
         }
+
+        //数据统计导出
+        [HttpPost]
+        public ActionResult getStatisticExcel(FormCollection form)
+        {
+            HSSFWorkbook book = new HSSFWorkbook();
+            ISheet sheet = book.CreateSheet("Total");
+            // 写标题
+            IRow row = sheet.CreateRow(0);
+            int cell_pos = 0;
+            row.CreateCell(cell_pos).SetCellValue("产品编号");
+            row.CreateCell(++cell_pos).SetCellValue("商品编码");
+            row.CreateCell(++cell_pos).SetCellValue("商品名称");
+            row.CreateCell(++cell_pos).SetCellValue("销售数据");
+            row.CreateCell(++cell_pos).SetCellValue("结算单价");
+            row.CreateCell(++cell_pos).SetCellValue("仓库库存");
+            var startDate= form["start_date"];
+            var endDate = form["end_date"];
+            var findSql = "";
+            var storageId = form["storage_id"];
+            if (storageId == "0")
+            {
+                findSql = "select a.System_Code,a.Item_Code,a.Item_Name,b.salesCount,a.Purchase_Price,b.storageCount from " +
+                    "(select id,System_Code,Item_Code,Item_Name,Purchase_Price from SS_Product where Plattform_Id = 1) as a," +
+                    "(SELECT Product_Id, sum(Sales_Count) as salesCount, sum(Storage_Count) as storageCount  FROM SS_SalesRecord " +
+                    "where SalesRecord_Date >= '" + startDate + "' and SalesRecord_Date <= '" + endDate + "' and Storage_Id in (select Id from SS_Storage where Storage_Type=1 and Plattform_Id=1) " +
+                    " group by Product_Id) as b where a.Id = b.Product_Id";
+            }
+            else {
+                findSql = "select a.System_Code,a.Item_Code,a.Item_Name,b.salesCount,a.Purchase_Price,b.storageCount from " +
+                    "(select id,System_Code,Item_Code,Item_Name,Purchase_Price from SS_Product where Plattform_Id = 1) as a," +
+                    "(SELECT Product_Id, sum(Sales_Count) as salesCount, sum(Storage_Count) as storageCount  FROM SS_SalesRecord " +
+                    "where SalesRecord_Date >= '" + startDate + "' and SalesRecord_Date <= '" + endDate + "' and Storage_Id = '" + storageId + "'" +
+                    " group by Product_Id) as b where a.Id = b.Product_Id";
+            }
+            var dataList = _db.Database.SqlQuery<StatisticExcelViewModel>(findSql);
+            // 写产品列
+            int row_pos = 1;
+            foreach (var data in dataList)
+            {
+                IRow single_row = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row.CreateCell(cell_pos).SetCellValue(data.System_Code);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.Item_Code);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.Item_Name);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.salesCount);
+                single_row.CreateCell(++cell_pos).SetCellValue(Convert.ToDouble(data.Purchase_Price));
+                single_row.CreateCell(++cell_pos).SetCellValue(data.storageCount);
+                row_pos++;
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
+        }
+
         // 获取仓库表格
         [HttpPost]
         public ActionResult getInventoryExcel(FormCollection form)
@@ -785,13 +842,15 @@ namespace PeriodAid.Controllers
             row.CreateCell(cell_pos).SetCellValue("产品编号");
             row.CreateCell(++cell_pos).SetCellValue("产品名称");
             row.CreateCell(++cell_pos).SetCellValue("商品编码");
+            row.CreateCell(++cell_pos).SetCellValue("箱规");
             foreach (var inventory in inventory_list)
             {
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "日均销量");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "周转数");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "库存");
-                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "补货");
-                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "箱数");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "预期补货");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "实际补货");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "补货箱数");
             }
             row.CreateCell(++cell_pos).SetCellValue("合计补货");
             row.CreateCell(++cell_pos).SetCellValue("合计金额");
@@ -804,6 +863,7 @@ namespace PeriodAid.Controllers
                 single_row.CreateCell(cell_pos).SetCellValue(product.System_Code);
                 single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Name);
                 single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Code);
+                single_row.CreateCell(++cell_pos).SetCellValue(product.Carton_Spec);
                 double total_count = 0;
                 //日均销量
                 var avg_data = form["p_avg_" + product.Id];
@@ -835,15 +895,29 @@ namespace PeriodAid.Controllers
                         double carton_count = 0;
                         if (product.Product_Type == 1)
                         {
-                            carton_count = recommand_storage / cartonspec >= 0.3 ? 1 : 0;
+                            if (recommand_storage / cartonspec < 1)
+                            {
+                                carton_count =Convert.ToInt32(recommand_storage) / cartonspec >= 0.3 ? 1 : 0;
+                            }
+                            else {
+                                carton_count = Convert.ToInt32(recommand_storage) / cartonspec + (recommand_storage % cartonspec / cartonspec >= 0.3 ? 1 : 0);
+                            }
                         }
                         else {
-                            carton_count = recommand_storage / cartonspec >= 0.5 ? 1 : 0;
+                            if (recommand_storage / cartonspec < 1)
+                            {
+                                carton_count = Convert.ToInt32(recommand_storage) / cartonspec >= 0.5 ? 1 : 0;
+                            }
+                            else
+                            {
+                                carton_count = Convert.ToInt32(recommand_storage) / cartonspec + (recommand_storage % cartonspec / cartonspec >= 0.5 ? 1 : 0);
+                            }
                         }
                         double final_storage = carton_count * cartonspec;
                         single_row.CreateCell(++cell_pos).SetCellValue(avg_data);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(carton_count);
                         total_count += final_storage;
@@ -1174,7 +1248,7 @@ namespace PeriodAid.Controllers
                 }
             }
             var product = _db.SS_Product.SingleOrDefault(m => m.Id == productId);
-            if (product.Product_Type == 2)//稳定款
+            if (product.Product_Type == 1 || product.Product_Type == 2)//稳定款
             {
                 turnoverDays = 25;
             }
