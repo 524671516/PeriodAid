@@ -15,17 +15,6 @@
     <input type="button"  class="btn btn-primary" name="statistic_btn" value="15天均值" style="padding:1px 12px;margin-left:8px"/>
 </div>*@
 <div id="select_condition">
-    <div class="date_section_select select_condition_div">
-        <label class="pull-left">均值区间：</label>
-        <ul class="date_section_ul">
-            <li class="dete_section_li_active">
-                <a class="select-date active" id="statistic_btn_average7" data-date="7">7天均值</a>
-            </li>
-            <li>
-                <a class="select-date" id="statistic_btn_average15" data-date="15">15天均值</a>
-            </li>
-        </ul>
-    </div>
     <div class="select_condition_div date_select_div">
         <label class="pull-left">选择日期：</label>
         <div>
@@ -33,6 +22,28 @@
             <input type="text" id="end-date" class="file-data" style="margin-left:0" name="end-date" placeholder="请选择结束日期" />
             <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
         </div>
+    </div>
+    <div class="select_condition_div date_select_div">
+        <label class="pull-left">参照日期：</label>
+        <ul class="average_section_ul">
+            <li class="dete_section_li_active">
+                <a id="average_start" data-val="1" class="average_type active" name="statistic_btn">开始时间</a>
+            </li>
+            <li>
+                <a id="average_end" data-val="0" class="average_type" name="statistic_btn">结束时间</a>
+            </li>
+        </ul>
+    </div>
+    <div class="date_section_select select_condition_div">
+        <label class="pull-left">均值区间：</label>
+        <ul class="date_section_ul">
+            <li>
+                <a class="select-date active" id="statistic_btn_average7" data-date="7">7天均值</a>
+            </li>
+            <li>
+                <a class="select-date" id="statistic_btn_average15" data-date="15">15天均值</a>
+            </li>
+        </ul>
     </div>
 </div>
 <div id="myChart_Bar" style="min-width:500px;height:400px">
@@ -71,10 +82,13 @@
                     showstatistic(data);
                 }
             });
-            //$(".average_type").click(function () {
-            //    $(".average_type.active").removeClass("active")
-            //    $(this).addClass("active")
-            //})
+            $(".average_type").click(function () {
+                $(".average_type.active").removeClass("active")
+                $(this).addClass("active")
+                $(".average_section_ul").children("li").removeClass("dete_section_li_active")
+                $(this).parent("li").addClass("dete_section_li_active")
+                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+            })
             $(".select-date").click(function () {
                 var that = $(this)
                 $(".date_section_ul").children("li").removeClass("dete_section_li_active")
@@ -104,6 +118,7 @@
                             type: 1,
                             a_type: a_type
                         }, success: function (data) {
+                            console.log(data)
                             showstatistic(data);
                         }
                     });
@@ -119,6 +134,7 @@
                             type: 1,
                             a_type: a_type
                         }, success: function (data) {
+                            console.log(data)
                             showstatistic(data);
                         }
                     });
@@ -166,6 +182,7 @@
                 }
             })
             $("#statistic_btn").click(function () {
+                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
                 if ($("#start-date").val() <= $("#end-date").val()) {
                     $.ajax({
                         url: "/PlattformInventory/ViewProductStatisticPartial",
@@ -184,13 +201,14 @@
                 
             })
         });
-        function showstatistic(data) {
-            var resultdata = data.data;
+    function showstatistic(data) {
+        var resultdata = data.data;
             var totalarray = new Array();
             var datearray = new Array();
             for (var i = 0; i < resultdata.length; i++) {
                 var deeint;
                 var dee;
+                //console.log(data.data[i].salesdate)
                 if (data.data[i].salesdate.indexOf("~") == -1) {
                     deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
                     dee = new Date(deeint)

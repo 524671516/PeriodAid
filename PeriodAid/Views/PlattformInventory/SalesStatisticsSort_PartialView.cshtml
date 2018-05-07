@@ -16,8 +16,18 @@
             <td>0</td>
         }
         <td>
-            <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
+            <span class="JD-product">@Html.ActionLink("销售曲线", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
             <a class="JD-Traffic" data-val="@item.Id" data-name="@item.SS_Product.Item_Name" style="cursor:pointer">来源分析</a>
         </td>
     </tr>
 }
+<script>
+    $(function () {
+        // 来源分析
+        $(".JD-Traffic").on("click", function () {
+            var product_Id = $(this).attr('data-val')
+            var product_Name = $(this).attr("data-name")
+            $(this).attr("href", "TrafficList?plattformId=" + getUrlParam('plattformId') + "&productId=" + product_Id)
+        })
+    })
+</script>

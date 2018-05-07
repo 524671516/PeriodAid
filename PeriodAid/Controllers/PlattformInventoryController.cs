@@ -859,7 +859,7 @@ namespace PeriodAid.Controllers
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "库存表.xls");
         }
-
+        
         /*public ActionResult LeadingIn() {
             return View();
         }*/
@@ -988,8 +988,10 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult SalesStatistics_PartialView()
+        public ActionResult SalesStatistics_PartialView(int plattformId)
         {
+            var upload_date = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault(m => m.Plattform_Id == plattformId);
+            ViewBag.Upload = upload_date;
             return PartialView();
         }
 
@@ -1280,7 +1282,6 @@ namespace PeriodAid.Controllers
                         " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7 + 6), '" + end + "'), 120)" +
                         " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 7) * 7), '" + end + "'), 120)";
                 }
-                //var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
                 string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
                 SqlConnection mycon = new SqlConnection(constr);
                 mycon.Open();
@@ -1325,7 +1326,6 @@ namespace PeriodAid.Controllers
                         " order by convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15 + 14), '" + end + "'), 120)" +
                         " + '~' + convert(nvarchar(10), DATEADD(DAY, -(((abs(datepart(DAYOFYEAR, SalesRecord_Date) - " + sub_end + ")) / 15) * 15), '" + end + "'), 120)";
                 }
-                //var data_list = _db.Database.SqlQuery<ProductStatisticViewModelAverage>(findSql);
                 string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
                 SqlConnection mycon = new SqlConnection(constr);
                 mycon.Open();

@@ -178,7 +178,7 @@
                 type:"post",
                 data: {
                     productId: that.attr("data-val"),
-                    plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
                 },
                 success: function (data) {
                     if (data["rate"] == 0) {
@@ -195,7 +195,7 @@
             $.ajax({
                 url: l,
                 data: {
-                    plattformId: getUrlParam('plattformId'),
+                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
                     query: $("#storage-product-query").val()
                 },
                 success: function (data) {
@@ -210,7 +210,6 @@
             $('.TM-product').addClass('hidden')
         }
         $('.select-a').click(function () {
-            //console.log($(this).attr('data-val'))
             $.ajax({
                 url: '/PlattformInventory/EditProductInfo',
                 data: {

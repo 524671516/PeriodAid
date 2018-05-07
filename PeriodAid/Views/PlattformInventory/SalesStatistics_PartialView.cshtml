@@ -1,6 +1,4 @@
-﻿@*@model PagedList.IPagedList<PeriodAid.Models.SS_SalesStatistic>
-@using PagedList.Mvc;*@
-<table class="table table-hover">
+﻿<table class="table table-hover">
     <thead>
         <tr>
             <th>系统编码</th>
@@ -9,19 +7,18 @@
             <th><a href="#" style="display:inline-block;width:100%;height:100%;position:relative" class="sales_sort" data-val="2">近7天销量<i class="fa sort_i" data-sort="dec"  style="position:absolute;right:0;top:2px"></i></a></th>
             <th><a href="#" style="display:inline-block;width:100%;height:100%;position:relative" class="sales_sort" data-val="3">前7天销量<i class="fa sort_i" data-sort="dec"  style="position:absolute;right:0;top:2px"></i></a></th>
             <th>增比</th>
-            <th></th>
+            <th>数据日期:@ViewBag.Upload.SalesRecord_Date.ToString("yyyy-MM-dd")</th>
         </tr>
     </thead>
     <tbody id="sort_partialView">
     </tbody>
 </table>
-@*<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("SalesStatisticsSort_PartialView", new { page }))</div>*@
 
 <script>
     $.ajax({
         url: "/PlattformInventory/SalesStatisticsSort_PartialView",
         data: {
-            plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+            plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
             query: $("#sales_product_query").val(),
             sortVal: $(".sort_i").eq(0).attr("data-sort"),
             timeVal: $(".sales_sort").eq(0).attr("data-val")
@@ -57,7 +54,7 @@
             $.ajax({
                 url: "/PlattformInventory/SalesStatisticsSort_PartialView",
                 data: {
-                    plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
                     query: $("#sales_product_query").val(),
                     sortVal: that.children(".sort_i").attr("data-sort"),
                     timeVal: that.attr("data-val")
@@ -75,7 +72,7 @@
             $.ajax({
                 url: "/PlattformInventory/SalesStatisticsSort_PartialView",
                 data: {
-                    plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
+                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
                     query: $("#sales_product_query").val(),
                     sortVal: that.children(".sort_i").attr("data-sort"),
                     timeVal: that.attr("data-val")
@@ -86,11 +83,5 @@
             })
         }
         return false;
-    })
-    // 来源分析
-    $(".JD-Traffic").on("click", function () {
-        var product_Id = $(this).attr('data-val')
-        var product_Name = $(this).attr("data-name")
-        $(this).attr("href", "TrafficList?plattformId=" + getUrlParam('plattformId') + "&productId=" + product_Id)
     })
 </script>

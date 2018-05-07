@@ -1768,6 +1768,40 @@ a.btn_subtask_detail{
     display:inline-block;
     width:100%
 }
+
+.average_section_ul{
+    margin:0
+}
+.average_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.average_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+
+.shop_section_ul{
+    margin:0
+}
+.shop_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.shop_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
 /*日期区间结束*/
 /*选择日期开始*/
 #start-date,#end-date{
