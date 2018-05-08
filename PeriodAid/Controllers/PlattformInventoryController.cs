@@ -509,11 +509,11 @@ namespace PeriodAid.Controllers
                     content_list.Add(content);
                     if (data.Sales_Avg > 30)
                     {
-                        product.Product_Type = 2;//稳定款
+                        product.Product_Status = 2;//稳定款
                     }
                     else if (data.Sales_Avg < 3)
                     {
-                        product.Product_Type = 3;//滞销款
+                        product.Product_Status = 3;//滞销款
                     }
                     _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                 }
@@ -1179,11 +1179,11 @@ namespace PeriodAid.Controllers
                 }
             }
             var product = _db.SS_Product.SingleOrDefault(m => m.Id == productId);
-            if (product.Product_Type == 1 || product.Product_Type == 2)//稳定款
+            if (product.Product_Type == 1 || product.Product_Status == 2)//稳定款
             {
                 turnoverDays = 25;
             }
-            else if (product.Product_Type == 3)//滞销款
+            else if (product.Product_Status == 3)//滞销款
             {
                 turnoverDays = 15;
             }
