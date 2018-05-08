@@ -18,7 +18,7 @@
     $.ajax({
         url: "/PlattformInventory/SalesStatisticsSort_PartialView",
         data: {
-            plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+            plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
             query: $("#sales_product_query").val(),
             sortVal: $(".sort_i").eq(0).attr("data-sort"),
             timeVal: $(".sales_sort").eq(0).attr("data-val")
@@ -54,7 +54,7 @@
             $.ajax({
                 url: "/PlattformInventory/SalesStatisticsSort_PartialView",
                 data: {
-                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     query: $("#sales_product_query").val(),
                     sortVal: that.children(".sort_i").attr("data-sort"),
                     timeVal: that.attr("data-val")
@@ -72,7 +72,7 @@
             $.ajax({
                 url: "/PlattformInventory/SalesStatisticsSort_PartialView",
                 data: {
-                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     query: $("#sales_product_query").val(),
                     sortVal: that.children(".sort_i").attr("data-sort"),
                     timeVal: that.attr("data-val")

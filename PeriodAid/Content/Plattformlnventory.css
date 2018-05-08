@@ -1755,10 +1755,10 @@ a.btn_subtask_detail{
     margin: 5px 5px 5px 0;
     font-size:12px;
 }
-.dete_section_li_active{
+.date_section_li_active{
     background:#deefff;
 }
-.dete_section_li_active .active{
+.date_section_li_active .active{
     color:#0b73df
 }
 .date_section_ul li a{
@@ -1802,6 +1802,24 @@ a.btn_subtask_detail{
     display:inline-block;
     width:100%
 }
+/*渠道分析平台选择开始*/
+.traffic_section_ul{
+    margin:0
+}
+.traffic_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.traffic_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+/*渠道分析平台选择结束*/
 /*日期区间结束*/
 /*选择日期开始*/
 #start-date,#end-date{
@@ -1810,7 +1828,8 @@ a.btn_subtask_detail{
     display: inline-block;
     padding:4px 15px 4px 8px;
     width: 104px;
-    text-align: center;         
+    text-align: center;
+    margin-left:0         
 }
 /*选择日期结束*/
 /*仓库选择开始*/
@@ -1822,9 +1841,3 @@ a.btn_subtask_detail{
     padding:2px 15px 4px 8px;
 }
 /*仓库选择结束*/
-/*导出按钮样式开始*/
-#download_btn{
-    padding:2px 4px;
-    color:#fff
-}
-/*导出按钮样式结束*/
