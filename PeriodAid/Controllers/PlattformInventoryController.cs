@@ -487,40 +487,35 @@ namespace PeriodAid.Controllers
                 DateTime end = upload_record.SalesRecord_Date;
                 DateTime start_7 = end.AddDays(0 - 7);
                 DateTime start_15 = end.AddDays(0 - 15);
-                var find_7 = "select a.Product_Id,a.Sales_Count,b.Storage_Count from " +
-                    "(SELECT Product_Id,sum(Sales_Count)/7 as Sales_Count FROM SS_SalesRecord" +
-                    " where SalesRecord_Date > \'" + start_7 + "\' and SalesRecord_Date<= '" + end + "\' " +
-                    "and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0') " +
-                    "and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id) as a," +
-                    "(select Product_Id, sum(Storage_Count) as Storage_Count from SS_SalesRecord where SalesRecord_Date in" +
-                    " (select top(1) SalesRecord_Date from SS_SalesRecord order by SalesRecord_Date desc) group by Product_Id) as b " +
-                    "where a.Product_Id = b.Product_Id";
-                var data_list_7 = _db.Database.SqlQuery<CalcStorageViewModel>(find_7);
-                var find_15 = "SELECT Product_Id,sum(Sales_Count)/15 as Sales_Count FROM SS_SalesRecord" +
-                    " where SalesRecord_Date > \'" + start_15 + "\' and SalesRecord_Date<=\'" + end + "\'" +
-                    " and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')" +
-                    " and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id";
-                var data_list_15 = _db.Database.SqlQuery<CalcStorageViewModel>(find_15);
+                var find_sql = "select t1.Product_Id,t1.Sales_Count as Sales_Count_7,t2.Sales_Count as Sales_Count_15,t1.Storage_Count from " +
+                    "(select a.Product_Id,a.Sales_Count,b.Storage_Count from (SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord where " +
+                    "SalesRecord_Date >  \'" + start_7 + "\'  and SalesRecord_Date <= \'" + end + "\'  and Storage_Id in " +
+                    "(select Id from SS_Storage where Storage_Type = '1') group by Product_Id) as a," +
+                    "(select Product_Id, sum(Storage_Count) as Storage_Count from SS_SalesRecord where SalesRecord_Date in " +
+                    "(select top(1) SalesRecord_Date from SS_SalesRecord order by SalesRecord_Date desc) group by Product_Id) as b " +
+                    "where a.Product_Id = b.Product_Id) as t1," +
+                    "(SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord " +
+                    "where SalesRecord_Date > \'" + start_15 + "\'  and SalesRecord_Date<=  \'" + end + "\'  and Storage_Id in " +
+                    "(select Id from SS_Storage where Storage_Type = '1') group by Product_Id) as t2 where t1.Product_Id = t2.Product_Id and t1.Product_Id in " +
+                    "(select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')";
+                var data_list = _db.Database.SqlQuery<CalcStorageViewModel>(find_sql);
                 List<CalcStorageViewModel> content_list = new List<CalcStorageViewModel>();
-                foreach (var data in data_list_15) {
+                foreach (var data in data_list) {
                     CalcStorageViewModel content = new CalcStorageViewModel();
-                    foreach (var avg in data_list_7) {
-                        if (data.Product_id == avg.Product_id) {
-                            var product = _db.SS_Product.SingleOrDefault(m => m.Id == data.Product_id);
-                            content.Product = product;
-                            content.Storage_Count = avg.Storage_Count;
-                            content.Sales_Avg = (data.Sales_Count + avg.Sales_Count) / 2;
-                            content_list.Add(content);
-                            if ((data.Sales_Avg + avg.Sales_Count) / 2 > 30)
-                            {
-                                product.Product_Type = 2;//稳定款
-                            }
-                            else if ((data.Sales_Avg + avg.Sales_Count) / 2 < 3) {
-                                product.Product_Type = 3;//滞销款
-                            }
-                            _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
-                        }
+                    var product = _db.SS_Product.SingleOrDefault(m => m.Id == data.Product_id);
+                    content.Product = product;
+                    content.Storage_Count = data.Storage_Count;
+                    content.Sales_Avg = (data.Sales_Count_7 / 7.00 + data.Sales_Count_15 / 15.00) / 2;
+                    content_list.Add(content);
+                    if (data.Sales_Avg > 30)
+                    {
+                        product.Product_Type = 2;//稳定款
                     }
+                    else if (data.Sales_Avg < 3)
+                    {
+                        product.Product_Type = 3;//滞销款
+                    }
+                    _db.Entry(product).State = System.Data.Entity.EntityState.Modified;
                 }
                 _db.SaveChanges();
                 return PartialView(content_list.AsEnumerable());
@@ -874,7 +869,7 @@ namespace PeriodAid.Controllers
                 if (avg_data == null) {
                     avg_data = 0.ToString();
                 }
-                double avg_count =double.Parse(avg_data);
+                var avg_count = Convert.ToDouble(avg_data).ToString("0.00");
                 // 最近库存
                 var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
                 if (form["p_rate_" + product.Id] != null)
@@ -894,7 +889,7 @@ namespace PeriodAid.Controllers
                         {
                             storage_count = 0;
                         }
-                        double recommand_storage = avg_count * _rate - storage_count >= 0 ? avg_count * _rate - storage_count : 0;
+                        double recommand_storage = double.Parse(avg_count) * _rate - storage_count >= 0 ? double.Parse(avg_count) * _rate - storage_count : 0;
                         int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
                         double carton_count = 0;
                         if (product.Product_Type == 1)
@@ -918,7 +913,7 @@ namespace PeriodAid.Controllers
                             }
                         }
                         double final_storage = carton_count * cartonspec;
-                        single_row.CreateCell(++cell_pos).SetCellValue(avg_data);
+                        single_row.CreateCell(++cell_pos).SetCellValue(avg_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
