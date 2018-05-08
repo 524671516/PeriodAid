@@ -653,7 +653,6 @@ namespace PeriodAid.Controllers
                     statistic.Last_Count = lastData == null ? 0 : lastData.Sum(m => m.Sales_Count);
                     _db.Entry(statistic).State = System.Data.Entity.EntityState.Modified;
                 }
-                
             }
             return true;
         }
@@ -1198,8 +1197,6 @@ namespace PeriodAid.Controllers
             selectvalue.Add(new { Text = "下架", Value = -1 });
             selectvalue.Add(new { Text = "正常", Value = 0 });
             selectvalue.Add(new { Text = "爆款", Value = 1 });
-            selectvalue.Add(new { Text = "稳定款", Value = 2 });
-            selectvalue.Add(new { Text = "滞销款", Value = 3 });
             ViewBag.SelectList = new SelectList(selectvalue, "Value", "Text", item.Product_Type);
             return PartialView(item);
         }

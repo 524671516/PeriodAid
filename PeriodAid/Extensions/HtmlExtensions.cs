@@ -167,9 +167,9 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        public static string ProductTypeStatus(this HtmlHelper helper, int status)
+        public static string ProductType(this HtmlHelper helper, int type)
         {
-            switch (status)
+            switch (type)
             {
                 case -1:
                     return "下架";
@@ -177,10 +177,6 @@ namespace System.Web.Mvc
                     return "在售";
                 case 1:
                     return "爆款";
-                case 2:
-                    return "稳定款";
-                case 3:
-                    return "滞销款";
                 default:
                     return "未知";
             }
