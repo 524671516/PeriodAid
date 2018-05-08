@@ -487,12 +487,16 @@ namespace PeriodAid.Controllers
                 DateTime end = upload_record.SalesRecord_Date;
                 DateTime start_7 = end.AddDays(0 - 7);
                 DateTime start_15 = end.AddDays(0 - 15);
-                var find_7 = "SELECT Product_Id,sum(Storage_Count) as Storage_Count,sum(Sales_Count) as Sales_Count FROM SS_SalesRecord" +
-                    " where SalesRecord_Date > \'" + start_7 + "\' and SalesRecord_Date<=\'" + end + "\'" +
-                    " and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')" +
-                    " and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id";
+                var find_7 = "select a.Product_Id,a.Sales_Count,b.Storage_Count from " +
+                    "(SELECT Product_Id,sum(Sales_Count)/7 as Sales_Count FROM SS_SalesRecord" +
+                    " where SalesRecord_Date > \'" + start_7 + "\' and SalesRecord_Date<= '" + end + "\' " +
+                    "and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0') " +
+                    "and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id) as a," +
+                    "(select Product_Id, sum(Storage_Count) as Storage_Count from SS_SalesRecord where SalesRecord_Date in" +
+                    " (select top(1) SalesRecord_Date from SS_SalesRecord order by SalesRecord_Date desc) group by Product_Id) as b " +
+                    "where a.Product_Id = b.Product_Id";
                 var data_list_7 = _db.Database.SqlQuery<CalcStorageViewModel>(find_7);
-                var find_15 = "SELECT Product_Id,sum(Storage_Count) as Storage_Count,sum(Sales_Count) as Sales_Count FROM SS_SalesRecord" +
+                var find_15 = "SELECT Product_Id,sum(Sales_Count)/15 as Sales_Count FROM SS_SalesRecord" +
                     " where SalesRecord_Date > \'" + start_15 + "\' and SalesRecord_Date<=\'" + end + "\'" +
                     " and Product_Id in (select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')" +
                     " and Storage_Id in (select Id from SS_Storage where Storage_Type = '1') group by Product_Id";
@@ -504,8 +508,8 @@ namespace PeriodAid.Controllers
                         if (data.Product_id == avg.Product_id) {
                             var product = _db.SS_Product.SingleOrDefault(m => m.Id == data.Product_id);
                             content.Product = product;
-                            content.Storage_Count = data.Storage_Count;
-                            content.Sales_Avg = (data.Sales_Avg + avg.Sales_Count) / 2;
+                            content.Storage_Count = avg.Storage_Count;
+                            content.Sales_Avg = (data.Sales_Count + avg.Sales_Count) / 2;
                             content_list.Add(content);
                             if ((data.Sales_Avg + avg.Sales_Count) / 2 > 30)
                             {
