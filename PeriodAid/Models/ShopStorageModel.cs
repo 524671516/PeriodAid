@@ -93,7 +93,10 @@
 
         // 产品类型
         public int Product_Type { get; set; }
-        
+
+        // 产品状态
+        public int Product_Status { get; set; }
+
         // 箱规
         public int Carton_Spec { get; set; }
 
