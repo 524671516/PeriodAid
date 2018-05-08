@@ -219,7 +219,7 @@ namespace PeriodAid.Models
         public virtual CRM_Contract CRM_Contract { get; set; }
 
         public int product_id { get; set; }
-        [StringLength(64)]
+        [StringLength(256)]
         public string product_name { get; set; }
         [StringLength(128)]
         public string product_code { get; set; }
@@ -244,15 +244,7 @@ namespace PeriodAid.Models
         public string customer_address { get; set; }
         [StringLength(64)]
         public string customer_tel { get; set; }
-        //[StringLength(64)]
-        //public string province { get; set; }
-        //[StringLength(64)]
-        //public string city { get; set; }
-        //[StringLength(128)]
-        //public string district { get; set; }
-        //[StringLength(32)]
-        //public string zip { get; set; }
-        // 0 正常 -1删除
+
         public int status { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

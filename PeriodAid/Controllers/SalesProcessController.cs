@@ -713,7 +713,6 @@ namespace PeriodAid.Controllers
                     return "FAIL";
                 }
                 return await getSingleCrmDetailInfo(contract_id);
-
             }
             await crm_db.SaveChangesAsync();
             return "SUCCESS";

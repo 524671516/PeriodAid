@@ -1060,137 +1060,70 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesStatistics_View(int plattformId)
         {
-            var salesTime = from m in _db.SS_SalesStatistic
-                            select m;
-            ViewBag.SalesTime = salesTime;
+            var upload_date = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault(m => m.Plattform_Id == plattformId);
+            ViewBag.Upload = upload_date;
             return View();
         }
 
         public ActionResult SalesStatistics_PartialView(int plattformId)
         {
-            var upload_date = _db.SS_UploadRecord.OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault(m => m.Plattform_Id == plattformId);
-            ViewBag.Upload = upload_date;
             return PartialView();
         }
 
         public ActionResult SalesStatisticsSort_PartialView(int plattformId, string query, string sortVal,int timeVal)
         {
-            if (query != "")
+            if (sortVal == "dec")
             {
-                var product = from m in _db.SS_SalesStatistic
-                              where m.SS_Product.Plattform_Id == plattformId
-                              select m;
-                if (sortVal == "dec")
+                if (timeVal == 1)
                 {
-                    if (timeVal ==1)
-                    {
-                        var slaes = (from m in product
-                                     where m.SS_Product.Item_Name.Contains(query)
-                                     orderby m.SingeleDay_Count descending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else if (timeVal == 2)
-                    {
-                        var slaes = (from m in product
-                                     where m.SS_Product.Item_Name.Contains(query)
-                                     orderby m.Recent_Count descending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else
-                    {
-                        var slaes = (from m in product
-                                     where m.SS_Product.Item_Name.Contains(query)
-                                     orderby m.Last_Count descending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    
+                    var slaes =  from m in _db.SS_SalesStatistic
+                                 where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                 orderby m.SingeleDay_Count descending
+                                 select m;
+                    return PartialView(slaes);
+                }
+                else if (timeVal == 2)
+                {
+                    var slaes = from m in _db.SS_SalesStatistic
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                orderby m.Recent_Count descending
+                                select m;
+                    return PartialView(slaes);
                 }
                 else
                 {
-                    if (timeVal == 1)
-                    {
-                        var slaes = (from m in product
-                                     where m.SS_Product.Item_Name.Contains(query)
-                                     orderby m.SingeleDay_Count ascending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else if (timeVal == 2)
-                    {
-                        var slaes = (from m in product
-                                     where m.SS_Product.Item_Name.Contains(query)
-                                     orderby m.Recent_Count ascending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else
-                    {
-                        var slaes = (from m in product
-                                     where m.SS_Product.Item_Name.Contains(query)
-                                     orderby m.Last_Count ascending
-                                     select m);
-                        return PartialView(slaes);
-                    }
+                    var slaes = from m in _db.SS_SalesStatistic
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                orderby m.Last_Count descending
+                                select m;
+                    return PartialView(slaes);
                 }
             }
             else
             {
-                if (sortVal == "dec")
+                if (timeVal == 1)
                 {
-                    if (timeVal == 1)
-                    {
-                        var slaes = (from m in _db.SS_SalesStatistic
-                                     where m.SS_Product.Plattform_Id == plattformId
-                                     orderby m.SingeleDay_Count descending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else if (timeVal == 2)
-                    {
-                        var slaes = (from m in _db.SS_SalesStatistic
-                                     where m.SS_Product.Plattform_Id == plattformId
-                                     orderby m.Recent_Count descending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else
-                    {
-                        var slaes = (from m in _db.SS_SalesStatistic
-                                     where m.SS_Product.Plattform_Id == plattformId
-                                     orderby m.Last_Count descending
-                                     select m);
-                        return PartialView(slaes); ;
-                    }
+                    var slaes = from m in _db.SS_SalesStatistic
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                orderby m.SingeleDay_Count ascending
+                                select m;
+                    return PartialView(slaes);
+                }
+                else if (timeVal == 2)
+                {
+                    var slaes = from m in _db.SS_SalesStatistic
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                orderby m.Recent_Count ascending
+                                select m;
+                    return PartialView(slaes);
                 }
                 else
                 {
-                    if (timeVal == 1)
-                    {
-                        var slaes = (from m in _db.SS_SalesStatistic
-                                     where m.SS_Product.Plattform_Id == plattformId
-                                     orderby m.SingeleDay_Count ascending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else if (timeVal == 2)
-                    {
-                        var slaes = (from m in _db.SS_SalesStatistic
-                                     where m.SS_Product.Plattform_Id == plattformId
-                                     orderby m.Recent_Count ascending
-                                     select m);
-                        return PartialView(slaes);
-                    }
-                    else
-                    {
-                        var slaes = (from m in _db.SS_SalesStatistic
-                                     where m.SS_Product.Plattform_Id == plattformId
-                                     orderby m.Last_Count ascending
-                                     select m);
-                        return PartialView(slaes); ;
-                    }
+                    var slaes = from m in _db.SS_SalesStatistic
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                orderby m.Last_Count ascending
+                                select m;
+                    return PartialView(slaes);
                 }
             }
         }

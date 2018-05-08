@@ -3,6 +3,11 @@
     ViewBag.Title = "SalesStatistics_View";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
+<style>
+    label{
+        margin-bottom:0
+    }
+</style>
 <div id="select_condition">
     <table class="offline-search-box" style="float:right;width:50%">
         <tr>
@@ -24,9 +29,15 @@
             </li>*@
         </ul>
     </div>
+    <div class="date_section_select select_condition_div">
+        <label class="pull-left">数据日期：</label>
+        <ul class="view_section_ul">
+            <li class="date_section_li_active">
+                <a class="view_select active">@ViewBag.Upload.SalesRecord_Date.ToString("yyyy-MM-dd")</a>
+            </li>
+        </ul>
+    </div>
 </div>
-
-
 <div id="salesstatistics_list_content">
 </div>
 @section scripts{

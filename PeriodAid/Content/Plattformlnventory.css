@@ -1802,6 +1802,24 @@ a.btn_subtask_detail{
     display:inline-block;
     width:100%
 }
+/*只有样式的ul开始*/
+.view_section_ul{
+    margin:0
+}
+.view_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.view_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+/*只有样式的ul结束*/
 /*渠道分析平台选择开始*/
 .traffic_section_ul{
     margin:0
