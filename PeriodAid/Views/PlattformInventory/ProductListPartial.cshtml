@@ -175,7 +175,8 @@
             var that = $(productId_list[i])
             $.ajax({
                 url: "/PlattformInventory/ProductGrowthRate",
-                type:"post",
+                type: "post",
+                async: true,
                 data: {
                     productId: that.attr("data-val"),
                     plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),

@@ -24,7 +24,9 @@ namespace PeriodAid.Models
 
         public int Product_id{ get;set;}
 
-        public int Sales_Count { get; set; }
+        public int Sales_Count_7 { get; set; }
+
+        public int Sales_Count_15 { get; set; }
 
         public int Storage_Count { get; set; }
 
