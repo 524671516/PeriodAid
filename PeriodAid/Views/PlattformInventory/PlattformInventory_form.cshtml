@@ -30,11 +30,11 @@
             <span hidden>@Html.TextBox("end_date", "", new { @class = "form-control input-sm", type = "text" })</span>
             <span hidden>@Html.TextBox("storage_id", "", new { @class = "form-control input-sm", type = "text" })</span>
         </form>
-        <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#Statistic_form').submit();">导出数据</span>
+        <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#Statistic_form').submit();" style="margin-top:10px">导出数据</span>
         <div class="date_section_select select_condition_div">
             <label class="pull-left">平台选择：</label>
             <ul class="shop_section_ul">
-                <li class="dete_section_li_active">
+                <li class="date_section_li_active">
                     <a class="shop_select active" data-val="1">京东</a>
                 </li>
                 @*<li>
@@ -45,7 +45,7 @@
         <div class="date_section_select select_condition_div">
             <label class="pull-left">日期区间：</label>
             <ul class="date_section_ul">
-                <li class="dete_section_li_active">
+                <li class="date_section_li_active">
                     <a class="select-date active" data-date="0">最新</a>
                 </li>
                 <li>
@@ -64,7 +64,7 @@
             <div>
                 <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="start-date" name="file-date" placeholder="请选择起始日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
                 <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="end-date" name="file-date" placeholder="请选择结束日期" value="@ViewBag.DataDate.ToString("yyyy-MM-dd")" />
-                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:0 12px;margin-left:8px" />
+                <input type="button" id="select-date-btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:2px 12px;margin-left:8px" />
             </div>
         </div>
         <div class="storage_select_div select_condition_div">
@@ -104,10 +104,10 @@
         })
         $(".select-date").click(function () {
             var that = $(this)
-            $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+            $(".date_section_ul").children("li").removeClass("date_section_li_active")
             $(".select-date").removeClass("active")
             that.addClass("active")
-            that.parent("li").addClass("dete_section_li_active")
+            that.parent("li").addClass("date_section_li_active")
             var now = new Date(last_date)
             $("#end-date").val(now.getFullYear() + "-" + ((now.getMonth() + 1) < 10 ? "0" : "") + (now.getMonth() + 1) + "-" + (now.getDate() < 10 ? "0" : "") + now.getDate())
             now.setDate(now.getDate() - that.attr("data-date"));
@@ -131,7 +131,7 @@
                 url: '/PlattformInventory/TMS_StorageShow/',
                 type: 'post',
                 data: {
-                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     start: $('#start-date').val(),
                     end: $('#end-date').val(),
                 },
@@ -140,7 +140,7 @@
                         url: '/PlattformInventory/TMShow_StorageShow/',
                         type: 'post',
                         data: {
-                            plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                            plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                             Storage: $('#storage-select').attr('data-ssid'),
                             start: $('#start-date').val(),
                             end: $('#end-date').val(),
@@ -158,7 +158,7 @@
             $.ajax({
                 url: '/PlattformInventory/StorageShow/',
                 data: {
-                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     start: $('#start-date').val(),
                     end: $('#end-date').val()
                 },
@@ -184,7 +184,7 @@
                 $.ajax({
                     url: "/PlattformInventory/TMS_StorageShow/",
                     data: {
-                        plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                        plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                         Storage: that.children("option:selected").attr("data-ssid"),
                         start: $('#start-date').val(),
                         end: $('#end-date').val()
@@ -196,7 +196,7 @@
                             url: '/PlattformInventory/TMShow_StorageShow/',
                             type: 'post',
                             data: {
-                                plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                                plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                                 Storage: $('#storage-select').attr('data-ssid'),
                                 start: $('#start-date').val(),
                                 end: $('#end-date').val()
@@ -214,7 +214,7 @@
                     url: '/PlattformInventory/StorageShow/',
                     type: 'post',
                     data: {
-                        plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                        plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                         Storage: that.children("option:selected").attr("data-ssid"),
                         start: $('#start-date').val(),
                         end: $('#end-date').val()
@@ -249,7 +249,7 @@
                     $.ajax({
                         url: "/PlattformInventory/TMS_StorageShow/",
                         data: {
-                            plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                            plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                             Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                             start: $('#start-date').val(),
                             end: $('#end-date').val()
@@ -261,7 +261,7 @@
                             $.ajax({
                                 url: '/PlattformInventory/TMShow_StorageShow/',
                                 data: {
-                                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                                     Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                                     start: $('#start-date').val(),
                                     end: $('#end-date').val()
@@ -278,7 +278,7 @@
                     $.ajax({
                         url: '/PlattformInventory/StorageShow/',
                         data: {
-                            plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                            plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                             Storage: $(".storage_select_div select").children("option:selected").attr("data-ssid"),
                             start: $('#start-date').val(),
                             end: $('#end-date').val()
@@ -299,14 +299,10 @@
 
         $(".shop_select").click(function () {
             var that = $(this)
-            $(".shop_section_ul").children("li").removeClass("dete_section_li_active")
+            $(".shop_section_ul").children("li").removeClass("date_section_li_active")
             $(".shop_select").removeClass("active")
             that.addClass("active")
-            that.parent("li").addClass("dete_section_li_active")
-        })
-        // 导出数据
-        $("#download_btn").on("click", function () {
-            console.log(1)
+            that.parent("li").addClass("date_section_li_active")
         })
     })
 </script>

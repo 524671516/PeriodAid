@@ -178,7 +178,7 @@
                 type:"post",
                 data: {
                     productId: that.attr("data-val"),
-                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                 },
                 success: function (data) {
                     if (data["rate"] == 0) {
@@ -195,7 +195,7 @@
             $.ajax({
                 url: l,
                 data: {
-                    plattformId: $(".shop_section_ul").children(".dete_section_li_active").children(".active").attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     query: $("#storage-product-query").val()
                 },
                 success: function (data) {

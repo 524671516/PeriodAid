@@ -26,7 +26,7 @@
     <div class="select_condition_div date_select_div">
         <label class="pull-left">参照日期：</label>
         <ul class="average_section_ul">
-            <li class="dete_section_li_active">
+            <li class="date_section_li_active">
                 <a id="average_start" data-val="1" class="average_type active" name="statistic_btn">开始时间</a>
             </li>
             <li>
@@ -85,16 +85,16 @@
             $(".average_type").click(function () {
                 $(".average_type.active").removeClass("active")
                 $(this).addClass("active")
-                $(".average_section_ul").children("li").removeClass("dete_section_li_active")
-                $(this).parent("li").addClass("dete_section_li_active")
-                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+                $(".average_section_ul").children("li").removeClass("date_section_li_active")
+                $(this).parent("li").addClass("date_section_li_active")
+                $(".date_section_ul").children("li").removeClass("date_section_li_active")
             })
             $(".select-date").click(function () {
                 var that = $(this)
-                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+                $(".date_section_ul").children("li").removeClass("date_section_li_active")
                 $(".select-date").removeClass("active")
                 that.addClass("active")
-                that.parent("li").addClass("dete_section_li_active")
+                that.parent("li").addClass("date_section_li_active")
             })
             $("#statistic_btn_average7").click(function () {
                 ave_start = $("#start-date").val()
@@ -182,7 +182,7 @@
                 }
             })
             $("#statistic_btn").click(function () {
-                $(".date_section_ul").children("li").removeClass("dete_section_li_active")
+                $(".date_section_ul").children("li").removeClass("date_section_li_active")
                 if ($("#start-date").val() <= $("#end-date").val()) {
                     $.ajax({
                         url: "/PlattformInventory/ViewProductStatisticPartial",

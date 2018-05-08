@@ -9,10 +9,11 @@
 
 <div id="myChart_Bar" style="min-width:500px;height:400px"></div>
 @section scripts{
-
-    <script src="~/Scripts/highcharts.js"></script>
-    <script type="text/javascript">
-    $(function () {
+<script src="~/Scripts/highcharts.js"></script>
+<script type="text/javascript">
+        $(function () {
+            $("#ul_btn").children("li").eq(1).addClass('left-navba-background').children(".san_you").removeClass("hidden")
+            $("#ul_btn").children("li").eq(1).children("a").addClass("click_a_color")
                 var fileDate = $('.file-data')
                 fileDate.datepicker({ dateFormat: "yy-mm-dd" });
                 //星期格式汉化
@@ -153,5 +154,6 @@
                     fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return fmt;
         };
-    </script>
+</script>
+    
 }
