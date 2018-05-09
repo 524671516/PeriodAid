@@ -1168,7 +1168,7 @@ namespace PeriodAid.Controllers
             //增长率&周转天数
             var growthRate = 0;
             var turnoverDays = 30;
-            var date = DateTime.Now.Date;
+            var date = DateTime.Now.Date.AddDays(-1);
             var data = _db.SS_SalesStatistic.SingleOrDefault(m => m.StatisticTime == date && m.Product_Id == productId);
             if (data != null)
             {

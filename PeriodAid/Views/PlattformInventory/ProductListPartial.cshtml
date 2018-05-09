@@ -181,7 +181,6 @@
                     plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                 },
                 success: function (data) {
-                    console.log(data)
                     if (data["rate"] == 0) {
                         $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-blue").show()
                     } else {
