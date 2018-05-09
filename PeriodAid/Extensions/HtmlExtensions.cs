@@ -167,9 +167,9 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        public static string ProductTypeStatus(this HtmlHelper helper, int status)
+        public static string ProductType(this HtmlHelper helper, int type)
         {
-            switch (status)
+            switch (type)
             {
                 case -1:
                     return "下架";

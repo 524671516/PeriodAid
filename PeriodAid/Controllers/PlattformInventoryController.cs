@@ -653,7 +653,6 @@ namespace PeriodAid.Controllers
                     statistic.Last_Count = lastData == null ? 0 : lastData.Sum(m => m.Sales_Count);
                     _db.Entry(statistic).State = System.Data.Entity.EntityState.Modified;
                 }
-                
             }
             return true;
         }
