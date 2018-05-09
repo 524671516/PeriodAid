@@ -494,7 +494,8 @@ namespace PeriodAid.Controllers
                     "(select top(1) SalesRecord_Date from SS_SalesRecord order by SalesRecord_Date desc) group by Product_Id) as b " +
                     "where a.Product_Id = b.Product_Id) as t1," +
                     "(SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord " +
-                    "where SalesRecord_Date > \'" + start_15 + "\'  and SalesRecord_Date<=  \'" + end + "\'  and Storage_Id >=5 and Storage_Id<=13 group by Product_Id) as t2 where t1.Product_Id = t2.Product_Id and t1.Product_Id in " +
+                    "where SalesRecord_Date > \'" + start_15 + "\'  and SalesRecord_Date<=  \'" + end + "\'  and Storage_Id >=5 and Storage_Id<=13 " +
+                    "group by Product_Id) as t2 where t1.Product_Id = t2.Product_Id and t1.Product_Id in " +
                     "(select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')";
                 var data_list = _db.Database.SqlQuery<CalcStorageViewModel>(find_sql);
                 List<CalcStorageViewModel> content_list = new List<CalcStorageViewModel>();
