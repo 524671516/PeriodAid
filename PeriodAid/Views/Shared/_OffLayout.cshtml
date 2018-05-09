@@ -172,7 +172,9 @@
                                     <a href="#" data-name="OffBonus" style="text-indent: 16px;">
                                         <i class="fa fa-money"></i>&nbsp;&nbsp;红包管理
                                         <ul class="list-unstyled position_ul hidden">
-                                            <li class="left-navbar"><a href="/OffBonus/BonusList"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;红包列表</a></li>
+                                            <li class="left-navbar">
+                                                <a href="/OffBonus/BonusList">
+                                                <i class="fa fa-line-chart"></i>&nbsp;&nbsp;红包列表</a></li>
                                         </ul>
                                     </a>
                                     <div class="san_you hidden"></div>
@@ -241,6 +243,12 @@
     })
     $(".nav_relative_ul li").mouseout(function () {
         $(this).children(".nav_absolute_ul").addClass("hidden")
+    })
+    $(".nav_absolute_ul li").mouseover(function () {
+        $(this).css("background","#fff")
+    })
+    $(".nav_absolute_ul li").mouseout(function () {
+        $(this).css("background", "none")
     })
     // 侧边栏li移动
     $(".left-navbar").mouseover(function () {

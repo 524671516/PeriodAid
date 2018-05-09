@@ -123,12 +123,20 @@
             $(this).addClass("click_a_color")
         }
     });
+    // 导航二级
     $(".nav_relative_ul li").mouseover(function () {
         $(this).children(".nav_absolute_ul").removeClass("hidden")
     })
     $(".nav_relative_ul li").mouseout(function () {
         $(this).children(".nav_absolute_ul").addClass("hidden")
     })
+    $(".nav_absolute_ul li").mouseover(function () {
+        $(this).css("background", "#fff")
+    })
+    $(".nav_absolute_ul li").mouseout(function () {
+        $(this).css("background", "none")
+    })
+    // 侧边栏li移动
     $(".left-navbar").mouseover(function () {
         $(this).children("a").css("paddingLeft", "10px")
     })
