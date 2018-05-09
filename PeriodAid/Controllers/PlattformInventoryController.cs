@@ -489,14 +489,13 @@ namespace PeriodAid.Controllers
                 DateTime start_15 = end.AddDays(0 - 15);
                 var find_sql = "select t1.Product_Id,t1.Sales_Count as Sales_Count_7,t2.Sales_Count as Sales_Count_15,t1.Storage_Count from " +
                     "(select a.Product_Id,a.Sales_Count,b.Storage_Count from (SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord where " +
-                    "SalesRecord_Date >  \'" + start_7 + "\'  and SalesRecord_Date <= \'" + end + "\'  and Storage_Id in " +
-                    "(select Id from SS_Storage where Storage_Type = '1') group by Product_Id) as a," +
+                    "SalesRecord_Date >  \'" + start_7 + "\'  and SalesRecord_Date <= \'" + end + "\'  and Storage_Id >=5 and Storage_Id<=13 group by Product_Id) as a," +
                     "(select Product_Id, sum(Storage_Count) as Storage_Count from SS_SalesRecord where SalesRecord_Date in " +
                     "(select top(1) SalesRecord_Date from SS_SalesRecord order by SalesRecord_Date desc) group by Product_Id) as b " +
                     "where a.Product_Id = b.Product_Id) as t1," +
                     "(SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord " +
-                    "where SalesRecord_Date > \'" + start_15 + "\'  and SalesRecord_Date<=  \'" + end + "\'  and Storage_Id in " +
-                    "(select Id from SS_Storage where Storage_Type = '1') group by Product_Id) as t2 where t1.Product_Id = t2.Product_Id and t1.Product_Id in " +
+                    "where SalesRecord_Date > \'" + start_15 + "\'  and SalesRecord_Date<=  \'" + end + "\'  and Storage_Id >=5 and Storage_Id<=13 " +
+                    "group by Product_Id) as t2 where t1.Product_Id = t2.Product_Id and t1.Product_Id in " +
                     "(select Id from SS_Product where Plattform_Id = '1' and Product_Type >= '0')";
                 var data_list = _db.Database.SqlQuery<CalcStorageViewModel>(find_sql);
                 List<CalcStorageViewModel> content_list = new List<CalcStorageViewModel>();
@@ -1169,7 +1168,7 @@ namespace PeriodAid.Controllers
             //增长率&周转天数
             var growthRate = 0;
             var turnoverDays = 30;
-            var date = DateTime.Now.Date;
+            var date = DateTime.Now.Date.AddDays(-1);
             var data = _db.SS_SalesStatistic.SingleOrDefault(m => m.StatisticTime == date && m.Product_Id == productId);
             if (data != null)
             {
