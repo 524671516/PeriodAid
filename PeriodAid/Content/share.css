@@ -34,7 +34,7 @@ ul,li,a{
 .fixed_ul{
     position:fixed;
     left:0;
-    width:14%;
+    width:189px;
     z-index:1000;
 }
 .position_ul{
