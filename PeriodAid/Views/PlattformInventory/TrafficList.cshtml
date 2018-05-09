@@ -202,7 +202,9 @@
             var dateTime = $(".traffci-date-time").html()
             $("#date-btn-right").removeClass("color-gray");
             var d = new Date(dateTime);
+            console.log(d)
             d.setDate(d.getDate() - 1);
+            console.log(d)
             var month = d.getMonth() + 1;
             var day = d.getDate();
             if (month < 10) {

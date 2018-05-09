@@ -1065,12 +1065,17 @@ namespace PeriodAid.Controllers
 
         public ActionResult SalesStatisticsSort_PartialView(int plattformId, string query, string sortVal,int timeVal)
         {
+            var product = from m in _db.SS_SalesStatistic
+                          where m.SS_Product.Plattform_Id == plattformId
+                          select m;
             if (sortVal == "dec")
             {
                 if (timeVal == 1)
                 {
                     var slaes =  from m in _db.SS_SalesStatistic
-                                 where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                 where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId 
+                                 || m.SS_Product.Item_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId 
+                                 || m.SS_Product.System_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
                                  orderby m.SingeleDay_Count descending
                                  select m;
                     return PartialView(slaes);
@@ -1078,7 +1083,9 @@ namespace PeriodAid.Controllers
                 else if (timeVal == 2)
                 {
                     var slaes = from m in _db.SS_SalesStatistic
-                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.Item_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.System_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
                                 orderby m.Recent_Count descending
                                 select m;
                     return PartialView(slaes);
@@ -1086,8 +1093,9 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var slaes = from m in _db.SS_SalesStatistic
-                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
-                                orderby m.Last_Count descending
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.Item_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.System_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
                                 select m;
                     return PartialView(slaes);
                 }
@@ -1097,7 +1105,9 @@ namespace PeriodAid.Controllers
                 if (timeVal == 1)
                 {
                     var slaes = from m in _db.SS_SalesStatistic
-                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.Item_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.System_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
                                 orderby m.SingeleDay_Count ascending
                                 select m;
                     return PartialView(slaes);
@@ -1105,7 +1115,9 @@ namespace PeriodAid.Controllers
                 else if (timeVal == 2)
                 {
                     var slaes = from m in _db.SS_SalesStatistic
-                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.Item_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.System_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
                                 orderby m.Recent_Count ascending
                                 select m;
                     return PartialView(slaes);
@@ -1113,7 +1125,9 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var slaes = from m in _db.SS_SalesStatistic
-                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
+                                where query != "" ? m.SS_Product.Item_Name.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.Item_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId
+                                 || m.SS_Product.System_Code.Contains(query) && m.SS_Product.Plattform_Id == plattformId : m.SS_Product.Plattform_Id == plattformId
                                 orderby m.Last_Count ascending
                                 select m;
                     return PartialView(slaes);
