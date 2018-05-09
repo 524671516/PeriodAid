@@ -127,6 +127,7 @@
 </body>
 </html>
 <script>
+    // 移入、移出三角样式
     $("#ul_btn li").mouseover(function () {
         $(this).children(".position_ul").removeClass("hidden")
         $(this).children(".san_you").removeClass("hidden")
@@ -135,10 +136,18 @@
         $(this).children(".position_ul").addClass("hidden")
         $(this).children(".san_you").addClass("hidden")
     })
+    // 导航二级
     $(".nav_relative_ul li").mouseover(function () {
         $(this).children(".nav_absolute_ul").removeClass("hidden")
     })
     $(".nav_relative_ul li").mouseout(function () {
         $(this).children(".nav_absolute_ul").addClass("hidden")
+    })
+    // 侧边栏li移动
+    $(".left-navbar").mouseover(function () {
+        $(this).children("a").css("paddingLeft", "10px")
+    })
+    $(".left-navbar").mouseout(function () {
+        $(this).children("a").css("paddingLeft", "0px")
     })
 </script>

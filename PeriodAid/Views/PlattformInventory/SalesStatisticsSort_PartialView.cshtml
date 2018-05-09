@@ -16,8 +16,8 @@
             <td>0</td>
         }
         <td>
-            <span class="JD-product">@Html.ActionLink("销售曲线", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
-            <a class="JD-Traffic" data-val="@item.Id" data-name="@item.SS_Product.Item_Name" style="cursor:pointer">来源分析</a>
+            <span class="JD-product">@Html.ActionLink("销售曲线", "ViewProductStatistic", new { productId = item.Product_Id })</span>&nbsp;|&nbsp;
+            <a class="JD-Traffic" data-val="@item.Product_Id" data-name="@item.SS_Product.Item_Name" style="cursor:pointer">来源分析</a>
         </td>
     </tr>
 }
