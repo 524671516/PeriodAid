@@ -79,6 +79,7 @@
                     start: $("#start-date").val(),
                     end: $("#end-date").val()
                 }, success: function (data) {
+                    console.log(data)
                     showstatistic(data);
                 }
             });
