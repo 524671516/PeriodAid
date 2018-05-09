@@ -50,7 +50,6 @@
                 </td>
                 <td>
                     <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
-                    @*<span class="JD-Traffic-Order">@Html.ActionLink("销量统计", "ViewTrafficStatistic", new { productId = item.Id })</span>*@
                 </td>
             </tr>
         }
@@ -182,6 +181,7 @@
                     plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                 },
                 success: function (data) {
+                    console.log(data)
                     if (data["rate"] == 0) {
                         $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-blue").show()
                     } else {
