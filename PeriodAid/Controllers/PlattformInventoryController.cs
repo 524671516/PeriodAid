@@ -822,6 +822,65 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
         }
 
+        //每日数据导出
+        public ActionResult getDailyData(FormCollection form)
+        {
+            HSSFWorkbook book = new HSSFWorkbook();
+            ISheet sheet = book.CreateSheet("Total");
+            // 写标题
+            IRow row = sheet.CreateRow(0);
+            int cell_pos = 0;
+            row.CreateCell(cell_pos).SetCellValue("sku");
+            row.CreateCell(++cell_pos).SetCellValue("日期");
+            row.CreateCell(++cell_pos).SetCellValue("访客数");
+            row.CreateCell(++cell_pos).SetCellValue("买家数");
+            row.CreateCell(++cell_pos).SetCellValue("订单件数");
+            row.CreateCell(++cell_pos).SetCellValue("客件数");
+            row.CreateCell(++cell_pos).SetCellValue("转化率");
+            row.CreateCell(++cell_pos).SetCellValue("搜索流量");
+            row.CreateCell(++cell_pos).SetCellValue("京准通");
+            row.CreateCell(++cell_pos).SetCellValue("我的京东");
+            row.CreateCell(++cell_pos).SetCellValue("购物车");
+            var date = form["daily_date"];
+            var findSql = " select g.System_Code,a.a1 as visitor,a.a2 as customer,b.b1 as order_count," +
+                "CONVERT(decimal(5),b.b1)/CONVERT(decimal(5),(case when a.a2=0 then 1 else a.a2 end)) as visitor_rate," +
+                "CONVERT(decimal(5),a.a2)/CONVERT(decimal(5),(case when a.a1=0 then 1 else a.a1 end)) as customer_rate," +
+                "c.c1 as source_1,d.d1 as source_2,e.e1 as source_3,f.f1 as source_4 from  " +
+                "(/*访客数和买家数*/SELECT Product_Id, sum(Product_Visitor) as a1, sum(Product_Customer) as a2  FROM[SHOPSTORAGE].[dbo].[SS_TrafficData] where UpdateTime = '" + date + "' group by Product_Id) as a, " +
+                "( /*订单件数*/ select Product_Id, sum(Sales_Count) as b1 from SS_SalesRecord where SalesRecord_Date = '" + date + "' and Storage_Id >= 5 and Storage_Id <= 13 group by Product_Id) as b, " +
+                "( /*搜索流量*/ SELECT Product_Id, sum(Product_Visitor) as c1  FROM[SHOPSTORAGE].[dbo].[SS_TrafficData] where UpdateTime = '" + date + "'  and TrafficSource_Id = '1' group by Product_Id ) as c, " +
+                "( /*京准通*/  SELECT Product_Id, sum(Product_Visitor) as d1  FROM[SHOPSTORAGE].[dbo].[SS_TrafficData] where UpdateTime = '" + date + "'  and(TrafficSource_Id = '3' or TrafficSource_Id = '12') group by Product_Id) as d, " +
+                "(  /*我的京东*/  SELECT Product_Id, sum(Product_Visitor) as e1  FROM[SHOPSTORAGE].[dbo].[SS_TrafficData] where UpdateTime = '" + date + "' and TrafficSource_Id = '4' group by Product_Id) as e, " +
+                "(  /*购物车*/  SELECT Product_Id, sum(Product_Visitor) as f1  FROM[SHOPSTORAGE].[dbo].[SS_TrafficData] where UpdateTime = '" + date + "' and TrafficSource_Id = '2' group by Product_Id) as f, " +
+                "(select Id, System_Code from SS_Product where System_Code in ('1273858', '1273862', '2795949', '4820153', '4020767', '6725856', '6739996', '4264874', '4521540', '3336384', '5059864', '1273867', '1505905')) as g " +
+                "where a.Product_Id = b.Product_Id and a.Product_Id = c.Product_Id and a.Product_Id = d.Product_Id and a.Product_Id = e.Product_Id and a.Product_Id = f.Product_Id and a.Product_Id = g.Id";
+            var dataList = _db.Database.SqlQuery<DailyDataViewModel>(findSql);
+            // 写产品列
+            int row_pos = 1;
+            foreach (var data in dataList)
+            {
+                IRow single_row = sheet.CreateRow(row_pos);
+                cell_pos = 0;
+                single_row.CreateCell(cell_pos).SetCellValue(data.System_Code);
+                single_row.CreateCell(++cell_pos).SetCellValue(date);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.visitor);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.customer);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.order_count);
+                single_row.CreateCell(++cell_pos).SetCellValue((Convert.ToDouble(data.visitor_rate)).ToString("F2"));
+                single_row.CreateCell(++cell_pos).SetCellValue((data.customer_rate*100).ToString("F2")+"%");
+                single_row.CreateCell(++cell_pos).SetCellValue(data.source_1);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.source_2);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.source_3);
+                single_row.CreateCell(++cell_pos).SetCellValue(data.source_4);
+                row_pos++;
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "数据表.xls");
+        }
+
         // 获取仓库表格
         [HttpPost]
         public ActionResult getInventoryExcel(FormCollection form)
