@@ -613,8 +613,8 @@ namespace PeriodAid.Controllers
                 };
                 _db.SS_UploadRecord.Add(upload_record);
             }
-            GetSalesStatistic(date);
             _db.SaveChanges();
+            GetSalesStatistic(date);
             return true;
         }
 
@@ -653,6 +653,7 @@ namespace PeriodAid.Controllers
                     _db.Entry(statistic).State = System.Data.Entity.EntityState.Modified;
                 }
             }
+            _db.SaveChanges();
             return true;
         }
 
