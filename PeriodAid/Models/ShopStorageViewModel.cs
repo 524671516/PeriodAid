@@ -62,6 +62,29 @@ namespace PeriodAid.Models
         public int storageCount { get; set; }
     }
 
+    public class DailyDataViewModel
+    {
+        public string System_Code { get; set; }
+
+        public int visitor { get; set; }
+
+        public int customer { get; set; }
+
+        public int order_count { get; set; }
+
+        public decimal visitor_rate { get; set; }
+
+        public decimal customer_rate { get; set; }
+
+        public int source_1 { get; set; }
+
+        public int source_2 { get; set; }
+
+        public int source_3 { get; set; }
+
+        public int source_4 { get; set; }
+    }
+
     public class EventStatisticViewModel
     {
         public int productId { get; set; }

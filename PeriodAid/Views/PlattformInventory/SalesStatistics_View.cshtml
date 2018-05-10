@@ -37,13 +37,29 @@
             </li>
         </ul>
     </div>
-    <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#Statistic_form').submit();" style="margin-top:10px">每日数据导出</span>
+    <form method="post" id="dailyData_form" action="/PlattformInventory/getDailyData">
+        <span hidden>@Html.TextBox("daily_date", "", new { @class = "form-control input-sm", type = "text" })</span>
+    </form>
+    <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#dailyData_form').submit();" style="margin-top:10px">每日数据导出</span>
+    <input type="text" class="file-date float-right" readonly="readonly" autocomplete="off" id="daily-date" name="file-date" placeholder="请选择数据日期" value="" style="margin-top:15px;margin-right:2px;padding:3px;width:120px;" />
 </div>
 <div id="salesstatistics_list_content">
 </div>
 @section scripts{
     <script>
         $(function () {
+            $("#daily_date").attr("value", $('#daily-date').val())
+            //日期格式改变
+            $(".file-date").datepicker({ dateFormat: "yy-mm-dd" });
+            //星期格式汉化
+            $(".file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+            //月份格式汉化
+            $(".file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+            $(".file-date").datepicker();
+            // 选择日期
+            $('#daily-date').change(function () {
+                $("#daily_date").attr("value", $('#daily-date').val())
+            })
             $.ajax({
                 url: "/PlattformInventory/SalesStatistics_PartialView",
                 data: {
