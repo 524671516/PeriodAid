@@ -1063,7 +1063,7 @@ namespace PeriodAid.Controllers
             return PartialView();
         }
 
-        public ActionResult SalesStatisticsSort_PartialView(int plattformId, string query, string sortVal, int timeVal)
+        public ActionResult SalesStatisticsSort_PartialView(int plattformId, string query, string sortVal,int timeVal)
         {
             var product = from m in _db.SS_SalesStatistic
                           where m.SS_Product.Plattform_Id == plattformId
@@ -1072,11 +1072,11 @@ namespace PeriodAid.Controllers
             {
                 if (timeVal == 1)
                 {
-                    var slaes = from m in product
-                                where query != "" ? m.SS_Product.Item_Name.Contains(query) || m.SS_Product.Item_Code.Contains(query)
-                                || m.SS_Product.System_Code.Contains(query) : m.SS_Product.Plattform_Id == plattformId
-                                orderby m.SingeleDay_Count descending
-                                select m;
+                    var slaes =  from m in product
+                                 where query != "" ? m.SS_Product.Item_Name.Contains(query) || m.SS_Product.Item_Code.Contains(query)
+                                 || m.SS_Product.System_Code.Contains(query) : m.SS_Product.Plattform_Id == plattformId
+                                 orderby m.SingeleDay_Count descending
+                                 select m;
                     return PartialView(slaes);
                 }
                 else if (timeVal == 2)
