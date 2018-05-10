@@ -17,6 +17,7 @@
         <span id="product-list-name" data-name="@list.Item_Name"></span>
     }
 </div>
+
 <div id="select_condition">
     <table class="offline-search-box" style="float:right;width:50%">
         <tr>
@@ -77,8 +78,11 @@
         </div>
     </div>
 </div>
-<a class="btn btn-info btn-sm" id="add-source" style="margin-bottom:10px"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道</a>
-<div class="text-center h4" id="single_day" style="margin-top:-27px">
+<div style="margin-bottom:10px">
+    <a class="btn btn-info btn-sm" id="add-source"><i class="fa fa-plus"></i>&nbsp;&nbsp;新增渠道</a>
+    <a class="btn btn-danger btn-sm" style="margin-left:5px" href="javascript:;">下载</a>
+</div>
+<div class="text-center h4" id="single_day" style="margin-top:0">
     <a class="glyphicon glyphicon-chevron-left" style="padding-right:40px;text-decoration:none;cursor:pointer" id="date-btn-left"></a>
     <span class="traffci-date-time color-blue" date-time="@ViewBag.trafficDate.ToString("yyyy-MM-dd")">@ViewBag.trafficDate.ToString("yyyy-MM-dd")</span>
     <a class="glyphicon glyphicon-chevron-right" style="padding-left:40px;text-decoration:none;cursor:pointer" id="date-btn-right"></a>
