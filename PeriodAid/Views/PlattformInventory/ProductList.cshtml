@@ -3,25 +3,38 @@
     ViewBag.Title = "ProductList";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-<table class="offline-search-box">
-    <tr>
-        <td class="pull-right">
-            <label>产品名称：</label>
-            <input class="form-control input-sm offline-search-inline" id="storage-product-query"  placeholder="搜索内容" />
-            <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
-        </td>
-    </tr>
-</table>
-<h2>产品列表</h2>
-<div id="product_list_content"></div>
+<div id="select_condition">
 
+    <table class="offline-search-box" style="float:right;width:50%">
+        <tr>
+            <td class="pull-right">
+                <label>产品名称：</label>
+                <input class="form-control input-sm offline-search-inline" id="storage-product-query" placeholder="搜索内容" />
+                <a class="btn btn-info btn-sm" id="storage-product-search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            </td>
+        </tr>
+    </table>
+    <div class="date_section_select select_condition_div">
+        <label class="pull-left">平台选择：</label>
+        <ul class="shop_section_ul">
+            <li class="date_section_li_active">
+                <a class="shop_select active" data-val="1">京东</a>
+            </li>
+            <li>
+                <a class="shop_select" data-val="2">天猫</a>
+            </li>
+        </ul>
+    </div>
+    
+</div>
+<div id="product_list_content"></div>
 @section scripts{
     <script>
         $(function () {
             $.ajax({
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
-                    plattformId: getUrlParam('plattformId'),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     page: 1,
                 },
                 success: function (data) {
@@ -34,7 +47,7 @@
             $.ajax({
                 url: "/PlattformInventory/ProductListPartial",
                 data: {
-                    plattformId: getUrlParam('plattformId'),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     page: 1,
                     query: $("#storage-product-query").val()
                 },
@@ -43,6 +56,25 @@
                 }
             })
         });
+        // 选择
+        $(".shop_select").click(function () {
+            var that = $(this)
+            $(".shop_section_ul").children("li").removeClass("date_section_li_active")
+            $(".shop_select").removeClass("active")
+            that.addClass("active")
+            that.parent("li").addClass("date_section_li_active")
+            $.ajax({
+                url: "/PlattformInventory/ProductListPartial",
+                data: {
+                    plattformId: that.attr("data-val"),
+                    page: 1,
+                    query: $("#storage-product-query").val()
+                },
+                success: function (data) {
+                    $("#product_list_content").html(data);
+                }
+            })
+        })
     </script>
 }
 

@@ -10,6 +10,7 @@ using System.Web.Script.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace PeriodAid.DAL
 {
@@ -244,7 +245,7 @@ namespace PeriodAid.DAL
                    "\"appkey\":\"" + AppId + "\"," +
                    "\"method\":\"gy.erp.trade.get\"," +
                    "\"sessionkey\":\"" + SessionKey + "\"," +
-                   "\"shop_code\":\"" +shop_code+"\","+
+                   "\"shop_code\":\"" + shop_code + "\"," +
                    "\"platform_code\":\"" + platform_code + "\"" +
                    "}";
             string signature = sign(json, AppSecret);
@@ -359,7 +360,7 @@ namespace PeriodAid.DAL
                                 erpdb.orders.AddRange(r.orders);
                                 erpdb.SaveChanges();
                                 flag = true;
-                                
+
                                 status.currentcount += 100;
                                 erpdb.Entry(status).State = System.Data.Entity.EntityState.Modified;
                                 erpdb.SaveChanges();
@@ -581,7 +582,7 @@ namespace PeriodAid.DAL
                             Vips_Result r = JsonConvert.DeserializeObject<Vips_Result>(result);
                             if (r != null)
                             {
-                                
+
                                 if (r.vips.Count > 0)
                                 {
                                     foreach (var item in r.vips)
@@ -713,7 +714,7 @@ namespace PeriodAid.DAL
                     "\"method\":\"gy.erp.shop.get\"," +
                     "\"sessionkey\":\"" + SessionKey + "\"," +
                     "\"page_size\":100," +
-                    "\"page_no\":" + 1 +"," +
+                    "\"page_no\":" + 1 + "," +
                     "\"sign\":\"" + signature + "\"" +
                 "}";
             //return Content(info);
@@ -821,7 +822,7 @@ namespace PeriodAid.DAL
                         "\"method\":\"gy.erp.items.get\"," +
                         "\"sessionkey\":\"" + SessionKey + "\"," +
                         "\"page_size\":100," +
-                        "\"page_no\":" + page + 
+                        "\"page_no\":" + page +
                         "}";
                 string signature = sign(json, AppSecret);
                 string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
@@ -863,7 +864,7 @@ namespace PeriodAid.DAL
 
                                 if (r.items.Count > 0)
                                 {
-                                    
+
                                     erpdb.items.AddRange(r.items);
                                     erpdb.SaveChanges();
                                     flag = true;
@@ -1010,7 +1011,7 @@ namespace PeriodAid.DAL
             }
             string formated_ids = string.Join(",", resultstring.ToArray());
             string sql = "SELECT T1.[id] FROM [ORDERERP].[dbo].[vips] as T1 "
-                +"where T1.name in (" + formated_ids + ") group by T1.[id]";
+                + "where T1.name in (" + formated_ids + ") group by T1.[id]";
             //SqlParameter[] parm = { new SqlParameter("content", formated_ids) };
             var vipids = erpdb.Database.SqlQuery<VipIds>(sql);
             return vipids;
@@ -1031,9 +1032,9 @@ namespace PeriodAid.DAL
                     details.Append("\"oid\":0,");
                     details.Append("\"item_code\":\"" + item.item_code + "\",");
                     details.Append("\"sku_code\":null");
-                    details.Append("}");
+                    details.Append("},");
                 }
-                if(order.details.Count>1)
+                if (order.details.Count >= 1)
                     details.Remove(details.Length - 1, 1);
             }
             StringBuilder json = new StringBuilder();
@@ -1043,30 +1044,31 @@ namespace PeriodAid.DAL
                     "\"sessionkey\":\"" + SessionKey + "\"," +
                     "\"order_type_code\":\"销售订单\"," +
                     "\"platform_code\":\"" + order.platform_code + "\"," +
-                    "\"shop_code\":\"线上其他渠道\"," +
+                    "\"shop_code\":\"" + order.shop_code + "\"," +
                     //"\"qty\": 1," +
-                    "\"vip_code\":\"" + order.event_name + "\"," +
+                    "\"vip_code\":\"" + order.vip_code + "\"," +
                     //"\"vip_name\":\"" + order.event_name + "\"," +
-                    "\"warehouse_code\":\"107\"," +
-                    "\"express_code\":\"STO\"," +
-                    "\"receiver_name\":\"" + order.receiver_name + "\"," +
+                    "\"warehouse_code\":\"" + order.warehouse_code + "\"," +
+                    "\"buyer_memo\":\"" + replaceWord(order.buyer_memo) + "\"," +
+                    "\"seller_memo_late\":\"" + replaceWord(order.seller_memo_late) + "\"," +
+                    "\"express_code\":\"" + order.express_code + "\"," +
+                    "\"receiver_name\":\"" + replaceWord(order.receiver_name) + "\"," +
                     "\"receiver_province\":\"" + order.receiver_province + "\"," +
                     "\"receiver_city\":\"" + order.receiver_city + "\"," +
                     "\"receiver_district\":\"" + order.receiver_district + "\"," +
                     "\"receiver_mobile\":\"" + order.receiver_mobile + "\"," +
                     "\"receiver_zip\":\"" + order.receiver_zip + "\"," +
                     "\"receiver_address\":\"" + order.receiver_address + "\"," +
-                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\","
-                    +"\"details\":[");
+                    //"\"business_man_code\":\"03004889\"," +
+                    "\"business_man_code\":\"" + order.business_man_code + "\"," +
+                    "\"deal_datetime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\"," +
+                    "\"payments\":[{" +
+                    "\"pay_type_code\":\"" + order.payments[0].pay_type_code + "\"," +
+                    "\"paytime\":\"" + ConvertDateTimeToInt(DateTime.Now) + "\"," +
+                    "\"payment\":" + order.payments[0].payment + "}],"
+                    + "\"details\":[");
             json.Append(details);
             json.Append("]}");
-            //json.Append("\"payments\":[{");
-            //json.Append("\"payment\":0,\"paytime\":\"" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "\",");
-            //json.Append("\"account\":null,\"pay_type_code\":\"支付宝\",\"pay_code\":null");
-            //json.Append("}],");
-            //json.Append("\"invoices\":null}");
-            //json.Append("\"invoices\":[{\"invoice_type\":1,\"invoice_title\":null,\"invoice_content\":null,\"invoice_amount\":null,\"bill_amount\":null}]}");
-            //return json.ToString();
             string signature = sign(json.ToString(), AppSecret);
             string post_url = "http://v2.api.guanyierp.com/rest/erp_open";
             var request = WebRequest.Create(post_url) as HttpWebRequest;
@@ -1103,6 +1105,62 @@ namespace PeriodAid.DAL
             {
                 return null;//return Content(ex.Message);// 出错处理
             }
+        }
+        public static long ConvertDateTimeToInt(DateTime time)
+        {
+            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
+            long t = (time.Ticks - startTime.Ticks) / 10000;
+            return t;
+        }
+        private string replaceWord(string str)
+        {
+            var strword = str;
+            try
+            {
+                if (str.Contains("+"))
+
+                    strword = strword.Replace("+", "加");
+
+                if (str.Contains(":"))
+
+                    strword = strword.Replace(":", " ");
+
+                if (str.Contains("："))
+
+                    strword = strword.Replace("：", " ");
+
+                if (str.Contains(","))
+
+                    strword = strword.Replace(",", ".");
+
+                if (str.Contains("，"))
+
+                    strword = strword.Replace("，", ".");
+
+                if (str.Contains("/"))
+
+                    strword = strword.Replace("/", ".");
+
+                if (str.Contains("\\"))
+
+                    strword = strword.Replace("\\", " ");
+
+                if (str.Contains("、"))
+
+                    strword = strword.Replace("、", ".");
+
+                if (str.Contains(" "))
+
+                    strword = Regex.Replace(strword, "\\s{2,}", " ");
+                if (str.Contains("-"))
+
+                    strword = strword.Replace("-", ".");
+            }
+            catch
+            {
+                strword = str;
+            }
+            return strword;
         }
 
         private string addTags(string originaltags, string tagname)
@@ -1142,13 +1200,29 @@ namespace PeriodAid.DAL
         public string receiver_mobile { get; set; }
         public string receiver_zip { get; set; }
         public string receiver_address { get; set; }
+        public string shop_code { get; set; }
+        public string express_code { get; set; }
+        public string warehouse_code { get; set; }
+        public string vip_code { get; set; }
+        public string deal_datetime { get; set; }
+        public string buyer_memo { get; set; }
+        public string seller_memo { get; set; }
+        public string business_man_code { get; set; }
+        public string seller_memo_late { get; set; }
         public List<ERPCustomOrder_details> details { get; set; }
+        public List<ERPCustomOrder_payments> payments { get; set; }
     }
     public class ERPCustomOrder_details
     {
         public int qty { get; set; }
         public decimal price { get; set; }
         public string item_code { get; set; }
+    }
+    public class ERPCustomOrder_payments
+    {
+        public string pay_type_code { get; set; }
+        public DateTime? paytime { get; set; }
+        public decimal payment { get; set; }
     }
     public class Orders_Result
     {

@@ -1,0 +1,108 @@
+﻿@model  PagedList.IPagedList<PeriodAid.Models.ApplicationUser>
+@using PagedList.Mvc;
+@using PeriodAid.Models;
+<style>
+    .table > tbody > tr > td {
+        vertical-align: middle;
+    }
+</style>
+
+<table class="table table-condensed table-hover" style="width:100%;table-layout:fixed">
+    <tr class="offline-table-background">
+        <th style="width:15%;">
+            姓名
+        </th>
+        <th style="width:30%;">
+            用户名
+        </th>
+        <th style="width:20%;">
+            电话
+        </th>
+        <th style="width:20%;"></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+               @item.NickName
+            </td>
+            <td>
+                @item.UserName
+            </td>
+            <td>
+               @item.PhoneNumber
+            </td>
+            <td>
+                <a class="btn btn-xs btn-primary select_btn" data-id="@item.Id" role="button">系统权限</a>
+                <a class="btn btn-xs btn-danger remove_btn" data-id="@item.Id" role="button">删除人员</a>
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">@Html.PagedListPager(Model, page => Url.Action("RightsListPartial", new { page }))</div>
+<script>
+    //页码切换
+    $(".pagination > li > a").click(function () {
+        $("#tm-view-loading").show()
+        $("#manager_list").html("")
+        var l = $(this).attr("href");
+        var query = $("#employee_name").val();
+        $.ajax({
+            url: l,
+            data: {
+                query: query
+            },
+            success: function (data) {
+                $("#manager_list").html(data)
+                $("#tm-view-loading").hide()
+            }
+        });
+        return false;
+    });
+    // 系统权限
+    $(".select_btn").on("click", function () {
+        $(this).attr("href", "/AccountRights/AccountRights_View/?userId=" + $(this).attr("data-id"))
+    })
+    // 删除
+    $(".remove_btn").on("click", function () {
+        var that = $(this)
+        if (!that.hasClass("disabled")) {
+            that.addClass("disabled")
+            $.ajax({
+                url: "/AccountRights/Remove_UserInfo",
+                type:"post",
+                data:{
+                    userId:that.attr("data-id")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#tm-view-loading").show()
+                        $("#manager_list").html("")
+                        $.alert({
+                            title: '提示!',
+                            content: '操作成功!',
+                            type: 'green',
+                        })
+                        that.removeClass("disabled")
+                        $.ajax({
+                            url: "/AccountRights/RightsListPartial",
+                            success: function (data) {
+                                $("#manager_list").html(data)
+                                $("#tm-view-loading").hide()
+                            }
+                        });
+                    }
+                    else {
+                        $.alert({
+                            title: '提示!',
+                            content: '权限不足!',
+                            type: 'red',
+                        })
+                        that.removeClass("disabled")
+                    }
+                }
+            });
+        }
+    })
+</script>

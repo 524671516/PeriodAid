@@ -14,7 +14,7 @@ using System.Net;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;

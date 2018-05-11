@@ -1,0 +1,192 @@
+﻿@model IEnumerable<PeriodAid.Models.MD_Order>
+<div>
+    <table class="table table-hover">
+        <tr style="background-color:#f9f9f9">
+            <th style="width:5%">
+                <label class="checkbox-custom">
+                    <input type="checkbox" class="btn" id="checkbox-all">
+                </label>
+            </th>
+            <th style="width:20%">平台单号</th>
+            <th style="width:9%">推送状态</th>
+            <th style="width:6%">数量</th>
+            <th style="width:10%">发货状态</th>
+            <th style="width:10%">发货时间</th>
+            <th style="width:20%">邮寄地址</th>
+            <th style="width:15%">物流单号</th>
+            <th style="width:10%">
+                <a class="btn btn-xs btn-danger amalgamate_btn hidden" role="button">合并</a>
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr class="data_view" data-toggle="tooltip" data-placement="left" title="">
+                <td>
+                    <label class="checkbox-custom">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.Id" data-upstatus ="@item.upload_status" data-ostatus ="@item.order_status">
+                    </label>
+                </td>
+                <td>@item.order_code</td>
+                <td>@Html.UploadStatus(item.upload_status)</td>
+                <td style="text-indent:10px">@item.qty</td>
+                <td>@Html.DeliveryStatus(item.delivery_state)</td>
+                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
+                <td>
+                    <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
+                </td>
+                <td>
+                    <div style="width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div>
+               
+                </td>
+                <td>
+                    <a class="btn btn-xs btn-success edit_btn" role="button" data-id="@item.Id" data-utatus="@item.upload_status" data-receiver="@item.delivery_state" data-toggle="modal" data-target="#myModal">编辑</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/distpicker.data.js"></script>
+<script src="~/Scripts/jquery-confirm.js"></script>
+<script src="~/Scripts/jquery.form.min.js"></script>
+<script>
+    $(function () {
+        $('.checkbox[data-upstatus="1"]').attr("disabled", "disabled")
+        var border_list = $(".edit_btn")
+        var j = 0
+        for (j; j < border_list.length; j++) {
+            var data_rstatus = $(border_list[j]).attr("data-receiver")
+            var data_status = $(border_list[j]).attr("data-status")
+            if (data_status == 1) {
+                $(border_list[j]).parents(".data_view").attr("title", "订单已合并！")
+            }
+            else if (data_status == -1) {
+                $(border_list[j]).parents(".data_view").attr("title", "订单已取消发送！")
+            }
+        }
+        $('[data-toggle="tooltip"]').tooltip()
+        $('.edit_btn[data-status="-1"]').addClass("disabled")
+        $('.edit_btn[data-receiver="2"]').addClass("disabled")
+        $("#ul-hover li").eq(1).addClass("current")
+        $('.edit_btn[data-utatus="1"]').addClass("disabled")
+        // 编辑
+        $(".edit_btn").on("click", function () {
+            var that = $(this)
+            $.ajax({
+                url: "/MonthlyDelivery/MD_EditOrderInfo/",
+                data: {
+                    order_id: that.attr("data-id")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                    $("#orderId_show").attr("data-id", $("#orderId").attr("data-id"))
+                }
+            })
+        })
+    })
+    var orderarry = [];
+    //全选
+    $("#checkbox-all").click(function () {
+        var i = 0
+        var that = $(this)
+        if (that.is(":checked")) {
+            $('.checkbox[data-upstatus="0"]').prop("checked", true);
+            var list = $(".checkbox:checked")
+            if (list.length < 2) {
+                $(".amalgamate_btn").addClass("hidden")
+            } else {
+                $(".amalgamate_btn").removeClass("hidden")
+                for (i; i < list.length; i++) {
+                    var list_data = $(list[i]).attr("data-val")
+                    if (orderarry.indexOf(list_data) == -1) {
+                        orderarry.push(list_data)
+                    }
+                }
+            }
+        }
+        else {
+            $("input").prop("checked", false);
+            var list = $(".checkbox:unchecked")
+            $(".amalgamate_btn").addClass("hidden")
+            for (i; i < list.length; i++) {
+                orderarry.remove($(list[i]).attr("data-val"))
+            }
+        }
+    })
+    //单选
+    $(".checkbox").on("click", function () {
+        var that = $(this)
+        var C_id = that.attr("data-val")
+        var select = that.is(":checked");
+        if (select) {
+            orderarry.push(C_id)
+            if ($("input:checked").length > 1) {
+                $(".amalgamate_btn").removeClass("hidden")
+                $(".change_status").hide()
+            }
+        }
+        else {
+            orderarry.remove(C_id)
+            if (orderarry.length < 2) {
+                $(".amalgamate_btn").addClass("hidden")
+                $(".change_status").show()
+            }
+        }
+    })
+    // 合并发送
+    $(".amalgamate_btn").on("click", function () {
+        var that = $(this)
+        var arrlen = orderarry.length
+        $.confirm({
+            title: '提示!',
+            type: 'green',
+            content: "合并订单数 : "+arrlen,
+            buttons: {
+                确定: function () {
+                    $.ajax({
+                        url: "/MonthlyDelivery/Amalgamate_Order/",
+                        type: "post",
+                        data: {
+                            order_id: orderarry.sort((a,b)=>a-b)
+                        },
+                        success: function (data) {
+                            if (data.result == "SUCCESS") {
+                                $.alert({
+                                    title: '提示!',
+                                    content: '合并成功!',
+                                    type: 'green',
+                                });
+                                $.ajax({
+                                    url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
+                                    data: {
+                                        parentOrder_id: $(".checkbox").eq(0).attr("data-val")
+                                    },
+                                    success: function (data) {
+                                        $("#orderdetail_list_content").html(data)
+                                    }
+                                })
+                            }
+                            else {
+                                $.alert({
+                                    title: '提示!',
+                                    content: '订单已合并!',
+                                    type: 'red',
+                                });
+                            }
+                        }
+                    })
+                },
+                取消: function () {
+
+                },
+            }
+        });
+    })
+</script>            

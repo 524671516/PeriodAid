@@ -6,13 +6,14 @@
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>库存管理系统</title>
+    <title>线上库存管理系统</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/share.css" rel="stylesheet" />
     <link href="~/Content/Plattformlnventory.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
@@ -32,83 +33,62 @@
                 @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            管理系统　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
-                            <li><a href="/SalesProcess/ProductList">销售管理系统</a></li>
+                <ul class="nav navbar-nav nav_relative_ul">
+                    <li>
+                        @Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
                         </ul>
                     </li>
-                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
-                    <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            工具　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
-                            <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
-                            <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
-                        </ul>
-                    </li>
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
+                    <li>
+                        @Html.ActionLink("线下销售", "StoreIndex", "OffStore")
+                    <ul class="nav_absolute_ul hidden">
+                        <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                        <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                    </ul>
+                </li>
+                <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
+                <li>@Html.ActionLink("系统权限", "RightsList", "AccountRights")</li>
+                <li role="presentation" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                        工具　<span class="caret"></span>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
+                        <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
+                        <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
+                    </ul>
+                </li>
+            </ul>
+            @Html.Partial("_LoginPartial")
+        </div>
         </div>
     </div>
-    <div class="container body-content" style="padding:20px">
-        <div class="row">
-            <div class="col-md-2">
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    京东 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseOne" class="collapse in" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li> 
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=1"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>  
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=1"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=1"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a></li> 
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=1"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传销售统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Index"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;上传下载分仓单</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/JD_Traffic?plattformId=1"><i class="fa fa-arrow-down"></i>&nbsp;&nbsp;上传下载渠道统计</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    天猫超市 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=2"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=2"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=2"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传统计</a></li>
-                                    <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=2"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a></li>                
-                                </ul>
-                            </div>
+    <div class="container body-content" id="container_view">
+        <div class="row" style="padding-top:3px">
+            <div class="col-md-2" id="col_2_view">
+                <div class="panel-group fixed_ul" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default" id="fixed_ul_color">
+                        <div class="panel-body" id="panel-body-view">
+                            <ul class="list-unstyled" id="ul_btn">
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/ProductList?plattformId=1"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/SalesStatistics_View?plattformId=1"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;产品销量统计</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/PlattformInventory_form?plattformId=1"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;数据统计</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Calc_Storage?plattformId=1"><i class="fa fa-search"></i>&nbsp;&nbsp;入库预估</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/EventList?plattformId=1"><i class="fa fa-tags"></i>&nbsp;&nbsp;活动列表</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/CustomUploadFile?plattformId=1"><i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp;上传销售统计</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/Index"><i class="fa fa-arrow-circle-down"></i>&nbsp;&nbsp;上传下载分仓单</a><div class="san_you hidden"></div></li>
+                                <li class="left-navbar" style="cursor:pointer"><a href="/PlattformInventory/JD_Traffic?plattformId=1"><i class="fa fa-arrow-down"></i>&nbsp;&nbsp;上传下载渠道统计</a><div class="san_you hidden"></div></li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10" id="col_10_style">
                 @RenderBody()
             </div>
         </div>
@@ -132,5 +112,39 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+<script>
+    var locUrl = window.location.pathname + window.location.search;
+    $("#ul_btn li a").each(function (index, el) {
+        var href = this.getAttribute("href");
+        $(this).removeClass("click_a_color")
+        if (href == locUrl) {
+            $(this).parent("li").addClass('left-navba-background');
+            $(this).siblings(".san_you").removeClass("hidden")
+            $(this).addClass("click_a_color")
+        }
+    });
+    $(".nav_relative_ul li").mouseover(function () {
+        $(this).children(".nav_absolute_ul").removeClass("hidden")
+    })
+    $(".nav_relative_ul li").mouseout(function () {
+        $(this).children(".nav_absolute_ul").addClass("hidden")
+    })
+    $(".nav_absolute_ul li").mouseover(function () {
+        $(this).css("background", "#fff")
+    })
+    $(".nav_absolute_ul li").mouseout(function () {
+        $(this).css("background", "none")
+    })
+    $(".left-navbar").mouseover(function () {
+        $(this).children("a").css("paddingLeft", "10px")
+    })
+    $(".left-navbar").mouseout(function () {
+        $(this).children("a").css("paddingLeft", "0px")
+    })
+    $(".left-navbar").on("click", function () {
+        var that = $(this)
+        window.location.href = that.children("a").attr("href");
+    })
+</script>
 
 

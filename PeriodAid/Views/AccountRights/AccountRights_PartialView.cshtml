@@ -1,0 +1,154 @@
+﻿@model PeriodAid.Models.ApplicationUser
+<div>
+    <div class="col-md-3">
+        <select multiple id="StoreList" name="StoreList" class="form-control input-sm" style="height:300px;font-size:14px">
+            @foreach(var role in ViewBag.UserRoles)
+            {
+                <option value="@role.Key">@role.Value</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2 text-center" style="height:300px;">
+        <ul class="list-unstyled text-center" style="margin-top:100px">
+            <li><a class="btn btn-default btn-sm btn-info" href="javascript:;" id="add_btn">添加</a></li>
+            <br />
+            <li><a class="btn btn-default btn-warning btn-sm" href="javascript:;" id="remove_btn">移除</a></li>
+        </ul>
+    </div>
+    <div class="col-md-3">
+        <select multiple id="selectList" name="selectList" class="form-control input-sm" style="height:300px;font-size:14px">
+            @foreach (var item in ViewBag.Roles)
+            {
+                <option value="@item.Key">@item.Value</option>
+            }
+        </select>
+    </div>
+</div><br />    
+<script>
+    $(function () {
+        var Carr = []
+        var carr = []
+        $("#StoreList option").each(function () {
+            var channlVal = $(this).val();
+            Carr.push(channlVal)
+        })
+        $("#selectList option").each(function () {
+            var channlval = $(this).val();
+            carr.push(channlval)
+        })
+        var long = Carr.length < carr.length ? carr : Carr;
+        var short = Carr.length < carr.length ? Carr : carr;
+        var str = "," + long.toString() + ",";
+        var result = [];
+        for (var i in short) {
+            if (str.indexOf("," + short[i] + ",") >= 0) {
+                result.push(short[i]);
+            }
+        }
+        for (var i = 0 ; i < result.length ; i++) {
+            $("#StoreList option").each(function () {
+                var that = $(this)
+                var channlVal = $(this).val();
+                if (channlVal == result[i]) {
+                    that.remove()
+                }
+            })
+        }
+        $("#add_btn").on("click", function () {
+            var that = $(this)
+            if (!that.hasClass("disabled")) {
+                that.addClass("disabled")
+                $.ajax({
+                    url: "/AccountRights/Add_RoleAjax/",
+                    type: "post",
+                    data: {
+                        userId: $("#user_id").attr("data-id"),
+                        Role: $("#StoreList").children("option:selected").val()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.alert({
+                                title: '提示!',
+                                content: '添加成功!',
+                                type: 'green',
+                            })
+                            $.ajax({
+                                url: "/AccountRights/AccountRights_PartialView",
+                                data: {
+                                    userId: $("#user_id").attr("data-id")
+                                },
+                                success: function (data) {
+                                    $("#roles_list").html(data)
+                                }
+                            });
+                        }
+                        else if (data.result == "FAIL") {
+                            $.alert({
+                                title: '提示!',
+                                content: '没有选择开通权限!',
+                                type: 'red',
+                            })
+                            that.removeClass("disabled")
+                        }
+                        else {
+                            $.alert({
+                                title: '提示!',
+                                content: '权限不足!',
+                                type: 'red',
+                            })
+                            that.removeClass("disabled")
+                        }
+                    }
+                })
+            }
+        })
+        $("#remove_btn").on("click", function () {
+            var that = $(this)
+            if (!that.hasClass("disabled")) {
+                that.addClass("disabled")
+                $.ajax({
+                    url: "/AccountRights/Remove_RoleAjax/",
+                    type: "post",
+                    data: {
+                        userId: $("#user_id").attr("data-id"),
+                        Role: $("#selectList").children("option:selected").val()
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.alert({
+                                title: '提示!',
+                                content: '删除成功!',
+                                type: 'green',
+                            })
+                            $.ajax({
+                                url: "/AccountRights/AccountRights_PartialView",
+                                data: {
+                                    userId: $("#user_id").attr("data-id")
+                                },
+                                success: function (data) {
+                                    $("#roles_list").html(data)
+                                }
+                            });
+                        }
+                        else if (data.result == "FAIL") {
+                            $.alert({
+                                title: '提示!',
+                                content: '没有选择删除权限!',
+                                type: 'red',
+                            })
+                            that.removeClass("disabled")
+                        }
+                        else {
+                            $.alert({
+                                title: '提示!',
+                                content: '权限不足!',
+                                type: 'red',
+                            })
+                            that.removeClass("disabled")
+                        }
+                    }
+                })
+            }
+        })
+    })
+</script>

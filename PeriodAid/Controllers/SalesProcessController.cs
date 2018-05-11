@@ -2,7 +2,9 @@
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NPOI.HSSF.UserModel;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
 using PagedList;
@@ -14,24 +16,31 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using System.Xml;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class SalesProcessController : Controller
     {
         // GET: SalesProcess
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private SalesProcessModel _db;
+        private IKCRMDATAModel crm_db;
+        private MonthlyDeliveryModel md_db;
+        int try_times = 0;
         public SalesProcessController()
         {
-            _db = new SalesProcessModel();
+            crm_db = new IKCRMDATAModel();
+            md_db = new MonthlyDeliveryModel();
         }
-
         public ActionResult Index()
         {
             return View();
@@ -45,2268 +54,1267 @@ namespace PeriodAid.Controllers
             stream.Close();
             return ArrayByte;
         }
+        //CRM
+        public static String buildQueryStr(Dictionary<String, String> dicList)
+        {
+            String postStr = "";
 
-        public SP_Seller getSeller(string username)
-        {
-            var seller = _db.SP_Seller.SingleOrDefault(m => m.User_Name == username);
-            return seller;
-        }
-
-        public ActionResult ProductList()
-        {
-            var P_Type = from m in _db.SP_ProductType
-                         select m;
-            ViewBag.ProductType = P_Type;
-            return View();
-        }
-
-        public ActionResult ProductDetail(int productId)
-        {
-            var product = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
-            ViewBag.Product = product;
-            return PartialView(product);
-        }
-        [Seller(OperationGroup = 102)]
-        public ActionResult ProductListPartial(int? page, string query, int productType)
-        {
-            int _page = page ?? 1;
-            if (productType == 0)
+            foreach (var item in dicList)
             {
-                if (query != "")
+                postStr += item.Key + "=" + HttpUtility.UrlEncode(item.Value, Encoding.UTF8) + "&";
+            }
+            postStr = postStr.Substring(0, postStr.LastIndexOf('&'));
+            return postStr;
+        }
+        // 获取当前TOKEN
+        private async Task<string> getUserToken()
+        {
+            // 取数据库
+            var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
+            try
+            {
+                TimeSpan ts = DateTime.Now - token_time.download_at;
+                int days = ts.Days;
+                if (days >= 1)
                 {
-                    var product = (from m in _db.SP_Product
-                                   where m.Product_Status != -1
-                                   select m);
-                    var SearchResult = (from m in product
-                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
-                                        || m.SP_ProductType.Type_Name.Contains(query) || m.Brand_Name.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = (from m in _db.SP_Product
-                                        where m.Product_Status != -1
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
+                    return await RefreshUserToken();
                 }
             }
-            else
+            catch (Exception)
             {
-                if (query != "")
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                try_times++;
+                if (try_times >= 5)
                 {
-                    var product = (from m in _db.SP_Product
-                                   where m.ProductType_Id == productType
-                                   select m);
-                    var SearchResult = (from m in product
-                                        where m.Item_Name.Contains(query) || m.Item_Code.Contains(query) || m.System_Code.Contains(query)
-                                        || m.SP_ProductType.Type_Name.Contains(query) || m.Brand_Name.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
+                    logs.type = "User_Token";
+                    logs.exception = "[User_Token]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return "FAIL";
                 }
-                else
-                {
-                    var SearchResult = (from m in _db.SP_Product
-                                        where m.ProductType_Id == productType
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
+                return await RefreshUserToken();
             }
+            return token_time.Value;
         }
 
-        public void AddProductViewBag()
+        private async Task<string> RefreshUserToken()
         {
-            List<SelectListItem> productType = new List<SelectListItem>();
-            productType.Add(new SelectListItem() { Text = "姜茶", Value = "1" });
-            productType.Add(new SelectListItem() { Text = "花草茶", Value = "2" });
-            productType.Add(new SelectListItem() { Text = "糕点", Value = "3" });
-            productType.Add(new SelectListItem() { Text = "其它", Value = "4" });
-            ViewBag.productType = new SelectList(productType, "Value", "Text");
-
-            List<SelectListItem> productStatus = new List<SelectListItem>();
-            productStatus.Add(new SelectListItem() { Text = "爆款", Value = "1" });
-            productStatus.Add(new SelectListItem() { Text = "在售", Value = "0" });
-            productStatus.Add(new SelectListItem() { Text = "下架", Value = "-1" });
-            ViewBag.productStatus = new SelectList(productStatus, "Value", "Text");
-        }
-
-        public ActionResult AddProductPartial()
-        {
-            AddProductViewBag();
-            return PartialView();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 101)]
-        public ActionResult AddProductPartial(SP_Product model, FormCollection form)
-        {
-            bool Product = _db.SP_Product.Any(m => m.Item_Name == model.Item_Name);
-            ModelState.Remove("Product_Status");
-            ModelState.Remove("Item_Code");
-            ModelState.Remove("System_Code");
-            ModelState.Remove("Item_ShortName");
-            ModelState.Remove("Bar_Code");
-            ModelState.Remove("Product_Img");
-            if (ModelState.IsValid)
+            // 远程获取
+            var token_time = crm_db.CRM_User_Token.SingleOrDefault(m => m.Key == "CRM_UserToken");
+            string url = "https://api.ikcrm.com/api/v2/auth/login";
+            var retString = "";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.ServicePoint.ConnectionLimit = int.MaxValue;
+            request.Method = "post";
+            request.ContentType = "application/x-www-form-urlencoded";
+            try
             {
-                if (Product)
+                Dictionary<String, String> dicList = new Dictionary<String, String>();
+                dicList.Add("login", UserInfo.login);
+                dicList.Add("password", UserInfo.password);
+                dicList.Add("device", UserInfo.device);
+                String postStr = buildQueryStr(dicList);
+                byte[] data = Encoding.UTF8.GetBytes(postStr);
+                request.ContentLength = data.Length;
+                Stream myRequestStream = request.GetRequestStream();
+                myRequestStream.Write(data, 0, data.Length);
+                myRequestStream.Close();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                result_Data resultdata = JsonConvert.DeserializeObject<result_Data>(retString);
+                if (resultdata.code == "0")
                 {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    var item = new SP_Product();
-                    item.System_Code = model.System_Code;
-                    item.Item_Code = model.Item_Code;
-                    item.Item_Name = model.Item_Name;
-                    item.Brand_Name = model.Brand_Name;
-                    item.Item_ShortName = model.Item_ShortName;
-                    item.Supplier_Name = model.Supplier_Name;
-                    item.Bar_Code = model.Bar_Code;
-                    item.Product_Weight = model.Product_Weight;
-                    item.Carton_Spec = model.Carton_Spec;
-                    item.Purchase_Price = model.Purchase_Price;
-                    item.Supply_Price = model.Supply_Price;
-                    item.ProductType_Id = model.ProductType_Id;
-                    item.Product_Status = model.Product_Status;
-                    item.Product_Img = model.Product_Img;
-                    _db.SP_Product.Add(item);
-                    _db.Configuration.ValidateOnSaveEnabled = false;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            else
-            {
-                AddProductViewBag();
-                return Json(new { result = "FAIL" });
-            }
-        }
-
-        public ActionResult EditProductInfo(int productId)
-        {
-            var item = _db.SP_Product.SingleOrDefault(m => m.Id == productId);
-            AddProductViewBag();
-            return PartialView(item);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 103)]
-        public ActionResult EditProductInfo(SP_Product model)
-        {
-            if (ModelState.IsValid)
-            {
-                SP_Product item = new SP_Product();
-                if (TryUpdateModel(item))
-                {
-                    _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 103)]
-        public ActionResult DeleteProduct(int productId)
-        {
-            var Product = _db.SP_Product.AsNoTracking().SingleOrDefault(m => m.Id == productId);
-            Product.Product_Status = -1;
-            _db.Entry(Product).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-        }
-
-        public ActionResult ClientList()
-        {
-            return View();
-        }
-
-        [Seller(OperationGroup = 202)]
-        public ActionResult ClientListPartial(int? page, string query)
-        {
-            int _page = page ?? 1;
-            var seller = getSeller(User.Identity.Name);
-            if (seller.Seller_Type == 0)
-            {
-                if (query != "")
-                {
-                    var customer = (from m in _db.SP_Client
-                                    where m.Client_Status != -1 && m.Seller_Id == seller.Id
-                                    select m);
-                    var SearchResult = (from m in customer
-                                        where m.Client_Name.Contains(query) || m.Client_Area.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = (from m in _db.SP_Client
-                                        where m.Client_Status != -1 && m.Seller_Id == seller.Id
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-            }
-            else
-            {
-                if (query != "")
-                {
-                    var customer = (from m in _db.SP_Client
-                                    where m.Client_Status != -1
-                                    select m);
-                    var SearchResult = (from m in customer
-                                        where m.Client_Name.Contains(query) || m.Client_Area.Contains(query) || m.SP_Seller.Seller_Name.Contains(query)
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-                else
-                {
-                    var SearchResult = (from m in _db.SP_Client
-                                        where m.Client_Status != -1 && m.SP_Seller.Seller_Status != -1
-                                        orderby m.Id descending
-                                        select m).ToPagedList(_page, 15);
-                    return PartialView(SearchResult);
-                }
-            }
-
-        }
-
-        public void AddClientViewBag()
-        {
-            var seller = getSeller(User.Identity.Name);
-            ViewBag.Seller = seller;
-            List<SelectListItem> itemlist = new List<SelectListItem>();
-            itemlist.Add(new SelectListItem() { Text = "活跃", Value = "1" });
-            itemlist.Add(new SelectListItem() { Text = "待开发", Value = "0" });
-            itemlist.Add(new SelectListItem() { Text = "解约", Value = "-1" });
-            ViewBag.ClientStatus = new SelectList(itemlist, "Value", "Text");
-
-            List<SelectListItem> typelist = new List<SelectListItem>();
-            typelist.Add(new SelectListItem() { Text = "未知", Value = "0" });
-            typelist.Add(new SelectListItem() { Text = "大客户", Value = "1" });
-            typelist.Add(new SelectListItem() { Text = "经销商", Value = "2" });
-            ViewBag.ClientType = new SelectList(typelist, "Value", "Text");
-
-            List<SelectListItem> salessystem = new List<SelectListItem>();
-            salessystem.Add(new SelectListItem() { Text = "华东", Value = "华东" });
-            salessystem.Add(new SelectListItem() { Text = "外区", Value = "外区" });
-            salessystem.Add(new SelectListItem() { Text = "华南", Value = "华南" });
-            salessystem.Add(new SelectListItem() { Text = "全国", Value = "全国" });
-            salessystem.Add(new SelectListItem() { Text = "西南", Value = "西南" });
-            salessystem.Add(new SelectListItem() { Text = "华中", Value = "华中" });
-            salessystem.Add(new SelectListItem() { Text = "东北", Value = "东北" });
-            salessystem.Add(new SelectListItem() { Text = "西北", Value = "西北" });
-            salessystem.Add(new SelectListItem() { Text = "华北", Value = "华北" });
-            ViewBag.SalesList = new SelectList(salessystem, "Value", "Text");
-        }
-
-        public ActionResult AddClientPartial()
-        {
-            AddClientViewBag();
-            return PartialView();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 201)]
-        public ActionResult AddClientPartial(SP_Client model, FormCollection form)
-        {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area);
-            if (ModelState.IsValid)
-            {
-                if (Client)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    var client = new SP_Client();
-                    client.Client_Name = model.Client_Name;
-                    client.Client_Type = model.Client_Type;
-                    client.Client_Area = model.Client_Area;
-                    client.Client_Address = model.Client_Address;
-                    client.Client_Status = model.Client_Status;
-                    client.Seller_Id = model.Seller_Id;
-                    _db.SP_Client.Add(client);
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                };
-            }
-            else
-            {
-                AddClientViewBag();
-                return Json(new { result = "ERROR" });
-            }
-        }
-
-        public ActionResult EditClientInfo(int clientId)
-        {
-            var seller = getSeller(User.Identity.Name);
-            ViewBag.Seller = seller;
-            var client = (from m in _db.SP_Client
-                          where m.Id == clientId && m.SP_Seller.Seller_Type <= seller.Seller_Type
-                          select m).FirstOrDefault();
-            ViewBag.Client = client;
-            var item = _db.SP_Client.SingleOrDefault(m => m.Id == clientId);
-            AddClientViewBag();
-            return PartialView(item);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 203)]
-        public ActionResult EditClientInfo(SP_Client model)
-        {
-            bool Client = _db.SP_Client.Any(m => m.Client_Name == model.Client_Name && m.Client_Area == model.Client_Area && m.Client_Type == model.Client_Type && m.Client_Status == model.Client_Status && m.Seller_Id == model.Seller_Id && m.Client_Address == model.Client_Address);
-            if (ModelState.IsValid)
-            {
-                if (Client)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    SP_Client client = new SP_Client();
-                    if (TryUpdateModel(client))
+                    if (token_time == null)
                     {
-                        _db.Entry(client).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 203)]
-        public ActionResult DeleteClient(int clientId)
-        {
-            var Client = _db.SP_Client.AsNoTracking().SingleOrDefault(m => m.Id == clientId);
-            Client.Client_Status = -1;
-            _db.Entry(Client).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-        }
-
-        public ActionResult ContactList(int clientId)
-        {
-            var client = (from m in _db.SP_Client
-                          where m.Id == clientId
-                          select m).FirstOrDefault();
-            ViewBag.ClientName = client;
-            return View();
-        }
-
-        public ActionResult ContactListPartial(int clientId, int? page, string query)
-        {
-            int _page = page ?? 1;
-            if (query != "")
-            {
-                var contact = (from m in _db.SP_Contact
-                               where m.Client_Id == clientId && m.Contact_Status != -1
-                               select m);
-                var SearchResult = (from m in contact
-                                    where m.Contact_Name.Contains(query) || m.Contact_Mobile.Contains(query)
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
-            }
-            else
-            {
-                var SearchResult = (from m in _db.SP_Contact
-                                    where m.Client_Id == clientId && m.Contact_Status != -1
-                                    orderby m.Id descending
-                                    select m).ToPagedList(_page, 15);
-                return PartialView(SearchResult);
-            }
-
-        }
-
-        public ActionResult AddContactPartial(int clientId)
-        {
-            var client = (from m in _db.SP_Client
-                          where m.Id == clientId
-                          select m).FirstOrDefault();
-            ViewBag.ClientName = client;
-            return PartialView();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 301)]
-        public ActionResult AddContactPartial(SP_Contact model, FormCollection form)
-        {
-            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Status == model.Contact_Status);
-            if (ModelState.IsValid)
-            {
-                if (Contact)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    var contact = new SP_Contact();
-                    contact.Contact_Name = model.Contact_Name;
-                    contact.Contact_Mobile = model.Contact_Mobile;
-                    contact.Contact_Job = model.Contact_Job;
-                    contact.Contact_Status = 0;
-                    contact.Client_Id = model.Client_Id;
-                    _db.SP_Contact.Add(contact);
-                    _db.Configuration.ValidateOnSaveEnabled = false;
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            else
-            {
-                return PartialView(model);
-            }
-            //return Content("ERROR1");
-        }
-
-        public ActionResult EditContactInfo(int contactId)
-        {
-            var item = _db.SP_Contact.SingleOrDefault(m => m.Id == contactId);
-            var contact = (from m in _db.SP_Contact
-                           where m.Id == contactId
-                           select m).FirstOrDefault();
-            ViewBag.ClientName = contact;
-            return PartialView(item);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 303)]
-        public ActionResult EditContactInfo(SP_Contact model)
-        {
-            bool Contact = _db.SP_Contact.Any(m => m.Contact_Name == model.Contact_Name && m.Contact_Mobile == model.Contact_Mobile && m.Contact_Job == model.Contact_Job);
-            if (ModelState.IsValid)
-            {
-                if (Contact)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    SP_Contact contact = new SP_Contact();
-                    if (TryUpdateModel(contact))
-                    {
-                        _db.Entry(contact).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 303)]
-        public ActionResult DeleteContact(int contactId)
-        {
-            var Contact = _db.SP_Contact.AsNoTracking().SingleOrDefault(m => m.Id == contactId);
-            Contact.Contact_Status = -1;
-            _db.Entry(Contact).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-        }
-
-        public ActionResult SalesList()
-        {
-            return View();
-        }
-        [Seller(OperationGroup = 402)]
-        public ActionResult SalesListPartial(int? page, string query, int? clientId)
-        {
-            int _page = page ?? 1;
-            var seller = getSeller(User.Identity.Name);
-            if (clientId == null)
-            {
-                if (seller.Seller_Type == 0)
-                {
-                    if (query != "")
-                    {
-                        var sales = from m in _db.SP_SalesSystem
-                                    where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
-                                    select m;
-                        var SearchResult = (from m in sales
-                                            where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
+                        token_time = new CRM_User_Token();
+                        token_time.Key = "CRM_UserToken";
+                        token_time.Value = resultdata.data.user_token;
+                        token_time.download_at = DateTime.Now;
+                        crm_db.CRM_User_Token.Add(token_time);
                     }
                     else
                     {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
+                        token_time.Key = "CRM_UserToken";
+                        token_time.Value = resultdata.data.user_token;
+                        token_time.download_at = DateTime.Now;
+                        crm_db.Entry(token_time).State = System.Data.Entity.EntityState.Modified;
                     }
-                }
-                else
-                {
-                    if (query != "")
-                    {
-                        var sales = from m in _db.SP_SalesSystem
-                                    where m.System_Status != -1
-                                    select m;
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
-                    else
-                    {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
+                    crm_db.SaveChanges();
                 }
             }
-            else
+            catch (Exception)
             {
-                if (seller.Seller_Type == 0)
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                try_times++;
+                if (try_times >= 5)
                 {
-                    if (query != "")
-                    {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
-                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
-                    else
-                    {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
+                    logs.type = "User_Token";
+                    logs.exception = "[User_Token]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return "FAIL";
                 }
-                else
-                {
-                    if (query != "")
-                    {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
-                                            && m.System_Name.Contains(query) || m.System_Phone.Contains(query)
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
-                    else
-                    {
-                        var SearchResult = (from m in _db.SP_SalesSystem
-                                            where m.System_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
-                                            orderby m.Id descending
-                                            select m).ToPagedList(_page, 15);
-                        return PartialView(SearchResult);
-                    }
-                }
+                return await RefreshUserToken();
             }
-
+            return token_time.Value;
         }
 
-        public ActionResult AddSalesPartial(int? clientId)
+        private async Task<string> Get_Request(string url)
         {
-            var _client = clientId ?? 0;
-            if (_client == 0)
+            var retString = "";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.ServicePoint.ConnectionLimit = int.MaxValue;
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            try
             {
-                ViewBag.Client = null;
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                return retString;
             }
-            else
+            catch (Exception)
             {
-                var Client = (from m in _db.SP_Client
-                              where m.Id == clientId
-                              select m).FirstOrDefault();
-                ViewBag.Client = Client;
+                return await Get_Request(url);
             }
+        }
 
-            return PartialView();
+        private async Task<int> Get_Count(string url_api)
+        {
+            string url = "https://api.ikcrm.com" + url_api + "?per_page=" + UserInfo.Count + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "get";
+            request.ContentType = "application/x-www-form-urlencoded";
+            string result = "";
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                result = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+                CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(result);
+                if (r.code == "0")
+                {
+                    return r.data.total_count;
+                }
+                else if (r.code == "100401")
+                {
+                    await RefreshUserToken();
+                    return await Get_Count(url_api);
+                }
+            }
+            catch (Exception)
+            {
+                return await Get_Count(url_api);
+            }
+            return 100;
         }
         [HttpPost]
-        [Seller(OperationGroup = 401)]
-        public ActionResult AddSalesPartial(SP_SalesSystem model, FormCollection form)
+        public async Task<JsonResult> GetCustomer(string url_api)
         {
-            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone);
-            if (ModelState.IsValid)
+            var count = await Get_Count(url_api);
+            var page = count / UserInfo.Count + 1;
+            List<int> customerlist = new List<int>();
+            List<int> CRM_Customerlist = new List<int>();
+            List<int> contactlist = new List<int>();
+            List<int> CRM_Contactlist = new List<int>();
+            for (int x = 1; x <= page; x++)
             {
-                if (Sales)
+                string url = "https://api.ikcrm.com/api/v2/customers/?per_page=" + UserInfo.Count + "&page=" + x + "&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                var res = await Get_Request(url);
+                CRM_Customer_ReturnData r = JsonConvert.DeserializeObject<CRM_Customer_ReturnData>(res);
+                if (r.code == "0")
                 {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    var sales = new SP_SalesSystem();
-                    sales.System_Name = model.System_Name;
-                    sales.System_Phone = model.System_Phone;
-                    sales.System_Address = model.System_Address;
-                    sales.Client_Id = model.Client_Id;
-                    sales.System_Status = 0;
-                    _db.SP_SalesSystem.Add(sales);
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            else
-            {
-                return Json(new { result = "FAIL" });
-            }
-        }
-
-        public ActionResult EditSalesInfo(int salesId)
-        {
-            var item = _db.SP_SalesSystem.SingleOrDefault(m => m.Id == salesId);
-            var sales = (from m in _db.SP_SalesSystem
-                         where m.Id == salesId
-                         select m).FirstOrDefault();
-            ViewBag.SalesName = sales;
-            return PartialView(item);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 403)]
-        public ActionResult EditSalesInfo(SP_SalesSystem model)
-        {
-            bool Sales = _db.SP_SalesSystem.Any(m => m.System_Name == model.System_Name && m.System_Phone == model.System_Phone && m.System_Address == model.System_Address && m.System_Status == model.System_Status);
-            if (ModelState.IsValid)
-            {
-                if (Sales)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    SP_SalesSystem sales = new SP_SalesSystem();
-                    if (TryUpdateModel(sales))
+                    foreach (var item in r.data.customers)
                     {
-                        _db.Entry(sales).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 403)]
-        public ActionResult DeleteSales(int Id)
-        {
-            var Sales = _db.SP_SalesSystem.AsNoTracking().SingleOrDefault(m => m.Id == Id);
-            Sales.System_Status = -1;
-            _db.Entry(Sales).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-        }
-
-        public ActionResult QuotePricrList()
-        {
-            return View();
-        }
-
-        public ActionResult QuotePricrListPartial(int? page, string query, int SalesSystemId)
-        {
-            int _page = page ?? 1;
-            if (query != "")
-            {
-                var price = from m in _db.SP_QuotePrice
-                            where m.SalesSystem_Id == SalesSystemId
-                            select m;
-                var SearchResult = from m in price
-                                   where m.SP_Product.Item_Name.Contains(query) || m.SP_Product.System_Code.Contains(query)
-                                   || m.SP_Product.Item_Code.Contains(query)
-                                   orderby m.Quoted_Status descending
-                                   select m;
-                return PartialView(SearchResult);
-            }
-            else
-            {
-                var SearchResult = from m in _db.SP_QuotePrice
-                                   where m.SalesSystem_Id == SalesSystemId
-                                   orderby m.Quoted_Status descending
-                                   select m;
-                return PartialView(SearchResult);
-            }
-        }
-
-        // 选择报价产品
-        public ActionResult SelectQuotePrice(int SalesSystemId)
-        {
-            var QuotePrice = from m in _db.SP_QuotePrice
-                             where m.SalesSystem_Id == SalesSystemId
-                             select m;
-            ViewBag.QuotePrice = QuotePrice;
-            return PartialView();
-        }
-
-        public ActionResult AddQuotePricrPartial(int SalesSystemId)
-        {
-            var sales = (from m in _db.SP_SalesSystem
-                         where m.Id == SalesSystemId
-                         select m).FirstOrDefault();
-            ViewBag.Sales = sales;
-            return PartialView();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 801)]
-        public ActionResult AddQuotePricrPartial(SP_QuotePrice model, FormCollection form)
-        {
-            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Product_Id == model.Product_Id && m.Quoted_Date == model.Quoted_Date && m.SalesSystem_Id == model.SalesSystem_Id);
-            var QuoteDate = _db.SP_QuotePrice.SingleOrDefault(m => m.Product_Id == model.Product_Id && m.Quoted_Status == 0 && m.SalesSystem_Id == model.SalesSystem_Id);
-            ModelState.Remove("Quoted_Date");
-            if (ModelState.IsValid)
-            {
-                if (QuotePrice)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    if (QuoteDate != null)
-                    {
-                        QuoteDate.Quoted_Status = -1;
-                        _db.Entry(QuoteDate).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                    }
-                    var quotePrice = new SP_QuotePrice();
-                    quotePrice.Product_Id = model.Product_Id;
-                    quotePrice.Quote_Price = model.Quote_Price;
-                    quotePrice.Quoted_Status = 0;
-                    quotePrice.Quoted_Date = model.Quoted_Date;
-                    quotePrice.SalesSystem_Id = model.SalesSystem_Id;
-                    _db.SP_QuotePrice.Add(quotePrice);
-                    _db.SaveChanges();
-                    return Json(new { result = "SUCCESS" });
-                }
-            }
-            else
-            {
-                AddProductViewBag();
-                return Json(new { result = "FAIL" });
-            }
-        }
-
-        public ActionResult EditQuotePriceInfo(int quotepriceId)
-        {
-            var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotepriceId);
-            var quotePrice = (from m in _db.SP_QuotePrice
-                              where m.Id == quotepriceId
-                              select m).FirstOrDefault();
-            ViewBag.QuotePrice = quotePrice;
-            return PartialView(item);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 803)]
-        public ActionResult EditQuotePriceInfo(SP_QuotePrice model)
-        {
-            bool QuotePrice = _db.SP_QuotePrice.Any(m => m.Quote_Price == model.Quote_Price);
-            ModelState.Remove("Quoted_Date");
-            if (ModelState.IsValid)
-            {
-                if (QuotePrice)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    SP_QuotePrice quoteprice = new SP_QuotePrice();
-                    if (TryUpdateModel(quoteprice))
-                    {
-                        _db.Entry(quoteprice).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 803)]
-        public ActionResult DeleteQuotePrice(int quotePriceId)
-        {
-            var item = _db.SP_QuotePrice.SingleOrDefault(m => m.Id == quotePriceId);
-            item.Quoted_Status = -1;
-            _db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-
-        }
-
-        public ActionResult SellerList()
-        {
-            return View();
-        }
-        [Seller(OperationGroup = 702)]
-        public ActionResult SellerListPartial(int? page, string query)
-        {
-            var seller = getSeller(User.Identity.Name);
-            int _page = page ?? 1;
-            if (query != "")
-            {
-                if (seller.Seller_Type != SellerType.ADMINISTARTOR)
-                {
-                    var Seller = from m in _db.SP_Seller
-                                 where m.Seller_Status != -1 && m.Manager_Id == seller.Manager_Id
-                                 select m;
-                    var sellerList = (from m in Seller
-                                      where m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
-                                      orderby m.Id
-                                      select m).ToPagedList(_page, 15);
-                    return PartialView(sellerList);
-                }
-                else
-                {
-                    var Seller = from m in _db.SP_Seller
-                                 where m.Seller_Status != -1
-                                 select m;
-                    var sellerList = (from m in _db.SP_Seller
-                                      where m.Seller_Status != -1 && m.Seller_Name.Contains(query) || m.Seller_Mobile.Contains(query)
-                                      orderby m.Id
-                                      select m).ToPagedList(_page, 15);
-                    return PartialView(sellerList);
-                }
-            }
-            else
-            {
-                if (seller.Seller_Type != SellerType.ADMINISTARTOR)
-                {
-                    var sellerList = (from m in _db.SP_Seller
-                                      where m.Seller_Status != -1 && m.Manager_Id == seller.Manager_Id
-                                      orderby m.Id
-                                      select m).ToPagedList(_page, 15);
-                    return PartialView(sellerList);
-                }
-                else
-                {
-
-                    var sellerList = (from m in _db.SP_Seller
-                                      where m.Seller_Status != -1
-                                      orderby m.Id
-                                      select m).ToPagedList(_page, 15);
-                    return PartialView(sellerList);
-                }
-            }
-        }
-
-        public void AddSellerViewBag()
-        {
-            var seller = getSeller(User.Identity.Name);
-            ViewBag.Seller = seller;
-            List<SelectListItem> sellerType = new List<SelectListItem>();
-            sellerType.Add(new SelectListItem() { Text = "普通", Value = SellerType.SELLER.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "产品操作", Value = SellerType.PRODUCTDEPARTMENT.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "财务审核", Value = SellerType.FINANCIALDEPARTMENT.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "部门主管", Value = SellerType.SELLERADMIN.ToString() });
-            sellerType.Add(new SelectListItem() { Text = "管理员", Value = SellerType.ADMINISTARTOR.ToString() });
-            ViewBag.SellerType = new SelectList(sellerType, "Value", "Text");
-            List<SelectListItem> managerlist = new List<SelectListItem>();
-            var managername = from m in _db.SP_Seller
-                              where m.Seller_Type > SellerType.FINANCIALDEPARTMENT
-                              select m;
-            foreach (var name in managername)
-            {
-                managerlist.Add(new SelectListItem() { Text = name.Seller_Name, Value = name.Id.ToString() });
-            }
-            ViewBag.Manager = new SelectList(managerlist, "Value", "Text");
-            List<SelectListItem> department = new List<SelectListItem>();
-            var departmentname = from m in _db.SP_Department
-                                 select m;
-            foreach (var name in departmentname)
-            {
-                department.Add(new SelectListItem() { Text = name.Department_Name, Value = name.Id.ToString() });
-            }
-            ViewBag.Department = new SelectList(department, "Value", "Text");
-        }
-
-        public ActionResult AddSellerPartial()
-        {
-            AddSellerViewBag();
-            return PartialView();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 701)]
-        public ActionResult AddSellerPartial(SP_Seller model, FormCollection form)
-        {
-            bool Seller = _db.SP_Seller.Any(m => m.Seller_Mobile == model.Seller_Mobile || m.User_Name == model.User_Name);
-            var SellerName = _db.SP_Seller.SingleOrDefault(m => m.User_Name == model.User_Name);
-            if (SellerName.Seller_Status == -1)
-            {
-                if (TryUpdateModel(SellerName))
-                {
-                    SellerName.Seller_Status = 0;
-                    _db.Entry(SellerName).State = System.Data.Entity.EntityState.Modified;
-                    _db.SaveChanges();
-                }
-            }
-            else
-            {
-                if (ModelState.IsValid)
-                {
-                    if (Seller)
-                    {
-                        return Json(new { result = "UNAUTHORIZED" });
-                    }
-                    else
-                    {
-                        var seller = new SP_Seller();
-                        seller.Seller_Name = model.Seller_Name;
-                        seller.Seller_Mobile = model.Seller_Mobile;
-                        seller.Seller_Type = model.Seller_Type;
-                        seller.User_Name = model.User_Name;
-                        seller.Department_Id = model.Department_Id;
-                        seller.Seller_Status = 0;
-                        if (model.Seller_Type == SellerType.SELLER || model.Seller_Type == SellerType.FINANCIALDEPARTMENT || model.Seller_Type == SellerType.PRODUCTDEPARTMENT)
+                        var costomerid = item.id;
+                        string customersAddress = item.address.region_info;
+                        customerlist.Add(item.id);
+                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == costomerid);
+                        if (check_customer == null)
                         {
-                            seller.Manager_Id = model.Manager_Id;
-                            _db.SP_Seller.Add(seller);
-                            _db.SaveChanges();
-                        }
-                        else
-                        {
-                            seller.Manager_Id = null;
-                            _db.SP_Seller.Add(seller);
-                            _db.SaveChanges();
-                            var newseller = _db.SP_Seller.SingleOrDefault(m => m.Id == seller.Id);
-                            newseller.Manager_Id = newseller.Id.ToString();
-                            _db.Entry(newseller).State = System.Data.Entity.EntityState.Modified;
-                            _db.SaveChanges();
-                        }
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "错误");
-                    AddSellerViewBag();
-                    return Json(new { result = "FAIL" });
-                }
-            }
-            return Json(new { result = "SUCCESS" });
-
-        }
-
-        public ActionResult EditSellerInfo(int sellerId)
-        {
-            var Seller = _db.SP_Seller.SingleOrDefault(m => m.Id == sellerId);
-            AddSellerViewBag();
-            return PartialView(Seller);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 703)]
-        public ActionResult EditSellerInfo(SP_Seller model)
-        {
-            bool Seller = _db.SP_Seller.Any(m => m.Seller_Name == model.Seller_Name && m.Seller_Mobile == model.Seller_Mobile && m.Seller_Type == model.Seller_Type && m.Department_Id == model.Department_Id && m.Manager_Id == model.Manager_Id);
-
-            if (ModelState.IsValid)
-            {
-                if (Seller)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-
-                    SP_Seller seller = new SP_Seller();
-                    if (TryUpdateModel(seller))
-                    {
-                        if (model.Seller_Type == SellerType.SELLER || model.Seller_Type == SellerType.FINANCIALDEPARTMENT || model.Seller_Type == SellerType.PRODUCTDEPARTMENT)
-                        {
-                            _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
-                            _db.SaveChanges();
-                        }
-                        else
-                        {
-                            seller.Manager_Id = model.Id.ToString();
-                            _db.Entry(seller).State = System.Data.Entity.EntityState.Modified;
-                            _db.SaveChanges();
-                        }
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 703)]
-        public ActionResult DeleteSeller(int sellerId)
-        {
-            var Seller = _db.SP_Seller.AsNoTracking().SingleOrDefault(m => m.Id == sellerId);
-            Seller.Seller_Status = -1;
-            _db.Entry(Seller).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-
-        }
-
-        public ActionResult OrderList()
-        {
-            return View();
-        }
-
-        [Seller(OperationGroup = 602)]
-        public ActionResult OrderListPartial(int? page, string query, int? clientId, int orderType)
-        {
-            var seller = getSeller(User.Identity.Name);
-            int _page = page ?? 1;
-            if (seller.Seller_Type == 0)
-            {
-                if (clientId != null)
-                {
-                    if (query != "")
-                    {
-                        var order = from m in _db.SP_Order
-                                    where m.Order_Type == orderType && m.Order_Status != -1
-                                    && m.SP_Contact.Client_Id == clientId && m.SP_Contact.SP_Client.Seller_Id == seller.Id
-                                    select m;
-                        var orderList = (from m in order
-                                         where m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                    else
-                    {
-                        var orderList = (from m in _db.SP_Order
-                                         where m.Order_Type == orderType && m.SP_Contact.Client_Id == clientId
-                                         && m.Order_Status != -1 && m.SP_Contact.SP_Client.Seller_Id == seller.Id
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                }
-                else
-                {
-                    if (query != "")
-                    {
-                        var order = from m in _db.SP_Order
-                                    where m.Order_Type == orderType && m.Order_Status != -1
-                                    && m.SP_Contact.SP_Client.Seller_Id == seller.Id
-                                    select m;
-                        var orderList = (from m in order
-                                         where m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                    else
-                    {
-                        var orderList = (from m in _db.SP_Order
-                                         where m.Order_Type == orderType && m.SP_Contact.SP_Client.Seller_Id == seller.Id
-                                         && m.Order_Status != -1
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                }
-            }
-            else
-            {
-                if (clientId != null)
-                {
-                    if (query != "")
-                    {
-                        var order = from m in _db.SP_Order
-                                    where m.Order_Type == orderType && m.Order_Status != -1 && m.SP_Contact.Client_Id == clientId
-                                    select m;
-                        var orderList = (from m in order
-                                         where m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                    else
-                    {
-                        var orderList = (from m in _db.SP_Order
-                                         where m.Order_Type == orderType && m.SP_Contact.Client_Id == clientId
-                                         && m.Order_Status != -1
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                }
-                else
-                {
-                    if (query != "")
-                    {
-                        var order = from m in _db.SP_Order
-                                    where m.Order_Type == orderType && m.Order_Status != -1
-                                    select m;
-                        var orderList = (from m in order
-                                         where m.Order_Number.Contains(query) || m.SP_Contact.SP_Client.Client_Name.Contains(query)
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                    else
-                    {
-                        var orderList = (from m in _db.SP_Order
-                                         where m.Order_Type == orderType && m.Order_Status != -1
-                                         orderby m.Order_Date descending
-                                         select m).ToPagedList(_page, 15);
-                        return PartialView(orderList);
-                    }
-                }
-            }
-
-
-
-        }
-        [Seller(OperationGroup = 601)]
-        public ActionResult AddOrder()
-        {
-            Random ran = new Random();
-            int RandKey = ran.Next(01, 99);
-            var ordernumber = DateTime.Now.Year.ToString() + DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString();
-            var OrderNum = int.Parse(DateTime.Now.Hour.ToString() + DateTime.Now.Minute.ToString() + RandKey);
-            var strNum = OrderNum.ToString();
-            if (strNum.Length == 1)
-            {
-                strNum = "00" + strNum;
-            }
-            else if (strNum.Length == 2)
-            {
-                strNum = "0" + strNum;
-            }
-            ordernumber += strNum;
-            ViewBag.ordernumber = ordernumber;
-            return View();
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 601)]
-        public ActionResult AddOrderPartial(SP_Order model, FormCollection form)
-        {
-            bool Contact = _db.SP_Contact.Any(m => m.Id == model.Contact_Id);
-            ModelState.Remove("Order_Date");
-            ModelState.Remove("Order_Remark");
-            if (ModelState.IsValid)
-            {
-                if (Contact)
-                {
-                    var order = new SP_Order();
-                    order.Order_Number = model.Order_Number;
-                    order.Order_Date = model.Order_Date;
-                    order.Order_Status = 0;
-                    order.Contact_Id = model.Contact_Id;
-                    order.Order_Address = model.Order_Address;
-                    order.Order_Type = -1;
-                    order.Order_Remark = model.Order_Remark;
-                    order.Signed_Number = model.Signed_Number;
-                    order.Cancellation_Fee = model.Cancellation_Fee;
-                    _db.SP_Order.Add(order);
-                    _db.SaveChanges();
-                    var OrderId = _db.SP_Order.SingleOrDefault(m => m.Order_Number == model.Order_Number);
-                    return Json(new { result = "SUCCESS", order = OrderId.Id });
-                }
-                else
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-
-            }
-            else
-            {
-                return Json(new { result = "FAIL" });
-            }
-        }
-
-        public ActionResult EditOrderInfo(int orderId)
-        {
-            var Order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            ViewBag.Order = Order;
-            var contact = _db.SP_Contact.SingleOrDefault(m => m.Id == Order.SP_Contact.Id);
-            ViewBag.contact = contact;
-            return View(Order);
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 603)]
-        public ActionResult EditOrderInfo(SP_Order model)
-        {
-            bool Order = _db.SP_Order.Any(m => m.Order_Address == model.Order_Address && m.Order_Remark == model.Order_Remark && m.Signed_Number == model.Signed_Number && m.Cancellation_Fee == model.Cancellation_Fee);
-            ModelState.Remove("Order_Date");
-            ModelState.Remove("Contact_Id");
-            if (ModelState.IsValid)
-            {
-                if (Order)
-                {
-                    return Json(new { result = "UNAUTHORIZED" });
-                }
-                else
-                {
-                    SP_Order order = new SP_Order();
-                    if (TryUpdateModel(order))
-                    {
-                        _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                        _db.SaveChanges();
-                        return Json(new { result = "SUCCESS" });
-                    }
-                }
-            }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        [Seller(OperationGroup = 603)]
-        public ActionResult DeleteOrder(int orderId)
-        {
-            var Order = _db.SP_Order.AsNoTracking().SingleOrDefault(m => m.Id == orderId);
-            Order.Order_Status = -1;
-            _db.Entry(Order).State = System.Data.Entity.EntityState.Modified;
-            _db.SaveChanges();
-            return Json(new { result = "SUCCESS" });
-
-        }
-        // 审批
-        [HttpPost]
-        public ActionResult ConfirmOrder(int orderId)
-        {
-            var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            if (TryUpdateModel(order))
-            {
-                order.Order_Type = 0;
-                _db.Entry(order).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-            }
-            return Json(new { result = "SUCCESS" });
-        }
-
-        public ActionResult OrderPriceList()
-        {
-            return PartialView();
-        }
-
-        public ActionResult OrderPriceListPartial(int orderId)
-        {
-            var order = from m in _db.SP_OrderPrice
-                        where m.Order_Id == orderId && m.OrderPrice_Status != -1
-                        select m;
-            var order_num = (from m in _db.SP_Order
-                             where m.Id == orderId && m.Order_Status != -1
-                             select m).FirstOrDefault();
-            ViewBag.OrderNum = order_num;
-
-            var Price = from m in _db.SP_OrderPrice
-                        where m.OrderPrice_Status != -1 && m.Order_Id == orderId
-                        group m by m.Id into g
-                        select new OrderPriceSum
-                        {
-                            SumCount = g.Sum(m => m.Order_Count),
-                            CartonCount = g.Sum(m => m.Order_Count / m.SP_Product.Carton_Spec),
-                            SumPrice = g.Sum(m => m.Order_Price),
-                            SumDiscount = g.Sum(m => m.OrderPrice_Discount),
-                        };
-            int cartonCount = 0;
-            decimal sumPrice = 0;
-            decimal sumDiscount = 0;
-            foreach (var price in Price)
-            {
-                cartonCount += price.CartonCount;
-                var Sumprice = price.SumCount * price.SumPrice;
-                sumPrice += Sumprice;
-                sumDiscount += price.SumDiscount;
-            }
-            ViewBag.Count = cartonCount;
-            ViewBag.Price = sumPrice;
-            ViewBag.Discount = sumDiscount;
-            return PartialView(order);
-        }
-
-        public ActionResult AddOrderPricePartial(int orderId)
-        {
-            var order = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            ViewBag.Order = order;
-            return PartialView();
-        }
-        [HttpPost]
-        public ActionResult AddOrderPricePartial(SP_OrderPrice model, FormCollection form)
-        {
-            if (ModelState.IsValid)
-            {
-                var productlist = from m in _db.SP_Product
-                                  where m.Product_Status != -1
-                                  select m;
-                foreach (var product in productlist)
-                {
-                    bool OrderPrice = _db.SP_OrderPrice.Any(m => m.Product_Id == model.Product_Id && m.Order_Id == model.Order_Id && m.OrderPrice_Status != -1);
-                    if (OrderPrice)
-                    {
-                        return Json(new { result = "UNAUTHORIZED" });
-                    }
-                    else
-                    {
-                        int order = 0;
-                        decimal price = 0;
-                        string remark = "";
-                        decimal discount = 0;
-                        if (form["order_" + product.Id] != "")
-                        order = Convert.ToInt32(form["order_" + product.Id]);
-                        price = Convert.ToDecimal(form["price_" + product.Id]);
-                        remark = Convert.ToString(form["remark_" + product.Id]);
-                        discount = Convert.ToDecimal(form["discount_" + product.Id]);
-                        var orderType = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
-                        if (orderType.Order_Type != 0)
-                        {
-                            if (order == 0)
+                            // new
+                            check_customer = new CRM_Customer();
+                            check_customer.customer_id = costomerid;
+                            check_customer.customer_name = item.name;
+                            check_customer.customer_address = customersAddress;
+                            check_customer.customer_tel = item.address.tel;
+                            check_customer.status = 0;
+                            check_customer.customer_abbreviation = item.address.wechat;
+                            crm_db.CRM_Customer.Add(check_customer);
+                            await crm_db.SaveChangesAsync();
+                            for (int i = 0; i < item.contacts.Count(); i++)
                             {
+                                var contactsId = item.contacts[i].address.addressable_id;
+                                var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactsId);
+                                string ctAddress = item.contacts[i].address.region_info;
+                                if (check_contact == null)
+                                {
+                                    // new
+                                    check_contact = new CRM_Contact();
+                                    check_contact.contact_id = contactsId;
+                                    check_contact.contact_name = item.contacts[i].name;
+                                    check_contact.contact_address = ctAddress;
+                                    check_contact.contact_tel = item.contacts[i].address.phone;
+                                    check_contact.customer_id = check_customer.Id;
+                                    check_contact.status = 0;
+                                    check_customer.customer_abbreviation = item.address.wechat;
+                                    crm_db.CRM_Contact.Add(check_contact);
+                                    await crm_db.SaveChangesAsync();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // update
+                            if (check_customer.customer_id != costomerid || check_customer.customer_address != customersAddress || check_customer.customer_tel != item.address.tel || check_customer.customer_abbreviation != item.address.wechat)
+                            {
+                                check_customer.customer_id = costomerid;
+                                check_customer.customer_name = item.name;
+                                check_customer.customer_address = customersAddress;
+                                check_customer.customer_tel = item.address.tel;
+                                check_customer.customer_abbreviation = item.address.wechat;
+                                crm_db.Entry(check_customer).State = System.Data.Entity.EntityState.Modified;
+                                for (int i = 0; i < item.contacts.Count(); i++)
+                                {
+                                    var contactId = item.contacts[i].address.addressable_id;
+                                    var check_contact = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
+                                    string ctAddress = item.contacts[i].address.region_info;
+                                    contactlist.Add(contactId);
+                                    if (check_contact == null)
+                                    {
+                                        // new
+                                        check_contact = new CRM_Contact();
+                                        check_contact.contact_id = contactId;
+                                        check_contact.contact_name = item.contacts[i].name;
+                                        check_contact.contact_address = ctAddress;
+                                        check_contact.contact_tel = item.contacts[i].address.phone;
+                                        check_contact.customer_id = check_customer.Id;
+                                        check_contact.status = 0;
+                                        crm_db.CRM_Contact.Add(check_contact);
+                                    }
+                                    else
+                                    {
+                                        //update
+                                        if (check_contact.contact_id != contactId || check_contact.contact_address != ctAddress || check_contact.contact_tel != item.contacts[i].address.phone || check_contact.customer_id != check_customer.Id)
+                                        {
+                                            check_contact.contact_id = contactId;
+                                            check_contact.contact_name = item.contacts[i].name;
+                                            check_contact.contact_address = ctAddress;
+                                            check_contact.contact_tel = item.contacts[i].address.phone;
+                                            check_contact.customer_id = check_customer.Id;
+                                            crm_db.Entry(check_contact).State = System.Data.Entity.EntityState.Modified;
+                                        }
+                                    }
+                                    await crm_db.SaveChangesAsync();
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (r.code == "100401")
+                {
+                    await RefreshUserToken();
+                    return await GetCustomer(url_api);
+                }
+                else
+                {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                    try_times++;
+                    if (try_times >= 5)
+                    {
+                        logs.type = "customer";
+                        logs.exception = "[customer]获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
+                        try_times = 0;
+                        return Json(new { result = "FAIL" });
+                    }
+                    return await GetCustomer(url_api);
+                }
+            }
+            var CRM_customer = from m in crm_db.CRM_Customer
+                               where m.status == 0
+                               select m;
+            foreach (var customer in CRM_customer)
+            {
+                CRM_Customerlist.Add(customer.customer_id);
+            }
+            var CRM_contact = from m in crm_db.CRM_Contact
+                              where m.status == 0
+                              select m;
+            foreach (var contact in CRM_contact)
+            {
+                CRM_Contactlist.Add(contact.contact_id);
+            }
+            var diffArrcustomer = CRM_Customerlist.Where(m => !customerlist.Contains(m)).ToArray();
+            for (int i = 0; i < diffArrcustomer.Count(); i++)
+            {
+                var customerId = diffArrcustomer[i];
+                var check_data = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
+                check_data.status = -1;
+                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+            }
+            var diffArrcontact = CRM_Contactlist.Where(m => !contactlist.Contains(m)).ToArray();
+            for (int i = 0; i < diffArrcontact.Count(); i++)
+            {
+                var contactId = diffArrcontact[i];
+                var check_data = crm_db.CRM_Contact.SingleOrDefault(m => m.contact_id == contactId);
+                check_data.status = -1;
+                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+            }
+            crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
+        [HttpPost]
+        public bool GetUserInfo()
+        {
+            //部门
+            string get_department = "https://api.ikcrm.com/api/v2/user/department_list?per_page=" + UserInfo.Count + "&user_token=" + getUserToken().Result + "&device=dingtalk&version_code=9.8.0";
+            var res = Get_Request(get_department);
+            CRM_ContractDetail_ReturnData department_data = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res.Result);
+            if (department_data.code == "0")
+            {
+                foreach (var item in department_data.data.options)
+                {
+                    var department = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == item.Id);
+                    if (department == null)
+                    {
+                        CRM_Department newdepartment = new CRM_Department();
+                        newdepartment.system_code = item.Id;
+                        newdepartment.name = item.name;
+                        newdepartment.level = item.level;
+                        newdepartment.parent_id = item.parent_id;
+                        newdepartment.can_use = item.can_use;
+                        crm_db.CRM_Department.Add(newdepartment);
+                    }
+                    else
+                    {
+                        if (department.system_code != item.Id || department.level != item.level || department.name != item.name || department.parent_id != item.parent_id || department.can_use != item.can_use)
+                        {
+                            department.system_code = item.Id;
+                            department.name = item.name;
+                            department.level = item.level;
+                            department.parent_id = item.parent_id;
+                            department.can_use = item.can_use;
+                            crm_db.Entry(department).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                }
+                crm_db.SaveChanges();
+            }
+            else if (department_data.code == "100401")
+            {
+                RefreshUserToken();
+                return GetUserInfo();
+            }
+            else
+            {
+                return GetUserInfo();
+            }
+            //角色和用户
+            string get_user = "https://api.ikcrm.com/api/v2/user/list?per_page=" + UserInfo.Count + "&sort=superior_id&order=asc&user_token=" + getUserToken().Result + "&device=dingtalk&version_code=9.8.0";
+            var rest = Get_Request(get_user);
+            CRM_ContractDetail_ReturnData user_data = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(rest.Result);
+            if (user_data.code == "0")
+            {
+                foreach (var item in user_data.data.users)
+                {
+                    //角色
+                    var role = crm_db.CRM_Role.SingleOrDefault(m => m.system_code == item.role_json.Id);
+                    if (role == null)
+                    {
+                        CRM_Role newrole = new CRM_Role();
+                        newrole.name = item.role_json.name;
+                        newrole.entity_grant_scope = item.role_json.entity_grant_scope;
+                        newrole.system_code = item.role_json.Id;
+                        crm_db.CRM_Role.Add(newrole);
+                    }
+                    else
+                    {
+                        if (role.name != item.role_json.name || role.entity_grant_scope != item.role_json.entity_grant_scope || role.system_code != item.role_json.Id)
+                        {
+                            role.name = item.role_json.name;
+                            role.entity_grant_scope = item.role_json.entity_grant_scope;
+                            role.system_code = item.role_json.Id;
+                            crm_db.Entry(role).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+                    crm_db.SaveChanges();
+                    //用户
+                    var user = crm_db.CRM_User.SingleOrDefault(m => m.email == item.email);
+                    if (user == null)
+                    {
+                        CRM_User newuser = new CRM_User();
+                        newuser.system_code = item.Id;
+                        newuser.email = item.email;
+                        newuser.created_at = item.created_at;
+                        newuser.name = item.name;
+                        newuser.phone = item.phone;
+                        newuser.role_id = crm_db.CRM_Role.SingleOrDefault(m => m.system_code == item.role_id).Id;
+                        var superior = crm_db.CRM_User.SingleOrDefault(m => m.system_code == item.superior_id);
+                        newuser.superior_id = superior != null ? superior.Id : 0;
+                        newuser.department_id = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == item.department_id).Id;
+                        crm_db.CRM_User.Add(newuser);
+                    }
+                    else
+                    {
+                        user.system_code = item.Id;
+                        user.email = item.email;
+                        user.created_at = item.created_at;
+                        user.name = item.name;
+                        user.phone = item.phone;
+                        user.role_id = crm_db.CRM_Role.SingleOrDefault(m => m.system_code == item.role_id).Id;
+                        var superior = crm_db.CRM_User.SingleOrDefault(m => m.system_code == item.superior_id);
+                        user.superior_id = superior != null ? superior.Id : 0;
+                        user.department_id = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == item.department_id).Id;
+                        crm_db.Entry(user).State = System.Data.Entity.EntityState.Modified;
+                    }
+                }
+                crm_db.SaveChanges();
+            }
+            else if (user_data.code == "100401")
+            {
+                RefreshUserToken();
+                return GetUserInfo();
+            }
+            else
+            {
+                return GetUserInfo();
+            }
+            return true;
+        }
+        [HttpPost]
+        public async Task<JsonResult> GetCrmInfo(string url_api)
+        {
+            var count = await Get_Count(url_api);
+            var page = count / UserInfo.Count + 1;
+            List<int> contractlist = new List<int>();
+            List<int> CRM_Contractlist = new List<int>();
+            for (int x = 1; x <= page; x++)
+            {
+                string url = "https://api.ikcrm.com/api/v2/contracts/?per_page=" + UserInfo.Count + "&page=" + x + "&approve_status=approved&status=3531567&user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+                var res = await Get_Request(url);
+                CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(res);
+                if (r.code == "0")
+                {
+                    foreach (var item in r.data.contracts)
+                    {
+                        var contractId = item.id;
+                        var customerId = item.customer_id;
+                        var check_customer = crm_db.CRM_Customer.SingleOrDefault(m => m.customer_id == customerId);
+                        var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                        var total_amount = item.total_amount;
+                        var unreceived_amount = item.unreceived_amount;
+                        var user_id = item.user_id;
+                        var userId = crm_db.CRM_User.SingleOrDefault(m => m.system_code == user_id);
+                        if (check_data == null)
+                        {
+                            //new
+                            check_data = new CRM_Contract();
+                            check_data.contract_id = item.id;
+                            check_data.user_id = userId.Id;
+                            check_data.user_name = userId.name;
+                            check_data.customer_id = check_customer.Id;
+                            check_data.contract_title = item.title;
+                            check_data.total_amount = (double)total_amount;
+                            check_data.unreceived_amount = (double)unreceived_amount;
+                            check_data.contract_status = item.status;
+                            check_data.warehouse_code = "107";
+                            check_data.express_code = "STO";
+                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                            {
+                                check_data.vip_code = check_customer.customer_name;
                             }
                             else
                             {
-                                var orderprice = new SP_OrderPrice();
-                                {
-                                    orderprice.Order_Count = order;
-                                    orderprice.Order_Price = price;
-                                    orderprice.OrderPrice_Discount = discount;
-                                    orderprice.Product_Id = product.Id;
-                                    orderprice.OrderPrice_Status = 0;
-                                    orderprice.Order_Id = model.Order_Id;
-                                    orderprice.OrderPrice_Remark = remark;
-                                };
-                                _db.SP_OrderPrice.Add(orderprice);
+                                check_data.vip_code = check_customer.customer_abbreviation;
                             }
+                            crm_db.CRM_Contract.Add(check_data);
                         }
                         else
                         {
-                            return Json(new { result = "WARNING" });
+                            // update
+                            if (check_data.user_id != userId.Id || check_data.customer_id != check_customer.Id || check_data.contract_title != item.title || check_data.total_amount != (double)total_amount || check_data.contract_status != item.status)
+                            {
+                                check_data.user_id = userId.Id;
+                                check_data.user_name = userId.name;
+                                check_data.customer_id = check_customer.Id;
+                                check_data.contract_title = item.title;
+                                check_data.total_amount = (double)total_amount;
+                                check_data.unreceived_amount = (double)unreceived_amount;
+                                check_data.contract_status = item.status;
+                            }
+                            if (check_customer.customer_abbreviation == null || check_customer.customer_abbreviation == "")
+                            {
+                                check_data.vip_code = check_customer.customer_name;
+                            }
+                            else
+                            {
+                                check_data.vip_code = check_customer.customer_abbreviation;
+                            }
+                            crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
                         }
-
+                        contractlist.Add(item.id);
+                        await crm_db.SaveChangesAsync();
+                        await getSingleCrmDetailInfo(item.id);
                     }
                 }
-                _db.SaveChangesAsync();
-                return Json(new { result = "SUCCESS" });
+                else if (r.code == "100401")
+                {
+                    await RefreshUserToken();
+                    return await GetCrmInfo(url_api);
+                }
+                else
+                {
+                    CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                    try_times++;
+                    if (try_times >= 5)
+                    {
+                        logs.type = "contract";
+                        logs.exception = "[contract]获取失败";
+                        logs.exception_at = DateTime.Now;
+                        crm_db.CRM_ExceptionLogs.Add(logs);
+                        crm_db.SaveChanges();
+                        try_times = 0;
+                        return Json(new { result = "FAIL" });
+                    }
+                    return await GetCrmInfo(url_api);
+                }
+            }
+            var CRM_Contract = from m in crm_db.CRM_Contract
+                               where m.contract_status == UserInfo.status_unsend && m.contract_status != UserInfo.delete
+                               select m;
+            foreach (var crm in CRM_Contract)
+            {
+                CRM_Contractlist.Add(crm.contract_id);
+            }
+            var diffArr = CRM_Contractlist.Where(m => !contractlist.Contains(m)).ToArray();
+            for (int i = 0; i < diffArr.Count(); i++)
+            {
+                var contractId = diffArr[i];
+                var check_data = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contractId);
+                check_data.contract_status = "-1";
+                crm_db.Entry(check_data).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
+            }
+            crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
+        }
 
+        public async Task<string> getSingleCrmDetailInfo(int contract_id)
+        {
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.contract_id == contract_id);
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + contract.contract_id + "?user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            var res = await Get_Request(url);
+            CRM_ContractDetail_ReturnData r = JsonConvert.DeserializeObject<CRM_ContractDetail_ReturnData>(res);
+            if (r.code == "0")
+            {
+                foreach (var item in r.data.product_assets_for_new_record)
+                {
+                    var pid = item.product_id;
+                    var s_price = item.recommended_unit_price;
+                    var quantity = item.quantity;
+                    var product_name = item.name;
+                    var product_code = item.product_no;
+                    var contractdetail = from m in crm_db.CRM_ContractDetail
+                                         where m.contract_id == contract.id && m.CRM_Contract.contract_status != UserInfo.delete
+                                         select m;
+                    if (contractdetail != null)
+                    {
+                        crm_db.CRM_ContractDetail.RemoveRange(contractdetail);
+                    }
+                    var contractDetail = new CRM_ContractDetail();
+                    contractDetail.contract_id = contract.id;
+                    contractDetail.product_id = pid;
+                    contractDetail.quantity = quantity;
+                    contractDetail.unit_price = s_price;
+                    contractDetail.product_name = product_name;
+                    contractDetail.product_code = product_code;
+                    crm_db.CRM_ContractDetail.Add(contractDetail);
+                }
+                contract.received_payments_status = 0;
+                if (r.data.text_asset_c33e2b == UserInfo.unreceived_payments || r.data.text_asset_c33e2b == UserInfo.nonEssential_payments)
+                {
+                    contract.received_payments_status = 1;
+                }
+                else if ((double)r.data.received_payments_amount >= contract.total_amount && r.data.text_asset_c33e2b == UserInfo.received_payments)
+                {
+                    contract.received_payments_status = 1;
+                }
+                else
+                {
+                    contract.received_payments_status = 0;
+                }
+                var shop_code = r.data.text_asset_615f62_display;
+                if (shop_code != null || shop_code != "")
+                {
+                    if (shop_code.Contains("零售/团购"))
+                    {
+                        contract.shop_code = "线下零售/团购";
+                    }
+                    else if (shop_code.Contains("线上其他渠道"))
+                    {
+                        contract.shop_code = "线上其他渠道";
+                    }
+                    else if (shop_code.Contains("自营渠道"))
+                    {
+                        contract.shop_code = "自营渠道";
+                    }
+                    else if (shop_code.Contains("展会/促销"))
+                    {
+                        contract.shop_code = "线下展会/促销物料";
+                    }
+                    else
+                    {
+                        contract.shop_code = "006";
+                    }
+                }
+                else
+                {
+                    contract.shop_code = "006";
+                }
+                contract.contract_type = r.data.category_mapped;
+                contract.receiver_name = r.data.text_asset_73f972;
+                contract.receiver_address = r.data.text_asset_eb802b;
+                contract.receiver_tel = r.data.text_asset_da4211;
+                contract.express_remark = r.data.text_asset_7fd81a;
+                contract.contract_remark = r.data.special_terms;
+                contract.created_at = r.data.created_at;
+                contract.platform_code = "IK" + r.data.created_at.ToString("yyyyMMddHHmmss") + contract_id;
+                crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                checkAddress(r.data.text_asset_eb802b, contract.id);
+            }
+            else if (r.code == "100401")
+            {
+                await RefreshUserToken();
+                return await getSingleCrmDetailInfo(contract_id);
+            }
+            else
+            {
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                try_times++;
+                if (try_times >= 5)
+                {
+                    logs.type = "contractDetial";
+                    logs.exception = "[contractDetial]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return "FAIL";
+                }
+                return await getSingleCrmDetailInfo(contract_id);
+            }
+            await crm_db.SaveChangesAsync();
+            return "SUCCESS";
+        }
+
+        private async Task<int> UpdateCRM(int cid, string contract_status, string express_information, string express_remark)
+        {
+            var contracts = crm_db.CRM_Contract.SingleOrDefault(m => m.id == cid);
+            string url = "https://api.ikcrm.com/api/v2/contracts/" + contracts.contract_id + "?user_token=" + await getUserToken() + "&device=dingtalk&version_code=9.8.0";
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "PUT";
+            request.ContentType = "application/x-www-form-urlencoded";
+            var retString = "";
+            request.ServicePoint.ConnectionLimit = int.MaxValue;
+            // 添加参数
+            Dictionary<String, String> dicList = new Dictionary<String, String>();
+            //只修改了订单状态和备注
+            dicList.Add("contract[status]", contracts.contract_status);
+            if (express_information != null)
+            {
+                dicList.Add("contract[text_area_asset_8f7067]", contracts.express_information);
+                dicList.Add("contract[text_asset_7fd81a]", contracts.express_remark);
+            }
+            String postStr = buildQueryStr(dicList);
+            byte[] data = Encoding.UTF8.GetBytes(postStr);
+            request.ContentLength = data.Length;
+            Stream myRequestStream = request.GetRequestStream();
+            myRequestStream.Write(data, 0, data.Length);
+            myRequestStream.Close();
+            try
+            {
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                StreamReader myStreamReader = new StreamReader(response.GetResponseStream(), Encoding.UTF8);
+                retString = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+            }
+            catch (Exception)
+            {
+                return await UpdateCRM(cid, contract_status, express_information, express_remark);
+            }
+            CRM_Contract_ReturnData r = JsonConvert.DeserializeObject<CRM_Contract_ReturnData>(retString);
+            if (r.code == "0")
+            {
+                return 1; // 1 正确
+            }
+            else if (r.code == "100401")
+            {
+                await RefreshUserToken();
+                return await UpdateCRM(cid, contract_status, express_information, express_remark);
+            }
+            return 0;
+        }
+        [Authorize(Roles = "CRM")]
+        public ActionResult CRM_show()
+        {
+            List<string> shoplist = new List<string>();
+            shoplist.Add("线上其他渠道");
+            shoplist.Add("线上自营渠道");
+            shoplist.Add("线下零售/团购");
+            shoplist.Add("线下展会/促销物料");
+            ViewBag.shopList = shoplist;
+            return View();
+        }
+        [Authorize(Roles = "CRM")]
+        public ActionResult CRM_undeliveredPartical(string status, int? page, string shopCode, string query)
+        {
+            var user = getUser(User.Identity.Name);
+            int _page = page ?? 1;
+            if (user.role_id == UserInfo.SuperAdmin || user.role_id == UserInfo.Finance)
+            {
+                if (shopCode == "0")
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+                else
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.shop_code == shopCode && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+            }
+            else if (user.role_id == UserInfo.Assistant || user.role_id == UserInfo.Manager)
+            {
+                var crm_user = crm_db.CRM_User.SingleOrDefault(m => m.email == user.email);
+                if (crm_user.CRM_Department.parent_id == null)
+                {
+                    var employee = from m in crm_db.CRM_User
+                                   where m.department_id == crm_user.department_id
+                                   select m;
+                    if (shopCode == "0")
+                    {
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undeliveredData);
+                    }
+                    else
+                    {
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && m.shop_code == shopCode && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undeliveredData);
+                    }
+                }
+                else
+                {
+                    var parent_department = crm_db.CRM_Department.SingleOrDefault(m => m.system_code == crm_user.CRM_Department.parent_id);
+                    var sub_department = from m in crm_db.CRM_Department
+                                         where m.parent_id == parent_department.system_code || m.system_code == parent_department.system_code
+                                         select m;
+                    var employee = from m in crm_db.CRM_User
+                                   join c in sub_department on m.department_id equals c.Id
+                                   select m;
+                    if (shopCode == "0")
+                    {
+                        var undeliveredData = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undeliveredData);
+                    }
+                    else
+                    {
+                        var undelivereddata = (from m in crm_db.CRM_Contract
+                                               join c in employee on m.user_id equals c.Id
+                                               where m.contract_status == status && m.shop_code == shopCode && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                               || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                               || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                               orderby m.edit_time descending
+                                               select m).ToPagedList(_page, 20);
+                        return PartialView(undelivereddata);
+                    }
+                }
+            }
+            else
+            {
+                if (shopCode == "0")
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.user_id == user.Id && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+                else
+                {
+                    var undeliveredData = (from m in crm_db.CRM_Contract
+                                           where m.contract_status == status && m.shop_code == shopCode && m.user_id == user.Id && m.user_id == user.Id && (m.contract_title.Contains((query != null & query != "" ? query : m.contract_title))
+                                           || m.user_name.Contains((query != null & query != "" ? query : m.user_name))
+                                           || m.platform_code.Contains((query != null & query != "" ? query : m.platform_code)))
+                                           orderby m.edit_time descending
+                                           select m).ToPagedList(_page, 20);
+                    return PartialView(undeliveredData);
+                }
+            }
+        }
+        [Authorize(Roles = "CRM")]
+        public ActionResult ContractDetail_show(int c_id)
+        {
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == c_id);
+            var contractDetail = from m in crm_db.CRM_ContractDetail
+                                 where m.contract_id == c_id
+                                 select m;
+            ViewBag.Detail = contractDetail;
+            return PartialView(contract);
+        }
+        [Authorize(Roles = "CRM")]
+        [HttpPost]
+        public JsonResult Admin_pass(int c_id)
+        {
+            var seller = getUser(User.Identity.Name);
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == c_id);
+            if (seller.role_id == UserInfo.SuperAdmin)
+            {
+                contract.received_payments_status = UserInfo.received_payments_status;
+                contract.employee_id = seller.Id;
+                contract.employee_name = seller.name;
+                crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
                 return Json(new { result = "FAIL" });
             }
+            crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
-        public ActionResult EditOrderPriceInfo(int orderPriceId)
+        public CRM_User getUser(string username)
         {
-            var OrderPrice = _db.SP_OrderPrice.SingleOrDefault(m => m.Id == orderPriceId);
-            ViewBag.OrderPrice = OrderPrice;
-            return PartialView(OrderPrice);
+            var user = crm_db.CRM_User.SingleOrDefault(m => m.email == username);
+            return user;
+        }
+
+        private static string AppId = "130412";
+        private static string AppSecret = "26d2e926f42a4f2181dd7d1b7f7d55c0";
+        private static string SessionKey = "8a503b3d9d0d4119be2868cc69a8ef5a";
+        private static string API_Url = "http://v2.api.guanyierp.com/rest/erp_open";
+
+        private string sign(string json, string secret)
+        {
+            StringBuilder enValue = new StringBuilder();
+            //前后加上secret
+            enValue.Append(secret);
+            enValue.Append(json);
+            enValue.Append(secret);
+            //使用MD5加密(32位大写)
+            return CommonUtilities.encrypt_MD5(enValue.ToString()).ToUpper();
+        }
+
+        public string getDeliverys(string mail_no)
+        {
+            string json = "{" +
+                       "\"appkey\":\"" + AppId + "\"," +
+                        "\"method\":\"gy.erp.trade.deliverys.get\"," +
+                        "\"mail_no\":\"" + mail_no + "\"," +
+                        "\"sessionkey\":\"" + SessionKey + "\"" +
+                        "}";
+            string signature = sign(json, AppSecret);
+            string info = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.deliverys.get\"," +
+                    "\"mail_no\":\"" + mail_no + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
+            string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+            try
+            {
+                streamWriter.Write(info);
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                    sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    deliverys_Result r = JsonConvert.DeserializeObject<deliverys_Result>(sb.ToString());
+                    if (r.success)
+                    {
+                        return r.deliverys[0].seller_memo;
+                    }
+                    return "FAIL";
+                }
+            }
+            catch (Exception)
+            {
+                try_times++;
+                if (try_times >= 5)
+                {
+                    try_times = 0;
+                    return "FAIL";
+                }
+                return getDeliverys(mail_no);
+            }
         }
         [HttpPost]
-        public ActionResult EditOrderPriceInfo(SP_OrderPrice model)
+        public JsonResult getERPORDERS(int[] c_id)
         {
-            bool Order = _db.SP_OrderPrice.Any(m => m.Order_Count == model.Order_Count && m.OrderPrice_Remark == model.OrderPrice_Remark && m.Order_Price == model.Order_Price && m.OrderPrice_Discount == model.OrderPrice_Discount && m.OrderPrice_Status != -1);
-            if (ModelState.IsValid)
+            //var platform_code = "IK20180316144326431356";
+            //var mail_no = "3354788962851";
+            List<string> errorList = new List<string>();
+            List<string> failList = new List<string>();
+            List<string> partialList = new List<string>();
+            List<string> successList = new List<string>();
+            var strresult = "";
+            var result = "";
+            foreach (var cId in c_id)
             {
-                if (Order)
+                result = getSingleErpOrders(cId);
+                if (result.Contains("SUCCESS"))
                 {
-                    return Json(new { result = "UNAUTHORIZED" });
+                    strresult = result.Replace("SUCCESS", "");
+                    successList.Add(strresult);
+                }
+                else if (result.Contains("PARTIAL"))
+                {
+                    strresult = result.Replace("PARTIAL", "");
+                    errorList.Add(strresult);
+                }
+                else if (result.Contains("ERROR"))
+                {
+                    strresult = result.Replace("ERROR", "");
+                    partialList.Add(strresult);
                 }
                 else
                 {
-                    var order = _db.SP_Order.SingleOrDefault(m => m.Id == model.Order_Id);
-                    if (order.Order_Type != 0)
+                    failList.Add(result);
+                }
+            }
+            crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS", successlist = successList, errorlist = errorList, faillist = failList, partiallist = partialList });
+        }
+
+        public string getSingleErpOrders(int contractId)
+        {
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contractId);
+            var fail = "";
+            var partial = "";
+            var success = "";
+            var error = "";
+            string json = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                    "\"platform_code\":\"" + contract.platform_code + "\"," +
+                    //"\"platform_code\":\"" + platform_code + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"" +
+                    "}";
+            string signature = sign(json, AppSecret);
+            string info = "{" +
+                   "\"appkey\":\"" + AppId + "\"," +
+                    "\"method\":\"gy.erp.trade.get\"," +
+                    //"\"receiver_mobile\":\"" + platform_code + "\"," +
+                    "\"platform_code\":\"" + contract.platform_code + "\"," +
+                    //"\"platform_code\":\"" + platform_code + "\"," +
+                    "\"sessionkey\":\"" + SessionKey + "\"," +
+                    "\"sign\":\"" + signature + "\"" +
+                "}";
+            var request = WebRequest.Create(API_Url) as HttpWebRequest;
+            request.ContentType = "text/json";
+            request.Method = "post";
+            string result = "";
+            StreamWriter streamWriter = new StreamWriter(request.GetRequestStream());
+            try
+            {
+                streamWriter.Write(info);
+                streamWriter.Flush();
+                streamWriter.Close();
+                var response = request.GetResponse();
+                using (var reader = new StreamReader(response.GetResponseStream()))
+                {
+                    result = reader.ReadToEnd();
+                    StringBuilder sb = new StringBuilder(result);
+                    sb.Replace("\"refund\":\"NoRefund\"", "\"refund\":0");
+                    sb.Replace("\"refund\":\"RefundSuccess\"", "\"refund\":1");
+                    JavaScriptSerializer serializer = new JavaScriptSerializer();
+                    orders_Result r = JsonConvert.DeserializeObject<orders_Result>(sb.ToString());
+                    List<string> contractlist = new List<string>();
+                    List<string> deliveryslist = new List<string>();
+                    if (r.success)
                     {
-                        SP_OrderPrice orderPrice = new SP_OrderPrice();
-                        if (TryUpdateModel(orderPrice))
+                        if (r.orders[0].delivery_state == 1)
                         {
-                            _db.Entry(orderPrice).State = System.Data.Entity.EntityState.Modified;
-                            _db.SaveChanges();
-                            return Json(new { result = "SUCCESS" });
+                            contract.express_status = "部分发货";
+                            contract.contract_status = UserInfo.status_part;
+                            contract.edit_time = DateTime.Now;
+                            for (int i = 0; i < r.orders[0].deliverys.Count(); i++)
+                            {
+                                if (r.orders[0].deliverys[i].mail_no == "" || r.orders[0].deliverys[i].mail_no == null)
+                                {
+                                    contractlist.Add(r.orders[0].deliverys[i].express_name + " ");
+                                    deliveryslist.Add("");
+                                }
+                                else
+                                {
+                                    contractlist.Add(r.orders[0].deliverys[i].express_name + r.orders[0].deliverys[i].mail_no);
+                                    deliveryslist.Add(getDeliverys(r.orders[0].deliverys[i].mail_no));
+                                }
+                            }
+                            success = contract.platform_code + " " + contract.contract_title + "SUCCESS";
+                            string express_information = string.Join(";", contractlist.ToArray());
+                            string express_remark = string.Join(";", deliveryslist.ToArray());
+                            contract.express_information = express_information;
+                            contract.express_remark = express_remark;
+                            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else if (r.orders[0].delivery_state == 2)
+                        {
+                            contract.express_status = "全部发货";
+                            contract.contract_status = UserInfo.status_delivered;
+                            contract.edit_time = DateTime.Now;
+                            for (int i = 0; i < r.orders[0].deliverys.Count(); i++)
+                            {
+                                if (r.orders[0].deliverys[i].mail_no == "" || r.orders[0].deliverys[i].mail_no == null)
+                                {
+                                    contractlist.Add(r.orders[0].deliverys[i].express_name + " ");
+                                    deliveryslist.Add("");
+                                }
+                                else
+                                {
+                                    contractlist.Add(r.orders[0].deliverys[i].express_name + r.orders[0].deliverys[i].mail_no);
+                                    deliveryslist.Add(getDeliverys(r.orders[0].deliverys[i].mail_no));
+                                }
+                            }
+                            success = contract.platform_code + " " + contract.contract_title + "SUCCESS";
+                            string express_information = string.Join(";", contractlist.ToArray());
+                            string express_remark = string.Join(";", deliveryslist.ToArray());
+                            contract.express_information = express_information;
+                            contract.express_remark = express_remark;
+                            crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                        }
+                        else
+                        {
+                            partial = contract.platform_code + " " + contract.contract_title + "PARTIAL";
+                            return partial;
+                        }
+                        var updatcrm = UpdateCRM(contractId, contract.contract_status, contract.express_information, contract.express_remark);
+                        if (updatcrm.Result != 1)
+                        {
+                            error = contract.platform_code + " " + contract.contract_title + "ERROR";
+                            return error;
                         }
                     }
                     else
                     {
-                        return Json(new { result = "WARNING" });
+                        fail = contract.platform_code + " " + contract.contract_title + " " + r.errorDesc;
+                        return fail;
                     }
                 }
             }
-            return Json(new { result = "FAIL" });
-        }
-        [HttpPost]
-        public ActionResult DeleteOrderPrice(int orderPriceId)
-        {
-            var OrderPrice = _db.SP_OrderPrice.AsNoTracking().SingleOrDefault(m => m.Id == orderPriceId);
-            var order = _db.SP_Order.SingleOrDefault(m => m.Id == OrderPrice.Order_Id);
-            if (order.Order_Type != 0)
+            catch (Exception)
             {
-                OrderPrice.OrderPrice_Status = -1;
-                _db.Entry(OrderPrice).State = System.Data.Entity.EntityState.Modified;
-                _db.SaveChanges();
-            }
-            else
-            {
-                return Json(new { result = "WARNING" });
-            }
-            return Json(new { result = "SUCCESS" });
-
-        }
-
-        // 搜索
-        [HttpPost]
-        public JsonResult QueryClient(string query)
-        {
-            var seller = getSeller(User.Identity.Name);
-            if (seller.Seller_Type == 0)
-            {
-                var client = from m in _db.SP_Client
-                             where m.Client_Status != -1 && m.Seller_Id == seller.Id
-                             && m.Client_Name.Contains(query)
-                             select new { Id = m.Id, Client_Name = m.Client_Name };
-                return Json(client);
-            }
-            else
-            {
-                var client = from m in _db.SP_Client
-                             where m.Client_Status != -1 && m.Client_Name.Contains(query)
-                             select new { Id = m.Id, Client_Name = m.Client_Name };
-                return Json(client);
-            }
-        }
-        [HttpPost]
-        public JsonResult QueryContact(string query)
-        {
-            var seller = getSeller(User.Identity.Name);
-            if (seller.Seller_Type == 0)
-            {
-                var client = from m in _db.SP_Contact
-                             where m.Contact_Status != -1 && m.SP_Client.Seller_Id == seller.Id
-                             && m.Contact_Name.Contains(query)
-                             select new { Id = m.Id, Contact_Name = m.SP_Client.Client_Name + "-" + m.Contact_Name };
-                return Json(client);
-            }
-            else
-            {
-                var client = from m in _db.SP_Contact
-                             where m.Contact_Status != -1 && m.Contact_Name.Contains(query)
-                             select new { Id = m.Id, Contact_Name = m.SP_Client.Client_Name + "-" + m.Contact_Name };
-                return Json(client);
-            }
-        }
-        [HttpPost]
-        public JsonResult QueryProduct(string query)
-        {
-            var product = from m in _db.SP_Product
-                          where m.Product_Status != -1
-                          && m.Item_Name.Contains(query)
-                          select new { Id = m.Id, ProductName = m.Item_Name };
-            return Json(product);
-        }
-        [HttpPost]
-        public JsonResult QuerySeller(string query)
-        {
-            var seller = from m in _db.SP_Seller
-                         where m.Seller_Status != -1
-                         && m.Seller_Name.Contains(query)
-                         select new { Id = m.Id, SellerName = m.Seller_Name };
-            return Json(seller);
-        }
-        [HttpPost]
-        public JsonResult QueryContactPhone(string query, int clientId)
-        {
-            var seller = getSeller(User.Identity.Name);
-            if (seller.Seller_Type == 0)
-            {
-                var client = from m in _db.SP_Contact
-                             where m.Contact_Status != -1 && m.SP_Client.Seller_Id == seller.Id && m.Client_Id == clientId
-                             && m.Contact_Name.Contains(query)
-                             select new { Id = m.Id, Contact_Name = m.Contact_Name + "  " + m.Contact_Mobile };
-                return Json(client);
-            }
-            else
-            {
-                var client = from m in _db.SP_Contact
-                             where m.Contact_Status != -1 && m.SP_Client.SP_Seller.Seller_Type <= seller.Seller_Type && m.Client_Id == clientId
-                             && m.Contact_Name.Contains(query)
-                             select new { Id = m.Id, Contact_Name = m.Contact_Name + " " + m.Contact_Mobile };
-                return Json(client);
-            }
-        }
-
-        public JsonResult AllPriceAjax(int productId, int clientId)
-        {
-            bool Price = _db.SP_QuotePrice.Any(m => m.Product_Id == productId && m.Quoted_Status != -1 && m.SP_SalesSystem.Client_Id == clientId);
-            if (Price)
-            {
-                var product = from m in _db.SP_QuotePrice
-                              where m.Quoted_Status != -1 && m.Product_Id == productId && m.SP_SalesSystem.Client_Id == clientId
-                              select new { Id = m.Product_Id, Price = m.Quote_Price };
-                return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                var product = from m in _db.SP_Product
-                              where m.Product_Status != -1 && m.Id == productId
-                              select new { Id = m.Id, Price = m.Purchase_Price };
-                return Json(new { result = "SUCCESS", data = product }, JsonRequestBehavior.AllowGet);
-            }
-
-
-        }
-        [HttpPost]
-        public ActionResult OrderPdf(int orderId)
-        {
-            var product = from m in _db.SP_OrderPrice
-                          where m.OrderPrice_Status != -1 && m.Order_Id == orderId
-                          select m;
-            var orderNum = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            var count = product.Count();
-            Document document = new Document(PageSize.A3);
-            try
-            {
-                // 创建文档
-                PdfWriter.GetInstance(document, new FileStream(@"C:\Users\Tork\Downloads\Create.pdf", FileMode.Append));
-                BaseFont setFont = BaseFont.CreateFont(@"C:\Windows\Fonts\simfang.ttf", BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
-                Font font = new Font(setFont, 16);
-                Font font1 = new Font(setFont, 12);
-                Font font2 = new Font(setFont, 10);
-
-                Paragraph title = new Paragraph("寿全斋[-订单发货-]审批单", font);
-                title.Alignment = 1;
-                // 打开文档
-                document.Open();
-                document.Add(title);
-                PdfPTable table = new PdfPTable(10);
-                PdfPCell cell;
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-                cell.Border = Rectangle.NO_BORDER;
-                cell.Colspan = 10;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-                cell.Border = Rectangle.NO_BORDER;
-                cell.Colspan = 5;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase("□有货就发", font1));
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-                cell.Border = Rectangle.NO_BORDER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase("□发货时间:", font1));
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-                cell.Border = Rectangle.NO_BORDER;
-                cell.Colspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase("订单编号:", font1));
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase(orderNum.Order_Number.ToString(), font1));
-                cell.Colspan = 4;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase("客户名称:", font1));
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase(orderNum.SP_Contact.SP_Client.Client_Name.ToString(), font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Colspan = 4;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase("订单类型:", font1));
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase(" "));
-                cell.Colspan = 4;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase("业务对接:", font1));
-                table.AddCell(cell);
-                cell = new PdfPCell(new Phrase(orderNum.SP_Contact.SP_Client.SP_Seller.Seller_Name.ToString(), font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Colspan = 4;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                cell.VerticalAlignment = Element.ALIGN_BOTTOM;
-                cell.Border = Rectangle.NO_BORDER;
-                cell.Colspan = 10;
-                table.AddCell(cell);
-                // 产品标题
-                cell = new PdfPCell(new Paragraph("I.订单信息", font1));
-                cell.Colspan = 10;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订货情况", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订单内容", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("产品代码", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订货品种", font1));
-                cell.Colspan = 2;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订货数量", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订货单价", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("货款金额", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("备注", font1));
-                cell.Colspan = 2;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订货品种", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cell.Rowspan = count;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("订单内容", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cell.Rowspan = count;
-                table.AddCell(cell);
-                foreach (var order in product)
+                streamWriter.Close();
+                CRM_ExceptionLogs logs = new CRM_ExceptionLogs();
+                try_times++;
+                if (try_times >= 5)
                 {
-                    cell = new PdfPCell(new Paragraph(order.SP_Product.Item_Code, font2));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    table.AddCell(cell);
-                    cell = new PdfPCell(new Paragraph(order.SP_Product.Item_Name.ToString(), font2));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    cell.Colspan = 2;
-                    table.AddCell(cell);
-                    cell = new PdfPCell(new Paragraph(order.Order_Count.ToString(), font2));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    table.AddCell(cell);
-                    cell = new PdfPCell(new Paragraph(order.Order_Price.ToString(), font2));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    table.AddCell(cell);
-                    cell = new PdfPCell(new Paragraph(Math.Round((order.Order_Price * order.Order_Count), 2).ToString(), font2));
-                    cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                    table.AddCell(cell);
-                    cell = new PdfPCell(new Paragraph(" ", font2));
-                    cell.Colspan = 2;
-                    table.AddCell(cell);
+                    logs.type = "getErpOrder";
+                    logs.exception = "[ErpOrder]获取失败";
+                    logs.exception_at = DateTime.Now;
+                    crm_db.CRM_ExceptionLogs.Add(logs);
+                    crm_db.SaveChanges();
+                    try_times = 0;
+                    return "FAIL";
                 }
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("合计", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("--"));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                var Price = from m in _db.SP_OrderPrice
-                            where m.OrderPrice_Status != -1 && m.Order_Id == orderId
-                            group m by m.Id into g
-                            select new OrderPriceSum
-                            {
-                                SumCount = g.Sum(m => m.Order_Count),
-                                SumPrice = g.Sum(m => m.Order_Price)
-                            };
-                decimal SumPrice = 0;
-                int SumCount = 0;
-                foreach (var price in Price)
-                {
-                    SumCount += price.SumCount;
-                    var sumPrice = price.SumPrice * price.SumCount;
-                    SumPrice += sumPrice;
-                }
-                cell = new PdfPCell(new Paragraph(SumCount.ToString(), font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("--"));
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(Math.Round(SumPrice, 2).ToString(), font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                // 付款
-                cell = new PdfPCell(new Paragraph("付款内容", font1));
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Rowspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("1"));
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("付款方式", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("开票内容", font1));
-                cell.Rowspan = 3;
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("1"));
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("开票类型"));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                // 2
-                cell = new PdfPCell(new Paragraph("2"));
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("付款时间", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("2"));
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("开票内容"));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                //3 
-                cell = new PdfPCell(new Paragraph("3"));
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("付款金额", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("3"));
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("开票时间"));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                // 收货
-                cell = new PdfPCell(new Paragraph("收货人信息", font1));
-                cell.Colspan = 2;
-                cell.Rowspan = 5;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("收货人", font1));
-                cell.Colspan = 3;
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 5;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("收货人联系电话", font1));
-                cell.Colspan = 3;
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 5;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("收货地址", font1));
-                cell.Colspan = 3;
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 5;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("运输方式（特批加急）", font1));
-                cell.Colspan = 3;
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("□快递-顺丰  □物流-德邦  □包车", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Colspan = 5;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("最后收货期限", font1));
-                cell.Colspan = 3;
-                cell.HorizontalAlignment = Element.ALIGN_LEFT;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("     年     月     日", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Colspan = 5;
-                table.AddCell(cell);
-                // 发货
-                cell = new PdfPCell(new Paragraph("II.发货审核", font1));
-                cell.Colspan = 10;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("业务对接人签署：", font1));
-                cell.Colspan = 3;
-                cell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("负责人签署：", font1));
-                cell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.TOP_BORDER;
-                cell.Colspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("ERP制单", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("ERP审核", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(""));
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER;
-                cell.Colspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(""));
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER;
-                cell.Colspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("[       ]年[    ]月[    ]日", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER;
-                cell.Colspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("[       ]年[    ]月[    ]日", font1));
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER;
-                cell.Colspan = 3;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(""));
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(""));
-                cell.Border = Rectangle.RIGHT_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER;
-                cell.Colspan = 2;
-                table.AddCell(cell);
-                // 回执
-                cell = new PdfPCell(new Paragraph("III.发货回执", font1));
-                cell.Colspan = 10;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("发货物流或快递名称", font2));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 8;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("快递或物流单号", font2));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph(" "));
-                cell.Colspan = 8;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("预计到货日期", font2));
-                cell.Colspan = 2;
-                table.AddCell(cell);
-
-                cell = new PdfPCell(new Paragraph("[          ]年[      ]月[      ]日", font2));
-                cell.Colspan = 8;
-                cell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(cell);
-                // 
-                cell = new PdfPCell(new Paragraph("产品部签署:", font2));
-                cell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
-                cell.Colspan = 10;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("[确认已经完成发货]", font2));
-                cell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER;
-                cell.Colspan = 10;
-                table.AddCell(cell);
-                cell = new PdfPCell(new Paragraph("[        ]年[    ]月[    ]日", font2));
-                cell.Border = Rectangle.LEFT_BORDER | Rectangle.RIGHT_BORDER | Rectangle.BOTTOM_BORDER;
-                cell.HorizontalAlignment = Element.ALIGN_RIGHT;
-                cell.Colspan = 10;
-                table.AddCell(cell);
-
-                document.Add(table);
+                return getSingleErpOrders(contractId);
             }
-            catch (DocumentException de)
-            {
-                Console.Error.WriteLine(de.Message);
-            }
-            catch (IOException ioe)
-            {
-                Console.Error.WriteLine(ioe.Message);
-            }
-            // 关闭文档
-            document.Close();
-            return Json(new { result = "SUCCESS" });
+            return success;
         }
-        // 上传图片
         [HttpPost]
-        public ActionResult UpLoadImg(FormCollection form)
+        public JsonResult createOrder(int[] c_id, string province, string city, string district)
         {
-            var files = Request.Files;
-            string msg = string.Empty;
-            string error = string.Empty;
-            string imgurl;
-            if (files.Count > 0)
+            List<string> failList = new List<string>();
+            List<string> partialList = new List<string>();
+            List<string> successList = new List<string>();
+            var result = "";
+            var strresult = "";
+            foreach (var _Cid in c_id)
             {
-                int size = files[0].ContentLength;
-                if (files[0].ContentLength > 0 && files[0].ContentType.Contains("image"))
+                result = creatSingleOrder(_Cid, province, city, district);
+                if (result.Contains("SUCCESS"))
                 {
-                    string filename = files[0].FileName; //改filename公式
-                    string _filename = DateTime.Now.ToFileTime().ToString() + "sqzweb" + filename.ToString().Substring(filename.ToString().LastIndexOf("."));
-                    //files[0].SaveAs(Server.MapPath("/Content/checkin-img/") + filename);
-                    AliOSSUtilities util = new AliOSSUtilities();
-                    util.PutWebObject(files[0].InputStream, "Content/" + _filename);
-                    msg = "成功! 文件大小为:" + files[0].ContentLength;
-                    imgurl = "http://cdn.shouquanzhai.cn/Content/" + _filename;
-                    string res = "{ error:'" + error + "', size:'" + size + "', msg:'" + msg + "',imgurl:'" + imgurl + "'}";
-                    return Content(res);
+                    strresult = result.Replace("SUCCESS", "");
+                    successList.Add(strresult);
+                }
+                else if (result.Contains("PARTIAL"))
+                {
+                    strresult = result.Replace("PARTIAL", "");
+                    partialList.Add(strresult);
                 }
                 else
                 {
-                    error = "文件错误";
+                    failList.Add(result);
                 }
             }
-            string err_res = "{ error:'" + error + "', msg:'" + msg + "',imgurl:''}";
-            return Content(err_res);
+            crm_db.SaveChanges();
+            return Json(new { result = "SUCCESS", successlist = successList, faillist = failList, partiallist = partialList });
+        }
 
-        }
-        // 报价单导出
-        [HttpPost]
-        public ActionResult getQuotePrice(FormCollection form, int SalesSystemId, string productId)
+        public string creatSingleOrder(int contractId, string province, string city, string district)
         {
-            HSSFWorkbook book = new HSSFWorkbook();
-            ISheet sheet = book.CreateSheet("报价单");
-            // 写标题
-            IRow row = sheet.CreateRow(0);
-            int cell_pos = 0;
-            row.CreateCell(cell_pos).SetCellValue("商品编码");
-            row.CreateCell(++cell_pos).SetCellValue("产品名称");
-            row.CreateCell(++cell_pos).SetCellValue("箱规");
-            row.CreateCell(++cell_pos).SetCellValue("单价");
-            int row_pos = 1;
-            string _productId = productId;
-            string[] sArray = _productId.Split(',');
-            string num = "";
-            foreach (string i in sArray)
+            var fail = "";
+            var partial = "";
+            var success = "";
+            var seller = getUser(User.Identity.Name);
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contractId && m.contract_status == UserInfo.status_unsend && m.received_payments_status == UserInfo.received_payments_status);
+            if (province != null)
             {
-                num = i;
-                int _ProductId = Convert.ToInt32(num);
-                var price_list = _db.SP_QuotePrice.SingleOrDefault(m => m.SalesSystem_Id == SalesSystemId && m.Quoted_Status != -1 && m.Product_Id == _ProductId);
-                IRow single_row = sheet.CreateRow(row_pos);
-                cell_pos = 0;
-                single_row.CreateCell(cell_pos).SetCellValue(price_list.SP_Product.Item_Code);
-                single_row.CreateCell(++cell_pos).SetCellValue(price_list.SP_Product.Item_Name);
-                single_row.CreateCell(++cell_pos).SetCellValue(price_list.SP_Product.Carton_Spec);
-                single_row.CreateCell(++cell_pos).SetCellValue((double)(price_list.Quote_Price));
-                row_pos++;
-            };
-            MemoryStream _stream = new MemoryStream();
-            book.Write(_stream);
-            _stream.Flush();
-            _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "报价单.xls");
-        }
-        public ICellStyle ExcelCellStyle(HSSFWorkbook book,string styleName)
-        {
-            if (styleName == "标题")
-            {
-                ICellStyle cellStyle = book.CreateCellStyle();//标题样式
-                cellStyle.BorderLeft = BorderStyle.Thin;
-                cellStyle.BorderBottom = BorderStyle.Thin;
-                cellStyle.BorderRight = BorderStyle.Thin;
-                cellStyle.BorderTop = BorderStyle.Thin;
-                cellStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-                cellStyle.Alignment = HorizontalAlignment.Center;//水平对齐
-                IFont titleFont = book.CreateFont(); //创建一个字体样式对象
-                titleFont.FontName = "宋体"; //和excel里面的字体对应
-                titleFont.FontHeightInPoints = 16;//字体大小
-                titleFont.Boldweight = (short)FontBoldWeight.Bold;
-                cellStyle.SetFont(titleFont);
-                return cellStyle;
+                contract.receiver_province = province;
+                contract.receiver_city = city;
+                contract.receiver_district = district;
+                contract.address_status = 1;
+                crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
             }
-            else if (styleName == "居中正文")
+            ERPCustomOrder order = new ERPCustomOrder()
             {
-                ICellStyle cellStyle = book.CreateCellStyle();//正文样式（居中）
-                cellStyle.BorderBottom = BorderStyle.Thin;
-                cellStyle.BorderLeft = BorderStyle.Thin;
-                cellStyle.BorderRight = BorderStyle.Thin;
-                cellStyle.BorderTop = BorderStyle.Thin;
-                cellStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-                cellStyle.Alignment = HorizontalAlignment.Center;
-                IFont textFont1 = book.CreateFont(); //创建一个字体样式对象
-                textFont1.FontName = "宋体"; //和excel里面的字体对应
-                textFont1.FontHeightInPoints = 12;//字体大小
-                cellStyle.SetFont(textFont1);
-                return cellStyle;
+                platform_code = contract.platform_code,
+                shop_code = contract.shop_code,
+                vip_code = contract.vip_code,
+                warehouse_code = contract.warehouse_code,
+                express_code = contract.express_code,
+                receiver_name = contract.receiver_name,
+                receiver_province = contract.receiver_province,
+                receiver_city = contract.receiver_city,
+                receiver_district = contract.receiver_district,
+                receiver_mobile = contract.receiver_tel,
+                receiver_zip = "200000",
+                receiver_address = contract.receiver_address,
+                buyer_memo = contract.contract_remark,
+                seller_memo_late = contract.contract_title,
+                deal_datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                business_man_code = contract.user_name,
+            };
+            order.details = new List<ERPCustomOrder_details>();
+            foreach (var item in contract.CRM_ContractDetail)
+            {
+                ERPCustomOrder_details details = new ERPCustomOrder_details()
+                {
+                    item_code = item.product_code,
+                    price = item.unit_price,
+                    qty = item.quantity
+                };
+                order.details.Add(details);
+            }
+            order.payments = new List<ERPCustomOrder_payments>();
+            foreach (var item in contract.CRM_ContractDetail)
+            {
+                ERPCustomOrder_payments payments = new ERPCustomOrder_payments()
+                {
+                    pay_type_code = "zhifubao",
+                    //payment = 0
+                    payment = (decimal)item.CRM_Contract.total_amount
+                };
+                order.payments.Add(payments);
+            }
+            ERPOrderUtilities util = new ERPOrderUtilities();
+            string result = util.createOrder(order);
+            Orders_Result r = JsonConvert.DeserializeObject<Orders_Result>(result);
+            if (r.success)
+            {
+                contract.contract_status = UserInfo.status_undelivered;
+                contract.address_status = 1;
+                contract.employee_id = seller.Id;
+                contract.employee_name = seller.name;
+                contract.edit_time = DateTime.Now;
+                crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
+                crm_db.SaveChanges();
+                success = contract.platform_code + " " + contract.contract_title + "SUCCESS";
+                var updatcrm = UpdateCRM(contractId, contract.contract_status, contract.express_information, contract.express_remark);
+                if (updatcrm.Result != 1)
+                {
+                    partial = contract.platform_code + " " + contract.contract_title + "PARTIAL";
+                    return partial;
+                }
             }
             else
             {
-                ICellStyle cellStyle = book.CreateCellStyle();//正文样式（居左）
-                cellStyle.BorderBottom = BorderStyle.Thin;
-                cellStyle.BorderLeft = BorderStyle.Thin;
-                cellStyle.BorderRight = BorderStyle.Thin;
-                cellStyle.BorderTop = BorderStyle.Thin;
-                cellStyle.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-                cellStyle.Alignment = HorizontalAlignment.Left;
-                IFont textFont1 = book.CreateFont(); //创建一个字体样式对象
-                textFont1.FontName = "宋体"; //和excel里面的字体对应
-                textFont1.FontHeightInPoints = 12;//字体大小
-                cellStyle.SetFont(textFont1);
-                return cellStyle;
+                fail = contract.platform_code + " " + contract.contract_title + " " + r.errorDesc;
+                return fail;
             }
+            return success;
         }
-        //生成订货通知单
-        [HttpPost]
-        public ActionResult CreatOrderExcel(int orderId)
+
+        public void checkAddress(string full_address, int contract_id)
         {
-            HSSFWorkbook book = new HSSFWorkbook();
-            ISheet sheet = book.CreateSheet("报价单");
-            var titleStyle = ExcelCellStyle(book, "标题");
-            var textStyle1 = ExcelCellStyle(book, "居中正文");
-            var textStyle2 = ExcelCellStyle(book, "居左正文");
-            //合并单元格
-            for (int i = 0; i < 21; i++)
+            var address_arry = full_address.ToCharArray();
+            List<int> marks = new List<int>();
+            var contract = crm_db.CRM_Contract.SingleOrDefault(m => m.id == contract_id);
+            int i;
+            for (i = 0; i < address_arry.Length; i++)
             {
-                int j = i + 1;
-                int[] a = { 0, 0, 2, 1, 3, 1, 4, 1, 5, 1, 6, 1, 2, 4, 3, 4, 4, 4, 5, 4, 6, 4 };
-                int[] b = { 1, 8, 2, 2, 3, 2, 4, 2, 5, 2, 6, 2, 2, 8, 3, 8, 4, 8, 5, 8, 6, 8 };
-                if (i % 2 == 0)
+                if (address_arry[i].ToString() == " ")
                 {
-                    sheet.AddMergedRegion(new CellRangeAddress(a[i], b[i], a[j], b[j]));
+                    marks.Add(i);
                 }
             }
-            var orderInfo = _db.SP_Order.SingleOrDefault(m => m.Id == orderId);
-            // 写标题
-            IRow row0 = sheet.CreateRow(0);
-            row0.Height = 40 * 20;
-            for (int i = 0; i < 7; i++)
+            if (marks.Count() < 3)
             {
-                sheet.SetColumnWidth(i, 20 * 256);
-                //sheet.SetDefaultColumnStyle(i, borderstyle);
+                contract.address_status = 0;
             }
-            IRow row1 = sheet.CreateRow(1);
-            row1.Height = 40 * 20;
-            for (int i = 0; i < 9; i++)
+            else
             {
-                var r0c = row0.CreateCell(i);
-                r0c.CellStyle = textStyle1;
-                var r1c = row1.CreateCell(i);
-                r1c.CellStyle = textStyle1;
+                var sub_province = full_address.Substring(0, marks[0]);
+                var sub_city = full_address.Substring(marks[0] + 1, marks[1] - marks[0] - 1);
+                var sub_area = full_address.Substring(marks[1] + 1, marks[2] - marks[1] - 1);
+                contract.receiver_province = sub_province;
+                contract.receiver_city = sub_city;
+                contract.receiver_district = sub_area;
+                contract.address_status = 1;
+                crm_db.Entry(contract).State = System.Data.Entity.EntityState.Modified;
             }
-            int cell_pos = 0;
-            var eTitle = row0.CreateCell(cell_pos);
-            eTitle.SetCellValue("寿全斋订货通知单");
-            eTitle.CellStyle = titleStyle;
-            var r0c6 = row0.CreateCell(6);
-            var r1c6 = row1.CreateCell(6);
-            r0c6.CellStyle = titleStyle;
-            r1c6.CellStyle = titleStyle;
-            IRow row2 = sheet.CreateRow(2);//第三行
-            row2.Height = 35 * 20;
-            var r2c0 = row2.CreateCell(cell_pos);
-            r2c0.SetCellValue("购货单位：");
-            r2c0.CellStyle = textStyle2;
-            var r2c3 = row2.CreateCell(3);
-            r2c3.SetCellValue("订单编号：");
-            r2c3.CellStyle = textStyle2;
-            IRow row3 = sheet.CreateRow(3);//第四行
-            row3.Height = 35 * 20;
-            var r3c0 = row3.CreateCell(cell_pos);
-            r3c0.SetCellValue("联系人及电话：");
-            r3c0.CellStyle = textStyle2;
-            var r3c3 = row3.CreateCell(3);
-            r3c3.SetCellValue("订货日期：");
-            r3c3.CellStyle = textStyle2;
-            var r3c6 = row3.CreateCell(6);
-            r3c6.CellStyle = textStyle1;
-            IRow row4 = sheet.CreateRow(4);//第五行
-            row4.Height = 35 * 20;
-            var r4c6 = row4.CreateCell(6);
-            r4c6.CellStyle = textStyle1;
-            var r4c0 = row4.CreateCell(cell_pos);
-            r4c0.SetCellValue("签呈编号：");
-            r4c0.CellStyle = textStyle2;
-            var r4c3 = row4.CreateCell(3);
-            r4c3.SetCellValue("收货地址：");
-            r4c3.CellStyle = textStyle2;
-            IRow row5 = sheet.CreateRow(5);//第六行
-            row5.Height = 35 * 20;
-            var r5c6 = row5.CreateCell(6);
-            r5c6.CellStyle = textStyle1;
-            var r5c0 = row5.CreateCell(cell_pos);
-            r5c0.SetCellValue("核销费用：");
-            r5c0.CellStyle = textStyle2;
-            IRow row6 = sheet.CreateRow(6);//第七行
-            row6.Height = 35 * 20;
-            var r6c6 = row6.CreateCell(6);
-            r6c6.CellStyle = textStyle1;
-            var r6c0 = row6.CreateCell(cell_pos);
-            r6c0.SetCellValue("备注：");
-            r6c0.CellStyle = textStyle2;
-            IRow row7 = sheet.CreateRow(7);//第八行（数据区）
-            row7.Height = 30 * 20;
-            var r7c0 = row7.CreateCell(cell_pos);
-            r7c0.SetCellValue("序号");
-            var r7c1 = row7.CreateCell(++cell_pos);
-            r7c1.SetCellValue("产品代码");
-            var r7c2 = row7.CreateCell(++cell_pos);
-            r7c2.SetCellValue("品名");
-            var r7c3 = row7.CreateCell(++cell_pos);
-            r7c3.SetCellValue("规格");
-            var r7c4 = row7.CreateCell(++cell_pos);
-            r7c4.SetCellValue("订货数量");
-            var r7c5 = row7.CreateCell(++cell_pos);
-            r7c5.SetCellValue("箱数");
-            var r7c6 = row7.CreateCell(++cell_pos);
-            r7c6.SetCellValue("单价");
-            var r7c7 = row7.CreateCell(++cell_pos);
-            r7c7.SetCellValue("金额");
-            var r7c8 = row7.CreateCell(++cell_pos);
-            r7c8.SetCellValue("备注");
-            r7c0.CellStyle = textStyle1;
-            r7c1.CellStyle = textStyle1;
-            r7c2.CellStyle = textStyle1;
-            r7c3.CellStyle = textStyle1;
-            r7c4.CellStyle = textStyle1;
-            r7c5.CellStyle = textStyle1;
-            r7c6.CellStyle = textStyle1;
-            r7c7.CellStyle = textStyle1;
-            r7c8.CellStyle = textStyle1;
-            var priceData = from m in _db.SP_OrderPrice
-                            where m.Order_Id == orderId && m.OrderPrice_Status != -1
-                            select m;
-            var cell_data = 7;
-            var order_num = 0;
-            foreach (var data in priceData)
-            {
-                IRow rowData = sheet.CreateRow(++cell_data);
-                rowData.Height = 30 * 20;
-                var rd0 = rowData.CreateCell(0);
-                rd0.SetCellValue(++order_num);
-                var rd1 = rowData.CreateCell(1);
-                rd1.SetCellValue(data.SP_Product.Item_Code);
-                var rd2 = rowData.CreateCell(2);
-                rd2.SetCellValue(data.SP_Product.Item_Name);
-                var rd3 = rowData.CreateCell(3);
-                rd3.SetCellValue(data.SP_Product.Carton_Spec);
-                var rd4 = rowData.CreateCell(4);
-                rd4.SetCellValue(data.Order_Count);
-                var rd5 = rowData.CreateCell(5);
-                rd5.SetCellValue(data.Order_Count / data.SP_Product.Carton_Spec);
-                var rd6 = rowData.CreateCell(6);
-                rd6.SetCellValue(data.SP_Product.Purchase_Price.ToString());
-                var rd7 = rowData.CreateCell(7);
-                rd7.SetCellValue((data.Order_Count * data.SP_Product.Purchase_Price).ToString());
-                var rd8 = rowData.CreateCell(8);
-                rd8.SetCellValue(data.OrderPrice_Remark);
-                rd0.CellStyle = textStyle1;
-                rd1.CellStyle = textStyle1;
-                rd2.CellStyle = textStyle1;
-                rd3.CellStyle = textStyle1;
-                rd4.CellStyle = textStyle1;
-                rd5.CellStyle = textStyle1;
-                rd6.CellStyle = textStyle1;
-                rd7.CellStyle = textStyle1;
-                rd8.CellStyle = textStyle1;
-            }
-            for (int i = 1; i < 9; i++)//3-7行样式
-            {
-                if (i != 3)
-                {
-                    var r2c = row2.CreateCell(i);
-                    r2c.CellStyle = textStyle1;
-                    var r3c = row3.CreateCell(i);
-                    r3c.CellStyle = textStyle1;
-                    var r4c = row4.CreateCell(i);
-                    r4c.CellStyle = textStyle1;
-                }
-                var r5c = row5.CreateCell(i);
-                r5c.CellStyle = textStyle1;
-                var r6c = row6.CreateCell(i);
-                r6c.CellStyle = textStyle1;
-            }
-            var rest = priceData.Count() + 8;
-            var restEnd = priceData.Count() + 8;
-            for (; rest - restEnd <= 2; rest++)
-            {
-                IRow rowRest = sheet.CreateRow(rest);
-                rowRest.Height = 30 * 20;
-                for (int i = 0; i < 9; i++)
-                {
-                    var rcRest = rowRest.CreateCell(i);//数据区后追三行
-                    rcRest.CellStyle = textStyle1;
-                }
-            }
-            IRow rowAdd = sheet.CreateRow(rest);//合计数据区
-            rowAdd.Height = 30 * 20;
-            var rcAdd = rowAdd.CreateCell(0);
-            rcAdd.SetCellValue("合计");
-            rcAdd.CellStyle = textStyle1;
-            for (int i = 1; i < 9; i++)
-            {
-                var rcDataAdd = rowAdd.CreateCell(i);
-                rcDataAdd.CellStyle = textStyle1;
-            }
-            var Price = from m in _db.SP_OrderPrice
-                        where m.OrderPrice_Status != -1 && m.Order_Id == orderId
-                        group m by m.Id into g
-                        select new OrderPriceSum
-                        {
-                            SumCount = g.Sum(m => m.Order_Count),
-                            CartonCount = g.Sum(m => m.Order_Count / m.SP_Product.Carton_Spec),
-                            SumPrice = g.Sum(m => m.Order_Price)
-                        };
-            int cartonCount = 0;
-            int orderCount = 0;
-            decimal sumPrice = 0;
-            foreach (var price in Price)
-            {
-                cartonCount += price.CartonCount;
-                orderCount += price.SumCount;
-                var Sumprice = price.SumCount * price.SumPrice;
-                sumPrice += Sumprice;
-            }
-            var row_orderCount = rowAdd.CreateCell(4);
-            row_orderCount.SetCellValue(orderCount);
-            row_orderCount.CellStyle = textStyle1;
-            var row_sumCount = rowAdd.CreateCell(5);
-            row_sumCount.SetCellValue(cartonCount);
-            row_sumCount.CellStyle = textStyle1;
-            var row_sumPrice = rowAdd.CreateCell(7);
-            row_sumPrice.SetCellValue(sumPrice.ToString());
-            row_sumPrice.CellStyle = textStyle1;
-            //未知区
-            //填充订单数据
-            var r2c1 = row2.CreateCell(1);
-            r2c1.SetCellValue(orderInfo.SP_Contact.SP_Client.Client_Name);
-            r2c1.CellStyle = textStyle1;
-            var r2c4 = row2.CreateCell(4);
-            r2c4.SetCellValue(orderInfo.Order_Number);
-            r2c4.CellStyle = textStyle1;
-            var r3c1 = row3.CreateCell(1);
-            r3c1.SetCellValue(orderInfo.SP_Contact.Contact_Name + " " + orderInfo.SP_Contact.Contact_Mobile);
-            r3c1.CellStyle = textStyle1;
-            var r3c4 = row3.CreateCell(4);
-            r3c4.SetCellValue(orderInfo.Order_Date.ToString("yyyy-MM-dd"));
-            r3c4.CellStyle = textStyle1;
-            var r4c4 = row4.CreateCell(4);
-            r4c4.SetCellValue(orderInfo.Order_Address);
-            r4c4.CellStyle = textStyle1;
-            MemoryStream _stream = new MemoryStream();
-            book.Write(_stream);
-            _stream.Flush();
-            _stream.Seek(0, SeekOrigin.Begin);
-            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "订货通知单.xls");
         }
     }
 }

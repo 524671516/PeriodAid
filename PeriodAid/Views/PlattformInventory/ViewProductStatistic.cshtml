@@ -2,12 +2,44 @@
     ViewBag.Title = "产品数据统计";
     Layout = "~/Views/Shared/_PlattformInventory.cshtml";
 }
-
+<style>
+    label{
+            margin:0
+        }
+</style>
 <input type="hidden" id="productId" name="plattformId" value="@ViewBag.ProductId" />
-<input type="text" id="start_time" class="file-data" name="start_time" placeholder="请选择起始日期" />
-<input type="text" id="end_time" class="file-data" name="end_time" placeholder="请选择结束日期" />
-<input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px"/>
-
+<div id="select_condition">
+    <div class="select_condition_div date_select_div">
+        <label class="pull-left">选择日期：</label>
+        <div>
+            <input type="text" id="start-date" class="file-data" style="margin-left:0" name="start-date" placeholder="请选择起始日期" />
+            <input type="text" id="end-date" class="file-data" style="margin-left:0" name="end-date" placeholder="请选择结束日期" />
+            <input type="button" id="statistic_btn" class="btn btn-primary" name="statistic_btn" value="查询" style="padding:1px 12px;margin-left:8px" />
+        </div>
+    </div>
+    <div class="select_condition_div date_select_div">
+        <label class="pull-left">参照日期：</label>
+        <ul class="average_section_ul">
+            <li class="date_section_li_active">
+                <a id="average_start" data-val="1" class="average_type active" name="statistic_btn">开始时间</a>
+            </li>
+            <li>
+                <a id="average_end" data-val="0" class="average_type" name="statistic_btn">结束时间</a>
+            </li>
+        </ul>
+    </div>
+    <div class="date_section_select select_condition_div">
+        <label class="pull-left">均值区间：</label>
+        <ul class="date_section_ul">
+            <li>
+                <a class="select-date active" id="statistic_btn_average7" data-date="7">7天均值</a>
+            </li>
+            <li>
+                <a class="select-date" id="statistic_btn_average15" data-date="15">15天均值</a>
+            </li>
+        </ul>
+    </div>
+</div>
 <div id="myChart_Bar" style="min-width:500px;height:400px">
     <div class="hidden">
         @foreach (var list in ViewBag.eventList)
@@ -16,13 +48,13 @@
         }
     </div>
 </div>
-
 @section scripts{
-    
 <script src="~/Scripts/highcharts.js"></script>
 <script type="text/javascript">
     $(function () {
-            var fileDate = $('.file-data')
+        $("#ul_btn").children("li").eq(1).addClass('left-navba-background').children(".san_you").removeClass("hidden")
+        $("#ul_btn").children("li").eq(1).children("a").addClass("click_a_color")
+        var fileDate = $('.file-data')
                 fileDate.datepicker({ dateFormat: "yy-mm-dd" });
                 //星期格式汉化  
                 fileDate.datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
@@ -31,28 +63,129 @@
                 fileDate.datepicker();
             var current_date = showdate(-1);
             var start_date = showdate(-30);
-            $("#end_time").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + current_date.getDate());
-            $("#start_time").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0'+(start_date.getMonth() + 1)) + "-" + start_date.getDate());
+            $("#end-date").val(current_date.getFullYear() + "-" + ((current_date.getMonth() + 1) > 9 ? current_date.getMonth() + 1 : '0' + (current_date.getMonth() + 1)) + "-" + (current_date.getDate() < 10 ? "0" : "") + current_date.getDate());
+            $("#start-date").val(start_date.getFullYear() + "-" + ((start_date.getMonth() + 1) > 9 ? start_date.getMonth() + 1 : '0' + (start_date.getMonth() + 1)) + "-" + (start_date.getDate() < 10 ? "0" : "") + start_date.getDate());
             $.ajax({
                 url: "/PlattformInventory/ViewProductStatisticPartial",
                 type:"post",
                 data: {
                     productId: getUrlParam('productId'),
-                    start: $("#start_time").val(),
-                    end: $("#end_time").val()
+                    start: $("#start-date").val(),
+                    end: $("#end-date").val()
                 }, success: function (data) {
+                    console.log(data)
                     showstatistic(data);
                 }
             });
-            $("#statistic_btn").click(function () {
-                if ($("#start_time").val() <= $("#end_time").val()) {
+            $(".average_type").click(function () {
+                $(".average_type.active").removeClass("active")
+                $(this).addClass("active")
+                $(".average_section_ul").children("li").removeClass("date_section_li_active")
+                $(this).parent("li").addClass("date_section_li_active")
+                $(".date_section_ul").children("li").removeClass("date_section_li_active")
+            })
+            $(".select-date").click(function () {
+                var that = $(this)
+                $(".date_section_ul").children("li").removeClass("date_section_li_active")
+                $(".select-date").removeClass("active")
+                that.addClass("active")
+                that.parent("li").addClass("date_section_li_active")
+            })
+            $("#statistic_btn_average7").click(function () {
+                ave_start = $("#start-date").val()
+                ave_end = $("#end-date").val()
+                var ave_start_day = new Date(ave_start);
+                var ave_end_day = new Date(ave_end);
+                var between_day = (ave_end_day.setDate(ave_end_day.getDate()) - ave_start_day.setDate(ave_start_day.getDate())) / 1000 / 60 / 60 / 24
+                var a_type = $(".average_type.active").attr("data-val")
+                if (between_day < 6)//7天差值为6
+                {
+                    ave_start_day.setDate(ave_start_day.getDate() + 6);
+                    var m = ave_start_day.getMonth() + 1;
+                    var set_end_day = ave_start_day.getFullYear() + '-' + (m > 9 ? m : '0' + m) + '-' + (ave_start_day.getDate() > 9 ? ave_start_day.getDate() : '0' + ave_start_day.getDate())
                     $.ajax({
                         url: "/PlattformInventory/ViewProductStatisticPartial",
                         type: "post",
                         data: {
                             productId: getUrlParam('productId'),
-                            start: $("#start_time").val(),
-                            end: $("#end_time").val()
+                            start: ave_start,
+                            end: set_end_day,
+                            type: 1,
+                            a_type: a_type
+                        }, success: function (data) {
+                            console.log(data)
+                            showstatistic(data);
+                        }
+                    });
+                }
+                else {
+                    $.ajax({
+                        url: "/PlattformInventory/ViewProductStatisticPartial",
+                        type: "post",
+                        data: {
+                            productId: getUrlParam('productId'),
+                            start: ave_start,
+                            end: ave_end,
+                            type: 1,
+                            a_type: a_type
+                        }, success: function (data) {
+                            console.log(data)
+                            showstatistic(data);
+                        }
+                    });
+                }
+            })
+            $("#statistic_btn_average15").click(function () {
+                var ave_start = $("#start-date").val()
+                var ave_end = $("#end-date").val()
+                var ave_start_day = new Date(ave_start);
+                var ave_end_day = new Date(ave_end);
+                var between_day = (ave_end_day.setDate(ave_end_day.getDate()) - ave_start_day.setDate(ave_start_day.getDate())) / 1000 / 60 / 60 / 24
+                var a_type = $(".average_type.active").attr("data-val")
+                if (between_day < 15) {
+                    ave_start_day.setDate(ave_start_day.getDate() + 15);
+                    var m = ave_start_day.getMonth() + 1;
+                    var set_end_day = ave_start_day.getFullYear() + '-' + (m > 9 ? m : '0' + m) + '-' + (ave_start_day.getDate() > 9 ? ave_start_day.getDate() : '0' + ave_start_day.getDate())
+                    $.ajax({
+                        url: "/PlattformInventory/ViewProductStatisticPartial",
+                        type: "post",
+                        data: {
+                            productId: getUrlParam('productId'),
+                            start: ave_start,
+                            end: set_end_day,
+                            type: 2,
+                            a_type: a_type
+                        }, success: function (data) {
+                            showstatistic(data);
+                        }
+                    });
+                } else {
+                    $.ajax({
+                        url: "/PlattformInventory/ViewProductStatisticPartial",
+                        type: "post",
+                        data: {
+                            productId: getUrlParam('productId'),
+                            start: ave_start,
+                            end: ave_end,
+                            type: 2,
+                            a_type: a_type
+                        }, success: function (data) {
+                            showstatistic(data);
+                            console.log(data)
+                        }
+                    });
+                }
+            })
+            $("#statistic_btn").click(function () {
+                $(".date_section_ul").children("li").removeClass("date_section_li_active")
+                if ($("#start-date").val() <= $("#end-date").val()) {
+                    $.ajax({
+                        url: "/PlattformInventory/ViewProductStatisticPartial",
+                        type: "post",
+                        data: {
+                            productId: getUrlParam('productId'),
+                            start: $("#start-date").val(),
+                            end: $("#end-date").val()
                         }, success: function (data) {
                             showstatistic(data);
                         }
@@ -63,14 +196,23 @@
                 
             })
         });
-        function showstatistic(data) {
-            var resultdata = data.data;
+    function showstatistic(data) {
+        var resultdata = data.data;
             var totalarray = new Array();
             var datearray = new Array();
             for (var i = 0; i < resultdata.length; i++) {
-                var deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
-                var dee = new Date(deeint)
-                datearray.push(dee.Format("MM-dd"));
+                var deeint;
+                var dee;
+                //console.log(data.data[i].salesdate)
+                if (data.data[i].salesdate.indexOf("~") == -1) {
+                    deeint = parseInt(data.data[i].salesdate.replace(/\D/igm, ""));
+                    dee = new Date(deeint)
+                    dee = dee.Format("MM-dd");
+                } else {
+                    deeint = data.data[i].salesdate;
+                    dee = deeint;
+                }
+                datearray.push(dee);
                 var totaltemp = resultdata[i].salescount
                 totalarray.push(['无活动', totaltemp]);
             }

@@ -167,16 +167,72 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        public static string ProductTypeStatus(this HtmlHelper helper, int status)
+        public static string ProductType(this HtmlHelper helper, int type)
         {
-            switch (status)
+            switch (type)
             {
                 case -1:
                     return "下架";
                 case 0:
-                    return "正常";
+                    return "在售";
                 case 1:
                     return "爆款";
+                default:
+                    return "未知";
+            }
+        }
+        // CRM
+        public static string ContractStatus(this HtmlHelper helper, string status)
+        {
+            switch (status)
+            {
+                case "3531567":
+                    return "待发货";
+                case "3764330":
+                    return "已发货";
+                case "3531568":
+                    return "提交待审核";
+                default:
+                    return "未知";
+            }
+        }
+        // MD
+        public static string DeliveryStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "待发货";
+                case 2:
+                    return "已发货";
+                default:
+                    return "未知";
+            }
+        }
+        // AR
+        public static string UserInfoType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "业务";
+                case 1:
+                    return "主管";
+                case 2:
+                    return "超级管理员";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string UploadStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "未推送";
+                case 1:
+                    return "已推送";
                 default:
                     return "未知";
             }

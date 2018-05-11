@@ -1727,3 +1727,135 @@ a.btn_subtask_detail{
     background: url(../../Content/images/fire.svg) center center;
     background-size: cover;
 }
+.sales_sort{
+    color:black;
+    text-decoration:none
+}
+.sales_sort:hover, .sales_sort:visited, .sales_sort:link, .sales_sort:active {
+    color:black;
+    text-decoration:none
+}
+/*数据统计新增样式*/
+/*日期选择 开始*/
+#select_condition{
+    background:#f7fbfe;
+    margin-bottom:20px
+}
+.select_condition_div{
+    margin-left:10px;
+    line-height:38px
+}
+/*日期区间开始*/
+.date_section_ul{
+    margin:0
+}
+.date_section_ul li {
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+}
+.date_section_li_active{
+    background:#deefff;
+}
+.date_section_li_active .active{
+    color:#0b73df
+}
+.date_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+
+.average_section_ul{
+    margin:0
+}
+.average_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.average_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+
+.shop_section_ul{
+    margin:0
+}
+.shop_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.shop_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+/*只有样式的ul开始*/
+.view_section_ul{
+    margin:0
+}
+.view_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.view_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+/*只有样式的ul结束*/
+/*渠道分析平台选择开始*/
+.traffic_section_ul{
+    margin:0
+}
+.traffic_section_ul li{
+    padding:0 13px;
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+    font-size:12px;
+} 
+.traffic_section_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+/*渠道分析平台选择结束*/
+/*日期区间结束*/
+/*选择日期开始*/
+#start-date,#end-date{
+    line-height: normal;
+    font-size: 12px;
+    display: inline-block;
+    padding:4px 15px 4px 8px;
+    width: 104px;
+    text-align: center;
+    margin-left:0         
+}
+/*选择日期结束*/
+/*仓库选择开始*/
+.storage_select_div select{
+    line-height: normal;
+    font-size:12px;
+    margin-top:3px;
+    width: 104px;
+    padding:2px 15px 4px 8px;
+}
+/*仓库选择结束*/

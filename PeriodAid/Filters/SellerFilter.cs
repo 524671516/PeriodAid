@@ -139,6 +139,22 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.ORDERCONFIRM)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEVIEW)
+                    {
+                        //
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
                 }
                 else if (seller.Seller_Type == SellerType.FINANCIALDEPARTMENT) // 财务部权限
                 {
@@ -238,6 +254,22 @@ namespace PeriodAid.Filters
                     {
                         setErrorResult(filterContext, "权限不足");
                     }
+                    else if (OperationGroup == SalesOperationCode.ORDERCONFIRM)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEVIEW)
+                    {
+                        //
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEADD)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEEDIT)
+                    {
+                        setErrorResult(filterContext, "权限不足");
+                    }
                 }
                 else if (seller.Seller_Type == SellerType.SELLER) // 业务员权限
                 {
@@ -271,11 +303,11 @@ namespace PeriodAid.Filters
                     }
                     else if (OperationGroup == SalesOperationCode.CLIEADD)
                     {
-                        setErrorResult(filterContext, "权限不足");
+                       //
                     }
                     else if (OperationGroup == SalesOperationCode.CLIEEDIT)
                     {
-                        setErrorResult(filterContext, "权限不足");
+                       //
                     }
                     else if (OperationGroup == SalesOperationCode.SALESVIEW)
                     {
@@ -292,6 +324,19 @@ namespace PeriodAid.Filters
                     else if (OperationGroup == SalesOperationCode.ORDEREDIT)
                     {
                         //
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERCONFIRM)
+                    {
+                        //
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEVIEW)
+                    {
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEADD)
+                    {
+                    }
+                    else if (OperationGroup == SalesOperationCode.ORDERPRICEEDIT)
+                    {
                     }
                 }
                 else
@@ -400,6 +445,10 @@ namespace PeriodAid.Filters
         /// </summary>
         public static int ORDEREDIT = 603;
         /// <summary>
+        /// 修改/删除订单
+        /// </summary>
+        public static int ORDERCONFIRM = 604;
+        /// <summary>
         /// 添加人员信息
         /// </summary>
         public static int SELLERADD = 701;
@@ -423,5 +472,17 @@ namespace PeriodAid.Filters
         /// 修改/删除报价产品
         /// </summary>
         public static int QUOPRIEDIT = 803;
+        /// <summary>
+        /// 新增报价产品
+        /// </summary>
+        public static int ORDERPRICEADD = 901;
+        /// <summary>
+        /// 查看报价产品
+        /// </summary>
+        public static int ORDERPRICEVIEW = 902;
+        /// <summary>
+        /// 修改/删除报价产品
+        /// </summary>
+        public static int ORDERPRICEEDIT = 903;
     }
 }

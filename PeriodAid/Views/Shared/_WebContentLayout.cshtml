@@ -15,6 +15,7 @@
     <script src="~/Scripts/jquery-1.10.2.min.js"></script>
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/ajaxfileupload.js"></script>
+    <link href="~/Content/share.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
     <link href="~/Content/prettify.css" rel="stylesheet" />
     <script src="~/Scripts/jquery-ui.min.js"></script>
@@ -36,10 +37,25 @@
                 @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
+                <ul class="nav navbar-nav nav_relative_ul">
+                    <li>
+                        @Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        @Html.ActionLink("线下销售", "StoreIndex", "OffStore")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                        </ul>
+                    </li>
                     <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
+                    <li>@Html.ActionLink("系统权限", "RightsList", "AccountRights")</li>
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
                             工具　<span class="caret"></span>
@@ -57,52 +73,42 @@
         </div>
     </div>
     <br /><br />
-    <div class="container">
+    <div class="container" id="container_view" style="top:-13px">
         <div class="row">
-            <div class="col-md-2">
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                    官网内容 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/WebContent/WebContentIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingEight">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
-                                    券码 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingEight"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseEight" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEight">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupList"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
-                                    <li class="left-navbar"><a href="/WebContent/CheckCodeList"><i class="fa fa-search"></i>&nbsp;&nbsp;查看优惠券</a></li>
-                                    <li class="left-navbar"><a href="/WebContent/CheckCodeGroupStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;数据统计</a></li>
-                                </ul>
-                            </div>
+            <div class="col-md-2" id="col_2_view">
+                <div class="fixed_ul">
+                    <div class="panel panel-default" id="fixed_ul_color">
+                        <div class="panel-body" id="panel-body-view">
+                            <ul class="list-unstyled" id="ul_btn">
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="#" style="text-indent: 16px;">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;官网内容
+                                        <ul class="list-unstyled position_ul hidden">
+                                            <li class="left-navbar"><a href="/WebContent/WebContentIndex"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
+                                        </ul>
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="#" style="text-indent: 16px;">
+                                        <i class="fa fa-list"></i>
+                                        &nbsp;&nbsp;券码
+                                        <ul class="list-unstyled position_ul hidden">
+                                            <li class="left-navbar"><a href="/WebContent/CheckCodeGroupList"><i class="fa fa-search"></i>&nbsp;&nbsp;活动列表</a></li>
+                                            <li class="left-navbar"><a href="/WebContent/CheckCodeList"><i class="fa fa-search"></i>&nbsp;&nbsp;查看优惠券</a></li>
+                                            <li class="left-navbar"><a href="/WebContent/CheckCodeGroupStatistics"><i class="fa fa-search"></i>&nbsp;&nbsp;数据统计</a></li>
+                                        </ul>
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-10">
-                <div class="row">
-                    <div class="col-xs-12">
-                        @RenderBody()
-                    </div>
-                </div>
+            <div class="col-md-10" id="col_10_style">
+                @RenderBody()
             </div>
         </div>
     </div>
@@ -120,4 +126,34 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
-
+<script>
+    // 移入、移出三角样式
+    $("#ul_btn li").mouseover(function () {
+        $(this).children(".position_ul").removeClass("hidden")
+        $(this).children(".san_you").removeClass("hidden")
+    })
+    $("#ul_btn li").mouseout(function () {
+        $(this).children(".position_ul").addClass("hidden")
+        $(this).children(".san_you").addClass("hidden")
+    })
+    // 导航二级
+    $(".nav_relative_ul li").mouseover(function () {
+        $(this).children(".nav_absolute_ul").removeClass("hidden")
+    })
+    $(".nav_relative_ul li").mouseout(function () {
+        $(this).children(".nav_absolute_ul").addClass("hidden")
+    })
+    $(".nav_absolute_ul li").mouseover(function () {
+        $(this).css("background", "#fff")
+    })
+    $(".nav_absolute_ul li").mouseout(function () {
+        $(this).css("background", "none")
+    })
+    // 侧边栏li移动
+    $(".left-navbar").mouseover(function () {
+        $(this).children("a").css("paddingLeft", "10px")
+    })
+    $(".left-navbar").mouseout(function () {
+        $(this).children("a").css("paddingLeft", "0px")
+    })
+</script>

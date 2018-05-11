@@ -5,7 +5,7 @@
     <h2>修改产品信息</h2>
 </div>
 <div class="modal-body" id="modal-body">
-    @using (Html.BeginForm("EditProductInfo","PlattformInventory", FormMethod.Post, new { @id="product-form"}))
+    @using (Html.BeginForm("EditProductInfo", "PlattformInventory", FormMethod.Post, new { @id = "product-form" }))
     {
         @Html.AntiForgeryToken()
         <div class="form-horizontal">
@@ -37,7 +37,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">产品类型</label>
                 <div class="col-md-10">
-                    @Html.DropDownListFor(m=>m.Product_Type, ViewBag.SelectList as SelectList, new { @class="form-control"})
+                    @Html.DropDownListFor(m => m.Product_Type, ViewBag.SelectList as SelectList, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.Item_Name, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -60,33 +60,23 @@
             <div class="form-group">
                 <label class="control-label col-md-2">库存日期</label>
                 <div class="col-md-10">
-                    <div id="show-date">@Html.EditorFor(model => model.Inventory_Date, new { htmlAttributes = new { @class = "form-control disabled" } })</div>
-                        @Html.ValidationMessageFor(model => model.Inventory_Date, "", new { @class = "text-danger" })
-                    </div>
+                    <input id="Inventory_Date" type="text" value="@Model.Inventory_Date.ToString("yyyy-MM-dd")" class="form-control date-readonly" autocomplete="off" name="Inventory_Date" readonly="readonly" required />
+                    @Html.ValidationMessageFor(model => model.Inventory_Date, "", new { @class = "text-danger" })
             </div>
 
             <div class="form-group" style="display:none">
                 @Html.LabelFor(model => model.Plattform_Id, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-
-                </div>
             </div>
+        </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" />
                 </div>
             </div>
-        </div>
+</div>
     }
 </div>
-<div class="modal-footer"></div>
-
 <script>
-    // 修改日期格式
-    var strDate = $("#Inventory_Date").val().substring(0, 10)
-    var reg = /\//g
-    var newstrDate = strDate.replace(reg, "-")
-    $("#show-date input").attr("value", newstrDate)
     $('#save-btn').click(function () {
         $("#product-form").ajaxSubmit({
             url: '/PlattformInventory/EditProductInfo',
@@ -118,6 +108,6 @@
 </script>
 
 
-    
+
 
 
