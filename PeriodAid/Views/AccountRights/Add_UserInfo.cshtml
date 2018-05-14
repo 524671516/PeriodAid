@@ -18,10 +18,24 @@
         <div class="form-horizontal">
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
+                <label class="col-md-2 control-label">姓名</label>
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.NickName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.NickName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 <label class="col-md-2 control-label">用户名</label>
                 <div class="col-md-8">
                     @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
                     @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">联系电话</label>
+                <div class="col-md-8">
+                    @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
                 </div>
             </div>
             <div class="form-group">
@@ -39,11 +53,17 @@
             rules: {
                 UserName: {
                     required: true
+                },
+                NickName: {
+                    required: true
                 }
             },
             messages: {
                 UserName: {
                     required: "用户名不能为空"
+                },
+                NickName: {
+                    required: "姓名不能为空"
                 }
             },
             //验证通过的正式提交函数

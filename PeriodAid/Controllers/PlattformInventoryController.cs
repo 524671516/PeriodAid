@@ -653,6 +653,7 @@ namespace PeriodAid.Controllers
                     _db.Entry(statistic).State = System.Data.Entity.EntityState.Modified;
                 }
             }
+            _db.SaveChanges();
             return true;
         }
 

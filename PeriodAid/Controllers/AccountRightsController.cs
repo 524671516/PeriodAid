@@ -38,9 +38,11 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private AccountRightsModel ar_db;
+        private ApplicationDbContext memdb;
         public AccountRightsController()
         {
             ar_db = new AccountRightsModel();
+            memdb = new ApplicationDbContext();
         }
 
         public AccountRightsController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -81,7 +83,6 @@ namespace PeriodAid.Controllers
         public ActionResult RightsListPartial(int? page, string query)
         {
             int _page = page ?? 1;
-            var memdb = new ApplicationDbContext();
             var roles = memdb.Roles.SingleOrDefault(m => m.Name == "Staff");
             var usersInfo = from m in roles.Users
                             select m.UserId;
@@ -113,7 +114,7 @@ namespace PeriodAid.Controllers
         [Authorize(Roles = "SuperAdmin")]
         public JsonResult Add_UserInfo(ApplicationUser model, FormCollection form)
         {
-            var UserInfo = UserManager.Users.SingleOrDefault(m => m.UserName == model.UserName);
+            var UserInfo = memdb.Users.SingleOrDefault(m => m.UserName == model.UserName);
             if (UserInfo != null)
             {
                 if (UserManager.IsInRole(UserInfo.Id, "Staff"))
@@ -123,6 +124,9 @@ namespace PeriodAid.Controllers
                 else
                 {
                     var add_role = UserManager.AddToRole(UserInfo.Id, "Staff");
+                    UserInfo.NickName = model.NickName;
+                    UserInfo.PhoneNumber = model.PhoneNumber;
+                    memdb.SaveChanges();
                     return Json(new { result = "SUCCESS" });
                 }
             }

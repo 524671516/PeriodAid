@@ -25,7 +25,7 @@ ul,li,a{
     list-style:none;
 }
 #col_2_view{
-    padding-left:0
+    padding-left:0;
 }
 #container_view{
     width:100%;
@@ -34,13 +34,13 @@ ul,li,a{
 .fixed_ul{
     position:fixed;
     left:0;
-    width:189px;
+    width:200px;
     z-index:1000;
 }
 .position_ul{
     position: absolute;
     background:#26344b;
-    left: 188px;
+    left: 200px;
     width: 90%;
     border-radius: 3%;
     top: 5px;
@@ -94,8 +94,6 @@ ul,li,a{
 }
 #col_10_style{
     padding-top:10px;
-    padding-left:0;
-    margin-left:-15px
 }
 /*结束*/
 /*productlist样式*/
@@ -104,4 +102,18 @@ ul,li,a{
 }
 #ul_view li a{
     padding:10px 25px;
+}
+/*input 默认样式修改开始*/
+#view_input{
+    line-height: normal;
+    font-size: 12px;
+    display: inline-block;
+    padding:4px 15px 4px 8px;
+    width: 104px;
+    text-align: center;
+    margin-left:0  
+}
+/*input 默认样式修改结束*/
+#left_hidden_btn{
+
 }

@@ -7,6 +7,15 @@
     label{
         margin-bottom:0
     }
+    #daily-date{
+        line-height: normal;
+        font-size: 12px;
+        display: inline-block;
+        padding:4px 15px 4px 8px;
+        width: 104px;
+        text-align: center;
+        margin-left:0 
+    }
 </style>
 <div id="select_condition">
     <table class="offline-search-box" style="float:right;width:50%">
@@ -37,11 +46,16 @@
             </li>
         </ul>
     </div>
-    <form method="post" id="dailyData_form" action="/PlattformInventory/getDailyData">
-        <span hidden>@Html.TextBox("daily_date", "", new { @class = "form-control input-sm", type = "text" })</span>
-    </form>
-    <span class="btn btn-primary float-right" id="Statistic_form-download" data-date="30" onclick="$('#dailyData_form').submit();" style="margin-top:10px">每日数据导出</span>
-    <input type="text" class="file-date float-right" readonly="readonly" autocomplete="off" id="daily-date" name="file-date" placeholder="请选择数据日期" value="" style="margin-top:15px;margin-right:2px;padding:3px;width:120px;" />
+    <div class="date_section_select select_condition_div">
+        <form method="post" id="dailyData_form" action="/PlattformInventory/getDailyData">
+            <span hidden>@Html.TextBox("daily_date", "", new { @class = "form-control input-sm", type = "text" })</span>
+        </form>
+        <label class="pull-left">数据导出：</label>
+        <div>
+            <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="daily-date" name="file-date" placeholder="选择日期" value="" />
+            <span class="btn btn-primary" id="Statistic_form-download" data-date="30" onclick="$('#dailyData_form').submit();" style="padding:2px 12px;margin-left:8px">数据导出</span>
+        </div>
+    </div>
 </div>
 <div id="salesstatistics_list_content">
 </div>
