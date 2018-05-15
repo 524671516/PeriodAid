@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewBag.Title = "Visit_View";
+    Layout = "~/Views/Shared/_VisitManagementView.cshtml";
+}
+<div>
+    <div id="shared_select_condition">
+        <div class="select_condition_div">
+            <label class="pull-left">销售团队：</label>
+            <ul class="shared_ul visitor_ul">
+                <li class="shared_section_li_active" style="margin-left: 12px">
+                    <a class="team_select active" data-val="1">王者队</a>
+                </li>
+                <li>
+                    <a class="team_select" data-val="2">飞龙队</a>
+                </li>
+            </ul>
+        </div>
+        <div class="select_condition_div">
+            <label class="pull-left">客户类型：</label>
+            <ul class="shared_ul customer_ul">
+                <li class="shared_section_li_active" style="margin-left: 12px">
+                    <a class="customer_type active" data-val="1">现代渠道</a>
+                </li>
+                <li>
+                    <a class="customer_type" data-val="2">流通</a>
+                </li>
+                <li>
+                    <a class="customer_type" data-val="3">电商和APP</a>
+                </li>
+            </ul>
+        </div>
+        <div class="select_condition_div">
+            <label class="pull-left">拜访日期：</label>
+            <div class="select_condition_div2">
+                <input type="text" class="file-date shared_view_date" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
+                <b class="arrows_view"></b>
+            </div>
+        </div>
+        <div class="select_condition_div">
+            <label class="pull-left">客户名称：</label>
+            <div class="select_condition_div2">
+                <input type="text" class="shared_view_date" id="customer_id" style="margin-left: 12px;"/>
+                <b class="glass_view"></b>    
+            </div>
+        </div>
+        <div class="select_condition_div">
+            <label class="pull-left">业务员名称：</label>
+            <div class="select_condition_div2">
+                <input type="text" class="shared_view_date" id="visitor_id" />
+                <b class="glass_view" style="right: 34px;"></b>
+            </div>
+        </div>
+    </div>
+
+    <div id="visit_list_content"></div>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $(".shared_view_date").change(function () {
+                console.log($(this).val())
+            })
+        })
+        var dep_id = $(".team_select.active").attr("data-val");
+        var cus_type = $(".customer_type.active").attr("data-val");
+        $(".team_select").on("click", function () {
+            $(".visitor_ul li").removeClass("shared_section_li_active")
+            $(".team_select").removeClass("active")
+            $(this).parent("li").addClass("shared_section_li_active")
+            $(this).addClass("active")
+            dep_id = $(this).attr("data-val")
+            console.log(dep_id)
+            //function displayResult(item, val, text) {
+            //    $("#visitor_id").attr("data-id", val);
+            //}
+            //$('#visitor_id').typeahead({
+            //    ajax: {
+            //        url: '/VisitManagement/QueryVisitor?d_id=' + dep_id,
+            //        triggerLength: 1
+            //    },
+            //    itemSelected: displayResult,
+            //    display: 'VisitorName',
+            //    val: 'Id'
+            //});
+        })
+        // 搜索
+        $(".customer_type").on("click", function () {
+            $(".customer_ul li").removeClass("shared_section_li_active")
+            $(".customer_type").removeClass("active")
+            $(this).parent("li").addClass("shared_section_li_active")
+            $(this).addClass("active")
+            cus_type = $(this).attr("data-val")
+            console.log(cus_type)
+        //    function displayCResult(item, val, text) {
+        //        $("#customer_id").attr("data-id", val);
+        //    }
+        //    $('#customer_id').typeahead({
+        //        ajax: {
+        //            url: '/VisitManagement/QueryCustomer?cus_type=' + cus_type,
+        //            triggerLength: 1
+        //        },
+        //        itemSelected: displayCResult,
+        //        display: 'CustomerName',
+        //        val: 'Id'
+        //    });
+        })
+        
+    </script>
+    
+    }

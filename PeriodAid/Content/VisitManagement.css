@@ -1,0 +1,144 @@
+﻿html, body{
+    font-family:微软雅黑, Arial;
+    font-size:12px;
+    line-height: 20px;
+}
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family:微软雅黑, Arial;
+}
+form{
+    position:relative;
+}
+ul,li,a{
+    text-decoration:none;
+    list-style:none;
+}
+a:hover,a:visited,a:focus{
+    text-decoration:none;
+}
+.ver_icon:before{
+    vertical-align:middle;
+}
+ul,li{
+    padding:0;
+    margin:0;
+}
+.text-shadow{
+    text-shadow:2px 2px 2px #666;
+}
+body,html{
+    width:100%;
+}
+/*默认样式开始*/
+/*布局样式*/
+/*布局样式结束*/
+/*颜色*/
+.btn-blue{
+    color: #fff;
+    background-color: #3da8f5;
+    border-color: #3da8f5;
+}
+.color-orange{
+    color:#ff8547;
+}
+.color-blue{
+    color:#3da8f5;
+}
+.color-red{
+    color:#E51C23;
+}
+.color-green{
+    color:#259B24;
+}
+.border-blue{
+    border-color:#3da8f5 !important;
+}
+.border-green{
+    border-color:#259B24 !important;
+}
+.border-red{
+    border-color:#FF4F3E !important;
+}
+.color-lightgreen{
+    color:#8BC34A;
+}
+.color-gray{
+    color:#808080;
+}
+.color-white{
+    color:#fff;
+}
+.bg-white{
+    background-color:#fff;
+}
+.over-deadline{
+    background: #FF4F3E;
+    padding: 2px;
+    border-radius: 2px;
+    color: #fff;
+}
+/*颜色结束*/
+/*头部筛选*/
+#shared_select_condition{
+    margin-bottom:20px
+}
+.select_condition_div{
+    margin-left:10px;
+    line-height:38px;
+}
+.select_condition_div2{
+    position:relative;
+    width: 190px;
+    display: inline-block;
+}
+.shared_ul{
+    margin:0
+}
+.shared_ul li {
+    padding:0 13px;
+    display: inline-block;
+    line-height:28px;
+    font-size:12px;
+}
+.shared_section_li_active{
+    background:#deefff;
+}
+.shared_section_li_active .active{
+    color:#0b73df
+}
+.shared_ul li a{
+    text-decoration:none;
+    color:#323232;
+    cursor:pointer;
+    display:inline-block;
+    width:100%
+}
+.shared_view_date{
+    line-height: normal;
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 15px 4px 0;
+    width: 160px;
+    text-align: center;
+    margin-left: 0;
+}
+.arrows_view {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url('images/select2.png')no-repeat 0 1px;
+    background-position: 2px 2px;
+    margin-left: -28px;
+}
+.glass_view{
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: url('images/select2.png')no-repeat 0 1px;
+    background-position: -38px -21px;
+    position: absolute;
+    right: 23px;
+    top: 8px;
+}    
+/*头部筛选结束*/
+/*默认样式结束*/
