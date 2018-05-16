@@ -289,6 +289,7 @@
     <Compile Include="Models\SQZWEBModels.cs" />
     <Compile Include="Models\TestViewModels.cs" />
     <Compile Include="Models\ThreeLevelAddressModel.cs" />
+    <Compile Include="Models\VisitManagementModels.cs" />
     <Compile Include="Models\WxAcountViewModels.cs" />
     <Compile Include="Models\MonthlyDeliveryModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

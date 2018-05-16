@@ -312,7 +312,46 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-       
+
+        // VM
+        public static string SmoothlyStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "否";
+                case 0:
+                    return "是";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string ReplyStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "否";
+                case 0:
+                    return "是";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string CustomerReplyStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "否";
+                case 0:
+                    return "是";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {

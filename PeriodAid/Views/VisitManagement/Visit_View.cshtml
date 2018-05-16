@@ -4,51 +4,62 @@
     Layout = "~/Views/Shared/_VisitManagementView.cshtml";
 }
 <div>
-    <div id="shared_select_condition">
+    <div id="shared_select_condition" style="padding:0 20px">
         <div class="select_condition_div">
             <label class="pull-left">销售团队：</label>
             <ul class="shared_ul visitor_ul">
                 <li class="shared_section_li_active" style="margin-left: 12px">
-                    <a class="team_select active" data-val="1">王者队</a>
+                    <a class="team_select active" data-val="2">王者队</a>
                 </li>
                 <li>
-                    <a class="team_select" data-val="2">飞龙队</a>
+                    <a class="team_select" data-val="5">飞龙队</a>
                 </li>
             </ul>
         </div>
         <div class="select_condition_div">
-            <label class="pull-left">客户类型：</label>
-            <ul class="shared_ul customer_ul">
+            <label class="pull-left">公司类型：</label>
+            <ul class="shared_ul company_ul">
                 <li class="shared_section_li_active" style="margin-left: 12px">
-                    <a class="customer_type active" data-val="1">现代渠道</a>
+                    <a class="company_type active" data-val="1">现代渠道</a>
                 </li>
                 <li>
-                    <a class="customer_type" data-val="2">流通</a>
+                    <a class="company_type" data-val="2">流通</a>
                 </li>
                 <li>
-                    <a class="customer_type" data-val="3">电商和APP</a>
+                    <a class="company_type" data-val="3">电商和APP</a>
                 </li>
             </ul>
         </div>
         <div class="select_condition_div">
             <label class="pull-left">拜访日期：</label>
             <div class="select_condition_div2">
-                <input type="text" class="file-date shared_view_date" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
+                <input type="text" class="file-date shared_view_date" id="select_date" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
                 <b class="arrows_view"></b>
             </div>
         </div>
         <div class="select_condition_div">
             <label class="pull-left">客户名称：</label>
             <div class="select_condition_div2">
-                <input type="text" class="shared_view_date" id="customer_id" style="margin-left: 12px;"/>
-                <b class="glass_view"></b>    
+                <div type="text" class="shared_view_div" id="company_id" style="margin-left: 12px;">
+                    <span class="shared_view_span"></span>
+                    <b class="glass_view"></b>
+                    <div class="hidden_div hidden">
+                        <input class="search_input" />
+                        <select class="select_view" size="4">
+                            @foreach(var name in ViewBag.Visitor)
+                            {
+                                <option>@name.Employee_Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                    
             </div>
         </div>
         <div class="select_condition_div">
             <label class="pull-left">业务员名称：</label>
             <div class="select_condition_div2">
-                <input type="text" class="shared_view_date" id="visitor_id" />
-                <b class="glass_view" style="right: 34px;"></b>
+                <div type="text" class="shared_view_date shared_view_div" id="visitor_id" style="top:6px"><b class="glass_view"></b></div>
             </div>
         </div>
     </div>
@@ -58,54 +69,148 @@
 @section scripts{
     <script>
         $(function () {
-            $(".shared_view_date").change(function () {
-                console.log($(this).val())
+            // 获取时间
+            function getNowFormatDate() {
+                var date = new Date();
+                var seperator1 = "-";
+                var seperator2 = ":";
+                var month = date.getMonth() + 1;
+                var strDate = date.getDate();
+                if (month >= 1 && month <= 9) {
+                    month = "0" + month;
+                }
+                if (strDate >= 0 && strDate <= 9) {
+                    strDate = "0" + strDate;
+                }
+                var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+                return currentdate;
+            }
+            $("#select_date").val(getNowFormatDate())
+            $.ajax({
+                url: "/VisitManagement/Visit_PartialView/",
+                type: "post",
+                data: {
+                    visit_date: $("#select_date").val(),
+                    dep_id: $(".team_select.active").attr("data-val"),
+                    com_type: $(".company_type.active").text()
+                },
+                success: function (data) {
+                    $("#visit_list_content").html(data)
+                }
             })
-        })
-        var dep_id = $(".team_select.active").attr("data-val");
-        var cus_type = $(".customer_type.active").attr("data-val");
-        $(".team_select").on("click", function () {
-            $(".visitor_ul li").removeClass("shared_section_li_active")
-            $(".team_select").removeClass("active")
-            $(this).parent("li").addClass("shared_section_li_active")
-            $(this).addClass("active")
-            dep_id = $(this).attr("data-val")
-            console.log(dep_id)
-            //function displayResult(item, val, text) {
-            //    $("#visitor_id").attr("data-id", val);
-            //}
+            // 日期
+            $("#select_date").change(function () {
+                var that = $(this)
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: that.val(),
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text()
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
+            })
+            // 团队
+            $(".team_select").on("click", function () {
+                var that = $(this)
+                $(".visitor_ul li").removeClass("shared_section_li_active")
+                $(".team_select").removeClass("active")
+                that.parent("li").addClass("shared_section_li_active")
+                that.addClass("active")
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: $("#select_date").val(),
+                        dep_id: that.attr("data-val"),
+                        com_type: $(".company_type.active").text()
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
+            })
+            // 公司
+            $(".company_type").on("click", function () {
+                var that = $(this)
+                $(".company_ul li").removeClass("shared_section_li_active")
+                $(".company_type").removeClass("active")
+                that.parent("li").addClass("shared_section_li_active")
+                that.addClass("active")
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: $("#select_date").val(),
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: that.text()
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
+            })
+            // span 点击
+            $(".shared_view_div").on("click", function () {
+                var that = $(this)
+                $(".shared_view_span").removeClass("shared_view_span_active")
+                that.addClass("shared_view_span_active")
+                that.children(".hidden_div").removeClass("hidden")
+            })
+            //
+            $(".select_view").click(function (event) {
+                event.stopPropagation();
+                var options = $(".select_view option:selected")
+                $(this).parents(".hidden_div").addClass("hidden").siblings(".shared_view_span").html(options.text())
+                $(this).parents(".shared_view_div").css("top","1px")
+            })
+
+            // 搜索
             //$('#visitor_id').typeahead({
             //    ajax: {
-            //        url: '/VisitManagement/QueryVisitor?d_id=' + dep_id,
+            //        url: '/VisitManagement/QueryVisitor',
             //        triggerLength: 1
             //    },
             //    itemSelected: displayResult,
             //    display: 'VisitorName',
             //    val: 'Id'
             //});
+            //function displayResult(item, val, text) {
+            //    $("#visitor_id").attr("data-id", val);
+            //}
+            //function displayCResult(item, val, text) {
+            //    $("#company_id").attr("data-id", val);
+            //}
+            //$('#company_id').typeahead({
+            //    ajax: {
+            //        url: '/VisitManagement/QueryCompany',
+            //        triggerLength: 1
+            //    },
+            //    itemSelected: displayCResult,
+            //    display: 'CompanyName',
+            //    val: 'Id'
+            //});
+            //$("#company_id").change(function () {
+            //    console.log($("#company_id").attr("data-id"))
+            //    $.ajax({
+            //        url: "/VisitManagement/Visit_PartialView/",
+            //        type: "post",
+            //        data: {
+            //            visit_date: $("#select_date").val(),
+            //            dep_id: $(".team_select.active").attr("data-val"),
+            //            com_type: $(".company_type.active").text(),
+            //            vis_id: $("#visitor_id").attr("data-id"),
+            //            com_id: $("#company_id").attr("data-id")
+            //        },
+            //        success: function (data) {
+            //            $("#visit_list_content").html(data)
+            //        }
+            //    })
+            //})
         })
-        // 搜索
-        $(".customer_type").on("click", function () {
-            $(".customer_ul li").removeClass("shared_section_li_active")
-            $(".customer_type").removeClass("active")
-            $(this).parent("li").addClass("shared_section_li_active")
-            $(this).addClass("active")
-            cus_type = $(this).attr("data-val")
-            console.log(cus_type)
-        //    function displayCResult(item, val, text) {
-        //        $("#customer_id").attr("data-id", val);
-        //    }
-        //    $('#customer_id').typeahead({
-        //        ajax: {
-        //            url: '/VisitManagement/QueryCustomer?cus_type=' + cus_type,
-        //            triggerLength: 1
-        //        },
-        //        itemSelected: displayCResult,
-        //        display: 'CustomerName',
-        //        val: 'Id'
-        //    });
-        })
-        
     </script>
-    
     }

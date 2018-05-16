@@ -90,6 +90,7 @@ body,html{
     position:relative;
     width: 190px;
     display: inline-block;
+    height:41px
 }
 .shared_ul{
     margin:0
@@ -122,6 +123,58 @@ body,html{
     text-align: center;
     margin-left: 0;
 }
+.shared_view_div{
+    line-height: normal;
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 15px 4px 0;
+    width: 160px;
+    text-align: center;
+    margin-left: 0;
+    position:relative;
+    height:26px;
+    border:1px solid #9a9a9a;
+    top:6px
+}
+.shared_view_span_active{
+    border:1px solid #5897fb;
+}
+/*隐藏的DIV*/
+.hidden_div{
+    font-size: 12px;
+    display: inline-block;
+    width: 160px;
+    text-align: center;
+    border:1px solid #5897fb;
+    position:absolute;
+    top:24px;
+    left:-1px;
+    z-index:9999;
+    background:#fff
+}
+.hidden_div input{
+    line-height: normal;
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 15px 4px 0;
+    width: 150px;
+    margin-left: 0;
+}
+.hidden_div select{
+    line-height: normal;
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 15px 4px 0;
+    width: 150px;
+    margin-left: 0;
+    border: none
+}
+.select_view option:hover{
+    background:#5897fb;
+    color:#fff;
+    font-weight:600
+}
+/*隐藏的DIV结束*/
 .arrows_view {
     display: inline-block;
     width: 20px;
@@ -130,7 +183,7 @@ body,html{
     background-position: 2px 2px;
     margin-left: -28px;
 }
-.glass_view{
+/*.glass_view{
     display: block;
     width: 20px;
     height: 20px;
@@ -138,7 +191,20 @@ body,html{
     background-position: -38px -21px;
     position: absolute;
     right: 23px;
-    top: 8px;
-}    
+    top: 6px;
+}*/
+.glass_view {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: url('images/select2.png')no-repeat 0 1px;
+    background-position: -38px -21px;
+    position: absolute;
+    right: 3px;
+    top: 0;
+}
+
+
+ 
 /*头部筛选结束*/
 /*默认样式结束*/

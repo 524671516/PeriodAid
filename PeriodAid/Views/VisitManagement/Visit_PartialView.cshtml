@@ -1,1 +1,58 @@
-﻿
+﻿@model PagedList.IPagedList<PeriodAid.Models.VM_VisitRecord>
+@using PagedList.Mvc;
+<div style="padding:0 20px">
+    <table class="table table-hover">
+        <tr style="background-color:#f9f9f9">
+            <th>公司名称</th>
+            <th>拜访日期</th>
+            <th>参与同事</th>
+            <th>顺利与否</th>
+            <th>是否需要我方回复</th>
+            <th>等待对方回复</th>
+            <th>意向产品</th>
+            <th>下次拜访时间</th>
+            <th>客户来源</th>
+            <th>业务员</th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+           <tr>
+               <td>@item.VM_Company.Company_Name</td>
+               <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+               <td></td>
+               <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
+               <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
+               <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
+               <td>@item.Core_Problem</td>
+               <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+               <td>@item.VM_Company.Company_Source</td>
+               <td>@item.VM_Employee.Employee_Name</td>
+               <td>
+                   <a href="#">评论</a>
+                   <a href="#">管理</a>
+               </td>
+           </tr>
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
+    </div>
+</div>
+<script>
+    $(".pagination > li > a").click(function () {
+        var l = $(this).attr("href");
+        $.ajax({
+            url: l,
+            data: {
+                visit_date: $("#select_date").val(),
+                dep_id: $(".team_select.active").attr("data-val"),
+                com_type: $(".company_type.active").text()
+            },
+            success: function (data) {
+                $("#visit_list_content").html(data)
+            }
+        });
+        return false;
+    });
+</script>
