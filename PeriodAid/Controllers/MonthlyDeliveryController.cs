@@ -295,7 +295,7 @@ namespace PeriodAid.Controllers
                         logs.record_detail = order.order_code + " 发货地址由: " + " " + order.receiver_area + " " + order.receiver_address + " 修改至 :" + " " + model.receiver_area + " " + model.receiver_address;
                     if (order.receiver_date != model.receiver_date && order.receiver_address != model.receiver_address)
                         logs.record_detail = order.order_code + " 新增修改 :"+" " + model.receiver_date + " " + model.receiver_area + " " + model.receiver_address;
-                    if(order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address && order.receiver_name == model.receiver_name && order.receiver_tel == model.receiver_tel)
+                    if(order.receiver_date == model.receiver_date && order.receiver_address == model.receiver_address && order.receiver_name == model.receiver_name && order.receiver_tel == model.receiver_tel && order.remark == model.remark)
                         return Json(new { result = "ERROR" });
                     logs.record_amount = 1;
                     md_db.MD_Record.Add(logs);

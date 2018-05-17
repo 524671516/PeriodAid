@@ -8,11 +8,12 @@
                 </label>
             </th>
             <th style="width:20%">平台单号</th>
-            <th style="width:9%">推送状态</th>
+            <th style="width:9%">状态</th>
             <th style="width:6%">数量</th>
             <th style="width:10%">发货状态</th>
-            <th style="width:10%">发货时间</th>
-            <th style="width:20%">邮寄地址</th>
+            <th style="width:10%;white-space: nowrap;">发货时间</th>
+            <th style="width:15%">邮寄地址</th>
+            <th style="width:10%">备注</th>
             <th style="width:15%">物流单号</th>
             <th style="width:10%">
                 <a class="btn btn-xs btn-danger amalgamate_btn hidden" role="button">合并</a>
@@ -32,10 +33,13 @@
                 <td>@Html.DeliveryStatus(item.delivery_state)</td>
                 <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
                 <td>
-                    <div style="width:187px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
+                    <div style="width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_area @item.receiver_address</div>
                 </td>
                 <td>
-                    <div style="width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div>
+                    <div style="width:87px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.remark">@item.remark</div>
+                </td>
+                <td>
+                    <div style="width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div>
                
                 </td>
                 <td>

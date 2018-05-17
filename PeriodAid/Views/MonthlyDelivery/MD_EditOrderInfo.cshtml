@@ -85,6 +85,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <label class="col-md-2 control-label">备注</label>
+                <div class="col-md-10">
+                    <input id="remark" type="text" value="@Model.remark" class="form-control date-readonly order_control" autocomplete="off" name="remark" />
+                    @Html.ValidationMessageFor(model => model.remark, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
                     <input type="button" value="保存" id="save-btn" class="btn btn-default" name="save-btn" />
                 </div>
