@@ -260,7 +260,6 @@ body,html{
     font-size: 1.2em;
     color: rgba(0,0,0,1);
     padding-top: 2px;
-    padding-bottom: 2px;
 }
 .story_m {
     color: rgba(0,0,0,1);
@@ -292,9 +291,28 @@ body,html{
 #comment_text{
     width:60%;
     position:fixed;
-    bottom:0;
+    bottom:5px;
     border-radius:5px;
     left:50%;
     margin-left:-30%;
+}
+#comment_container{
+    width:80%;
+    display:inline-block;
+    text-align:left
+}
+#com_detial{
+    width:80%;
+    border-bottom-left-radius:5px;
+    border-top-left-radius:5px;
+    outline:none;
+    height:34px;
+    border:1px solid #d8dde5;
+    text-indent:10px
+}
+#save-btn{
+    padding:6px 11px;
+    margin-left: -4px;
+    margin-top: -2px
 }
 /*评论样式结束*/

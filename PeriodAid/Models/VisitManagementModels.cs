@@ -163,6 +163,9 @@
         [StringLength(11)]
         public string Employee_Mobile { get; set; }
 
+        [StringLength(32)]
+        public string Employee_Email { get; set; }
+
         public int Department_Id { get; set; }
 
         public virtual VM_Department VM_Department { get; set; }

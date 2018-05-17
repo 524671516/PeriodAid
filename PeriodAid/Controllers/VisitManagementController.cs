@@ -21,6 +21,7 @@ using System.Xml;
 
 namespace PeriodAid.Controllers
 {
+    [Authorize(Roles = "Staff")]
     public class VisitManagementController : Controller
     {
         // GET: VisitManagement
@@ -124,10 +125,8 @@ namespace PeriodAid.Controllers
             return PartialView(item);
         }
 
-        public ActionResult Comment_View(int rec_id)
+        public ActionResult Comment_View()
         {
-            var record = _vmdb.VM_Comment.FirstOrDefault(m => m.VisitRecord_Id == rec_id);
-            ViewBag.Record = record.VisitRecord_Id;
             return View();
         }
 
@@ -139,11 +138,21 @@ namespace PeriodAid.Controllers
             return PartialView(comment);
         }
 
-        [HttpPost]
-        public ActionResult CreateComment(string detail)
+        public VM_Employee getUser(string username)
         {
+            var user = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Email == username);
+            return user;
+        }
+
+        [HttpPost]
+        public ActionResult CreateComment(string detail,int rec_id)
+        {
+            var visitor = getUser(User.Identity.Name);
             VM_Comment comment = new VM_Comment();
             comment.Comment_Time = DateTime.Now;
+            comment.Employee_Id = visitor.Id;
+            comment.VisitRecord_Id = rec_id;
+            comment.Comment_Detail = detail;
             _vmdb.VM_Comment.Add(comment);
             _vmdb.SaveChanges();
             return Json(new { result = "SUCCESS" });

@@ -1,4 +1,9 @@
 ﻿@model IEnumerable<PeriodAid.Models.VM_Comment>
+<style>
+    p{
+        margin-bottom:5px
+    }
+</style>
 <p class="tit">
     所有评论
 </p>
@@ -18,10 +23,9 @@
     {
         <div class="form-horizontal" style="text-align:center">
             <div>
-                <label class="control-label">评论</label>
-                <div class="" style="width:80%;display:inline-block;text-align:left">
-                    <input style="width:80%;" id="com_detial" />
-                    <input type="button" value="确定" style="padding:2px 11px" id="save-btn" class="btn btn-default" name="save-btn" />
+                <div id="comment_container">
+                    <input id="com_detial" autocomplete="off" placeholder="评论内容" />
+                    <input type="button" value="确定" id="save-btn" class="btn btn-danger" name="save-btn" />
                 </div>
             </div>
         </div>
@@ -35,9 +39,19 @@
                 url: '/VisitManagement/CreateComment',
                 type: 'post',
                 data: {
-                    detail: $("#com_detial").val()
+                    detail: $("#com_detial").val(),
+                    rec_id: getUrlParam("rec_id")
                 },
                 success: function (data) {
+                    $.ajax({
+                        url: "/VisitManagement/Comment_PartialView",
+                        data: {
+                            rec_id: getUrlParam("rec_id")
+                        },
+                        success: function (data) {
+                            $("#comment_view").html(data)
+                        }
+                    })
                 }
             })
             return false;
