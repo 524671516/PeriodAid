@@ -1,0 +1,51 @@
+﻿@model PeriodAid.Models.VM_Company
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h2>公司信息</h2>
+</div>
+<div class="hidden" id="orderId_show"></div>
+<div class="modal-body" id="modal-body">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label">公司名称</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Company_Name" class="form-control order_control" readonly="readonly" />
+             </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">公司类别</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Company_Type" class="form-control order_control" readonly="readonly" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">年销售额</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Sales_Amount" class="form-control order_control" readonly="readonly" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">所属区域</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Region" class="form-control order_control" readonly="readonly" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">公司地址</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Company_Address" class="form-control order_control" readonly="readonly" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">联系电话</label>
+            <div class="col-md-10">
+                <input type="text" value="@Model.Company_Phone" class="form-control order_control" readonly="readonly" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -38,28 +38,43 @@
             </div>
         </div>
         <div class="select_condition_div">
-            <label class="pull-left">客户名称：</label>
+            <label class="pull-left">公司名称：</label>
             <div class="select_condition_div2">
                 <div type="text" class="shared_view_div" id="company_id" style="margin-left: 12px;">
-                    <span class="shared_view_span"></span>
-                    <b class="glass_view"></b>
+                    <span class="shared_view_span company_view_span" data-name="">请选择公司</span>
+                    <b class="glass_view background_view"></b>
                     <div class="hidden_div hidden">
-                        <input class="search_input" />
+                        <input class="company_search_input search_input" />
                         <select class="select_view" size="4">
-                            @foreach(var name in ViewBag.Visitor)
+                            @foreach (var name in ViewBag.Company)
+                            {
+                                <option>@name.Company_Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="select_condition_div">
+            <label class="pull-left">业务员名称：</label>
+            <div class="select_condition_div2">
+                <div type="text" class="shared_view_div" id="visitor_id" style="top:2px">
+                    <span class="shared_view_span visitor_view_span" data-name="">请选择业务员</span>
+                    <b class="glass_view background_view"></b>
+                    <div class="hidden_div hidden">
+                        <div class="search_contain_div">
+                            <input class="visitor_search_input search_input"/>
+                            <b class="search_icon"></b>
+                        </div>
+                        <select class="select_view" size="4">
+                            @foreach (var name in ViewBag.Visitor)
                             {
                                 <option>@name.Employee_Name</option>
                             }
                         </select>
                     </div>
                 </div>
-                    
-            </div>
-        </div>
-        <div class="select_condition_div">
-            <label class="pull-left">业务员名称：</label>
-            <div class="select_condition_div2">
-                <div type="text" class="shared_view_date shared_view_div" id="visitor_id" style="top:6px"><b class="glass_view"></b></div>
+
             </div>
         </div>
     </div>
@@ -92,7 +107,9 @@
                 data: {
                     visit_date: $("#select_date").val(),
                     dep_id: $(".team_select.active").attr("data-val"),
-                    com_type: $(".company_type.active").text()
+                    com_type: $(".company_type.active").text(),
+                    com_name: $("#company_id .shared_view_span").attr("data-name"),
+                    vis_name: $("#visitor_id .shared_view_span").attr("data-name")
                 },
                 success: function (data) {
                     $("#visit_list_content").html(data)
@@ -107,7 +124,9 @@
                     data: {
                         visit_date: that.val(),
                         dep_id: $(".team_select.active").attr("data-val"),
-                        com_type: $(".company_type.active").text()
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -127,7 +146,9 @@
                     data: {
                         visit_date: $("#select_date").val(),
                         dep_id: that.attr("data-val"),
-                        com_type: $(".company_type.active").text()
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -146,8 +167,10 @@
                     type: "post",
                     data: {
                         visit_date: $("#select_date").val(),
-                        dep_id: $(".team_select.active").attr("data-val"),
-                        com_type: that.text()
+                        dep_id: that.attr("data-val"),
+                        com_type: that.text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -155,62 +178,143 @@
                 })
             })
             // span 点击
-            $(".shared_view_div").on("click", function () {
+            $(".shared_view_div").on("click", function (event) {
+                event.stopPropagation();
                 var that = $(this)
-                $(".shared_view_span").removeClass("shared_view_span_active")
+                $(".hidden_div").addClass("hidden")
+                $(".shared_view_div").removeClass("shared_view_span_active")
                 that.addClass("shared_view_span_active")
                 that.children(".hidden_div").removeClass("hidden")
+                that.children(".background_view").removeClass("glass_view").addClass("glass_view_active")
             })
-            //
-            $(".select_view").click(function (event) {
+            // 隐藏的选择列表弹出、隐藏
+            $(document).on('click', function () {
+                $(".hidden_div").addClass("hidden");
+                $(".background_view").removeClass("glass_view_active").addClass("glass_view")
+                $(".search_input").val("")
+                $(".shared_view_div ").removeClass("shared_view_span_active")
+            });
+            $("#visitor_id .select_view").click(function (event) {
                 event.stopPropagation();
-                var options = $(".select_view option:selected")
-                $(this).parents(".hidden_div").addClass("hidden").siblings(".shared_view_span").html(options.text())
-                $(this).parents(".shared_view_div").css("top","1px")
+                var options = $("#visitor_id .select_view option:selected")
+                $(this).parents(".hidden_div").addClass("hidden").siblings(".visitor_view_span").html(options.text()).attr("data-name", options.text())
+                //$(this).parents(".shared_view_div").css("top", "1px")
+                $(".background_view").removeClass("glass_view_active").addClass("glass_view")
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: $("#select_date").val(),
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
             })
-
+            $("#company_id .select_view").click(function (event) {
+                event.stopPropagation();
+                var options = $("#company_id .select_view option:selected")
+                $(this).parents(".hidden_div").addClass("hidden").siblings(".company_view_span").html(options.text()).attr("data-name", options.text())
+                //$(this).parents(".shared_view_div").css("top", "1px")
+                $(".background_view").removeClass("glass_view_active").addClass("glass_view")
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: $("#select_date").val(),
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
+            })
             // 搜索
-            //$('#visitor_id').typeahead({
-            //    ajax: {
-            //        url: '/VisitManagement/QueryVisitor',
-            //        triggerLength: 1
-            //    },
-            //    itemSelected: displayResult,
-            //    display: 'VisitorName',
-            //    val: 'Id'
-            //});
-            //function displayResult(item, val, text) {
-            //    $("#visitor_id").attr("data-id", val);
-            //}
-            //function displayCResult(item, val, text) {
-            //    $("#company_id").attr("data-id", val);
-            //}
-            //$('#company_id').typeahead({
-            //    ajax: {
-            //        url: '/VisitManagement/QueryCompany',
-            //        triggerLength: 1
-            //    },
-            //    itemSelected: displayCResult,
-            //    display: 'CompanyName',
-            //    val: 'Id'
-            //});
-            //$("#company_id").change(function () {
-            //    console.log($("#company_id").attr("data-id"))
-            //    $.ajax({
-            //        url: "/VisitManagement/Visit_PartialView/",
-            //        type: "post",
-            //        data: {
-            //            visit_date: $("#select_date").val(),
-            //            dep_id: $(".team_select.active").attr("data-val"),
-            //            com_type: $(".company_type.active").text(),
-            //            vis_id: $("#visitor_id").attr("data-id"),
-            //            com_id: $("#company_id").attr("data-id")
-            //        },
-            //        success: function (data) {
-            //            $("#visit_list_content").html(data)
-            //        }
-            //    })
-            //})
+            // visitor
+            $(".visitor_search_input").on("input", function () {
+                if ($(".visitor_search_input").val() == "") {
+                    $("#visitor_id select").removeClass("hidden")
+                }
+                else {
+                    $('.visitor_search_input').typeahead({
+                        ajax: {
+                            url: '/VisitManagement/QueryVisitor',
+                            triggerLength: 1
+                        },
+                        itemSelected: displayResult,
+                        display: 'VisitorName',
+                        val: 'Id'
+                    });
+                    function displayResult(item, val, text) {
+                        $(".visitor_view_span").text(text).attr("data-name", text);
+                        $("#visitor_id .hidden_div").addClass("hidden")
+                        $(".background_view").removeClass("glass_view_active").addClass("glass_view")
+                        $(".visitor_search_input").val("")
+                        $("#visitor_id select").removeClass("hidden")
+                        $.ajax({
+                            url: "/VisitManagement/Visit_PartialView/",
+                            type: "post",
+                            data: {
+                                visit_date: $("#select_date").val(),
+                                dep_id: $(".team_select.active").attr("data-val"),
+                                com_type: $(".company_type.active").text(),
+                                com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                            },
+                            success: function (data) {
+                                $("#visit_list_content").html(data)
+                            }
+                        })
+                    }
+                    $("#visitor_id select").addClass("hidden")
+                }
+            });
+            //company
+            $(".company_search_input").on("input", function () {
+                if ($(".company_search_input").val()=="") {
+                    $("#company_id select").removeClass("hidden")
+                } else {
+
+                    $('.company_search_input').typeahead({
+                        ajax: {
+                            url: '/VisitManagement/QueryCompany',
+                            triggerLength: 1
+                        },
+                        itemSelected: displayCResult,
+                        display: 'CompanyName',
+                        val: 'Id'
+                    });
+                    function displayCResult(item, val, text) {
+                        $(".company_view_span").text(text).attr("data-name", text);
+                        $("#company_id .hidden_div").addClass("hidden")
+                        $(".background_view").removeClass("glass_view_active").addClass("glass_view")
+                        $(".company_search_input").val("")
+                        $("#company_id select").removeClass("hidden")
+                        $.ajax({
+                            url: "/VisitManagement/Visit_PartialView/",
+                            type: "post",
+                            data: {
+                                visit_date: $("#select_date").val(),
+                                dep_id: $(".team_select.active").attr("data-val"),
+                                com_type: $(".company_type.active").text(),
+                                com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                            },
+                            success: function (data) {
+                                $("#visit_list_content").html(data)
+                            }
+                        })
+                    }
+                    $("#company_id select").addClass("hidden")
+                }
+            })
         })
     </script>
     }

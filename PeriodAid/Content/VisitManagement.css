@@ -80,7 +80,9 @@ body,html{
 /*颜色结束*/
 /*头部筛选*/
 #shared_select_condition{
-    margin-bottom:20px
+    margin:20px;
+    background:#f7fbfe
+    
 }
 .select_condition_div{
     margin-left:10px;
@@ -134,7 +136,6 @@ body,html{
     position:relative;
     height:26px;
     border:1px solid #9a9a9a;
-    top:6px
 }
 .shared_view_span_active{
     border:1px solid #5897fb;
@@ -175,6 +176,7 @@ body,html{
     font-weight:600
 }
 /*隐藏的DIV结束*/
+/*小图标样式*/
 .arrows_view {
     display: inline-block;
     width: 20px;
@@ -182,6 +184,7 @@ body,html{
     background: url('images/select2.png')no-repeat 0 1px;
     background-position: 2px 2px;
     margin-left: -28px;
+    right: 3px;
 }
 /*.glass_view{
     display: block;
@@ -198,13 +201,100 @@ body,html{
     width: 20px;
     height: 20px;
     background: url('images/select2.png')no-repeat 0 1px;
-    background-position: -38px -21px;
+    background-position: 2px 2px;
     position: absolute;
     right: 3px;
-    top: 0;
+    top: -3px;
 }
-
-
- 
+.glass_view_active {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: url('images/select2.png')no-repeat 0 1px;
+    background-position: -17px 2px;
+    position: absolute;
+    right: 3px;
+    top: -3px;
+}
+/*小图标结束*/
+/*搜索*/
+.search_contain_div{
+    position:relative
+}
+.search_icon{
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: url('images/select2.png')no-repeat 0 1px;
+    background-position: -41px -22px;
+    position: absolute;
+    right: 3px;
+    top: 1px;
+}
+/*搜索结束*/
 /*头部筛选结束*/
+/*表格内样式*/
+
+/*表格内样式结束*/
 /*默认样式结束*/
+/*评论样式*/
+ .ylcon {
+        width: 100%;
+        min-width: 320px;
+    }
+.tit {
+        height: 26px;
+        line-height: 26px;
+        padding: 0px 15px;
+        position: relative;
+        font-size: 15px;
+        color: #aaa;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    }
+.story {
+    border-bottom: 1px dashed #cecece;
+    padding: 0 15px 3px;
+    position: relative;
+}
+.story_t {
+    font-size: 1.2em;
+    color: rgba(0,0,0,1);
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.story_m {
+    color: rgba(0,0,0,1);
+    line-height: 21px;
+    word-break: break-all;
+    word-wrap: break-word;
+    overflow: hidden;
+    font-size: 1.2em;
+    padding: 2px 0;
+}
+.story_time {
+    color: rgba(0,0,0,1);
+    padding: 2px 0;
+}
+.story_hf {
+    background: rgb(245,245,245);
+    font-size: 1.2em;
+    border: 1px solid rgba(204,204,204,0.2);
+    border-radius: 2px;
+    color: rgba(0,0,0,1);
+    padding: 2px;
+    margin-bottom: 5px;
+}
+.opbtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+}    
+#comment_text{
+    width:60%;
+    position:fixed;
+    bottom:0;
+    border-radius:5px;
+    left:50%;
+    margin-left:-30%;
+}
+/*评论样式结束*/
