@@ -2,11 +2,12 @@
 @using PagedList.Mvc;
 <style>
 </style>
-<div style="padding:0 20px">
+<div style="padding:0 20px;width:1400px">
     <table class="table table-hover">
         <tr style="background-color:#f9f9f9">
             <th>公司名称</th>
             <th>拜访日期</th>
+            <th>渠道名称</th>
             <th>参与同事</th>
             <th>顺利与否</th>
             <th>是否需要我方回复</th>
@@ -23,16 +24,21 @@
         {
            <tr>
                <td>
-                   <a href="#" data-id="@item.Company_Id" class="company_select_a" data-toggle="modal" data-target="#myModal">
+                   <a href="#" data-id="@item.Company_Id" title="@item.VM_Company.Company_Name" style="display: inline-block;overflow: hidden;width: 100px;text-overflow: ellipsis;white-space: nowrap;" class="company_select_a" data-toggle="modal" data-target="#myModal">
                        @item.VM_Company.Company_Name
                    </a>
                </td>
                <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+               <td>
+                   <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
+                       @item.VM_Company.Source_Name
+                   </div>
+               </td>
                <td></td>
                <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
                <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
                <td>
-                   <div style="width:110px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
+                   <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
                        @item.Reply_Detail
                    </div>
                </td>
@@ -45,7 +51,11 @@
                </td>
                @if (item.Intentional_Products != null)
                {
-                <td>@item.Intentional_Products</td>
+                <td>
+                    <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Intentional_Products">
+                       @item.Intentional_Products
+                    </div>
+                </td>
                }
                else
                {
