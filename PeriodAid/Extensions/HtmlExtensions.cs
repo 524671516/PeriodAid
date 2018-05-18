@@ -353,6 +353,20 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string SpecialSource(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "无";
+                case 0:
+                    return "有";
+                default:
+                    return "未知";
+            }
+        }
+
+
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
             if (username == null)

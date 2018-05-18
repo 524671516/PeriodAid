@@ -54,15 +54,17 @@
 
         [StringLength(32)]
         public string Company_Name { get; set; }
-        
+
         [StringLength(16)]
-        public string Company_Type { get; set; }// 1现代 2流通 3电商APP
+        public string Company_Type { get; set; }
 
         [StringLength(32)]
-        public string Company_Source { get; set; } // 客户来源
+        public string Company_Source { get; set; }
 
         [StringLength(128)]
         public string Company_Address { get; set; }
+
+        public int Employee_Count { get; set; }
 
         [StringLength(128)]
         public string Source_Name { get; set; }//渠道名称
@@ -155,8 +157,7 @@
         [StringLength(32)]
         public string Employee_Name { get; set; }
 
-        [StringLength(16)]
-        public string Employee_Type { get; set; }
+        public int Employee_Type { get; set; }
 
         public int Employee_Status { get; set; }
 
@@ -207,7 +208,7 @@
         public decimal ExpectedDelivery_Funds { get; set; }//预计拿货金额
 
         [StringLength(128)]
-        public string Core_Problem { get; set; }//兴趣品相
+        public string Core_Problem { get; set; }//核心问题
 
         [StringLength(128)]
         public string Support { get; set; }//需要支持

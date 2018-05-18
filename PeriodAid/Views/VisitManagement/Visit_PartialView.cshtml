@@ -10,7 +10,9 @@
             <th>参与同事</th>
             <th>顺利与否</th>
             <th>是否需要我方回复</th>
+            <th>回复详细</th>
             <th>等待对方回复</th>
+            <th>对方回复详细</th>
             <th>意向产品</th>
             <th>下次拜访时间</th>
             <th>客户来源</th>
@@ -29,8 +31,27 @@
                <td></td>
                <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
                <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
+               <td>
+                   <div style="width:110px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
+                       @item.Reply_Detail
+                   </div>
+               </td>
                <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
-               <td>@item.Core_Problem</td>
+               <td>
+                   <div style="width:130px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
+                       @item.CustomerReply_Detail
+                   </div>
+               
+               </td>
+               @if (item.Intentional_Products != null)
+               {
+                <td>@item.Intentional_Products</td>
+               }
+               else
+               {
+                <td>无</td>
+               }
+
                <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
                <td>@item.VM_Company.Company_Source</td>
                <td>@item.VM_Employee.Employee_Name</td>
