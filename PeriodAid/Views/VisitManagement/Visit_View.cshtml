@@ -167,7 +167,7 @@
                     type: "post",
                     data: {
                         visit_date: $("#select_date").val(),
-                        dep_id: that.attr("data-val"),
+                        dep_id: $(".team_select.active").attr("data-val"),
                         com_type: that.text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name")
