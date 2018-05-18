@@ -33,7 +33,7 @@
         <div class="select_condition_div">
             <label class="pull-left">拜访日期：</label>
             <div class="select_condition_div2">
-                <input type="text" class="file-date shared_view_date" id="select_date" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
+                <input type="text" class="file-date shared_view_date" id="select_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
                 <b class="arrows_view"></b>
             </div>
         </div>
@@ -85,22 +85,22 @@
     <script>
         $(function () {
             // 获取时间
-            function getNowFormatDate() {
-                var date = new Date();
-                var seperator1 = "-";
-                var seperator2 = ":";
-                var month = date.getMonth() + 1;
-                var strDate = date.getDate();
-                if (month >= 1 && month <= 9) {
-                    month = "0" + month;
-                }
-                if (strDate >= 0 && strDate <= 9) {
-                    strDate = "0" + strDate;
-                }
-                var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-                return currentdate;
-            }
-            $("#select_date").val(getNowFormatDate())
+            //function getNowFormatDate() {
+            //    var date = new Date();
+            //    var seperator1 = "-";
+            //    var seperator2 = ":";
+            //    var month = date.getMonth() + 1;
+            //    var strDate = date.getDate();
+            //    if (month >= 1 && month <= 9) {
+            //        month = "0" + month;
+            //    }
+            //    if (strDate >= 0 && strDate <= 9) {
+            //        strDate = "0" + strDate;
+            //    }
+            //    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+            //    return currentdate;
+            //}
+            //$("#select_date").val(getNowFormatDate())
             $.ajax({
                 url: "/VisitManagement/Visit_PartialView/",
                 type: "post",
