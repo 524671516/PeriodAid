@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_VisitManagementView.cshtml";
 }
 <div>
-    <div id="shared_select_condition" style="padding:0 20px">
+    <div id="shared_select_condition">
         <div class="select_condition_div">
             <label class="pull-left">销售团队：</label>
             <ul class="shared_ul visitor_ul">
@@ -34,12 +34,29 @@
                 <li>
                     <a class="company_type" data-val="3">电商和APP</a>
                 </li>
+                <li>
+                    <a class="company_type" data-val="4">餐饮</a>
+                </li>
+            </ul>
+        </div>
+        <div class="select_condition_div">
+            <label class="pull-left">排序方式：</label>
+            <ul class="shared_ul sort_ul">
+                <li class="shared_section_li_active" style="margin-left: 12px">
+                    <a class="sort_type active" data-val="0">默认</a>
+                </li>
+                <li>
+                    <a class="sort_type" data-val="1">按有无意向</a>
+                </li>
+                <li>
+                    <a class="sort_type" data-val="2">按拜访次数</a>
+                </li>
             </ul>
         </div>
         <div class="select_condition_div">
             <label class="pull-left">拜访日期：</label>
             <div class="select_condition_div2">
-                <input type="text" class="file-date shared_view_date" id="select_date" value="@DateTime.Now.ToString("yyyy-MM-dd")" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
+                <input type="text" class="file-date shared_view_date" id="select_date" value="" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
                 <b class="arrows_view"></b>
             </div>
         </div>
@@ -85,28 +102,11 @@
         </div>
     </div>
 
-    <div id="visit_list_content"></div>
+    <div id="visit_list_content" style="padding:0 20px;width:100%;"></div>
 </div>
 @section scripts{
     <script>
         $(function () {
-            // 获取时间
-            //function getNowFormatDate() {
-            //    var date = new Date();
-            //    var seperator1 = "-";
-            //    var seperator2 = ":";
-            //    var month = date.getMonth() + 1;
-            //    var strDate = date.getDate();
-            //    if (month >= 1 && month <= 9) {
-            //        month = "0" + month;
-            //    }
-            //    if (strDate >= 0 && strDate <= 9) {
-            //        strDate = "0" + strDate;
-            //    }
-            //    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
-            //    return currentdate;
-            //}
-            //$("#select_date").val(getNowFormatDate())
             $.ajax({
                 url: "/VisitManagement/Visit_PartialView/",
                 type: "post",
@@ -115,7 +115,8 @@
                     dep_id: $(".team_select.active").attr("data-val"),
                     com_type: $(".company_type.active").text(),
                     com_name: $("#company_id .shared_view_span").attr("data-name"),
-                    vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                    sort: $(".sort_type.active").attr("data-val")
                 },
                 success: function (data) {
                     $("#visit_list_content").html(data)
@@ -132,7 +133,8 @@
                         dep_id: $(".team_select.active").attr("data-val"),
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
-                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        sort: $(".sort_type.active").attr("data-val")
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -154,7 +156,8 @@
                         dep_id: that.attr("data-val"),
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
-                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        sort: $(".sort_type.active").attr("data-val")
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -176,7 +179,31 @@
                         dep_id: $(".team_select.active").attr("data-val"),
                         com_type: that.text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
-                        vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        sort: $(".sort_type.active").attr("data-val")
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
+            })
+            // 排序
+            $(".sort_type").on("click", function () {
+                var that = $(this)
+                $(".sort_ul li").removeClass("shared_section_li_active")
+                $(".sort_type").removeClass("active")
+                that.parent("li").addClass("shared_section_li_active")
+                that.addClass("active")
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: $("#select_date").val(),
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        sort: $(".sort_type.active").attr("data-val")
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -272,7 +299,8 @@
                                 dep_id: $(".team_select.active").attr("data-val"),
                                 com_type: $(".company_type.active").text(),
                                 com_name: $("#company_id .shared_view_span").attr("data-name"),
-                                vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                sort: $(".sort_type.active").attr("data-val")
                             },
                             success: function (data) {
                                 $("#visit_list_content").html(data)
@@ -311,7 +339,8 @@
                                 dep_id: $(".team_select.active").attr("data-val"),
                                 com_type: $(".company_type.active").text(),
                                 com_name: $("#company_id .shared_view_span").attr("data-name"),
-                                vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                sort: $(".sort_type.active").attr("data-val")
                             },
                             success: function (data) {
                                 $("#visit_list_content").html(data)

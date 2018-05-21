@@ -6,10 +6,12 @@
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>客户拜访系统</title>
+    <title>新客户拜访管理系统</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
     <link href="~/Content/VisitManagement.css" rel="stylesheet" />
@@ -35,6 +37,10 @@
             text-align: center;
             margin-left: 0;
         }
+        a:focus{
+        outline:none;
+         text-decoration:none;
+    }
     </style>
 </head>
 <body>
@@ -42,13 +48,13 @@
     <div class="navbar  navbar-default navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="#"><strong class="color-blue">客户拜访管理</strong></a>
+                <a class="navbar-brand" href="#"><strong class="color-blue">新客户拜访管理</strong></a>
             </div>
         </div>
     </div>
     <div>
         <div class="row">
-            <div style="padding:10px;background:#eef1f5">
+            <div style="padding:10px;background:#eef1f5;width:1500px">
                 @RenderBody()
             </div>
         </div>

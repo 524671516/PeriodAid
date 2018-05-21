@@ -1,4 +1,12 @@
 ﻿@model PeriodAid.Models.VM_Company
+    <style>
+        .collapse.in{
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+        }
+    </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
     <h2>公司信息</h2>
@@ -49,6 +57,12 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-md-3 control-label">是否有专用仓库</label>
+            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                @Html.SpecialSource(Model.Dedicated_Warehouse)
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-md-3 control-label">所属区域</label>
             <div class="col-md-9" style="line-height: 34px;font-size: 14px">
                 @Model.Region
@@ -66,10 +80,32 @@
                 @Model.Company_Phone
             </div>
         </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">联系人信息</label>
+            <div class="col-md-9 angle_btn" style="line-height: 34px;font-size: 14px" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">点击展开&nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i></div>
+            <div class="collapse col-md-11 col-md-offset-1" style="margin-top:10px;flex-wrap: wrap;" id="collapseExample">
+                <div class="contact_shared_view col-md-3">姓名</div>
+                <div class="contact_shared_view col-md-2">联系电话</div>
+                <div class="contact_shared_view col-md-3">邮箱</div>
+                <div class="contact_shared_view col-md-2">微信</div>
+                <div class="contact_shared_view col-md-2">职务</div>
+                @foreach (var contact in Model.VM_Contact)
+                {
+                    <div class="contact_shared_view col-md-3">@contact.Contact_Name</div>
+                    <div class="contact_shared_view col-md-2">@contact.Contact_Mobile</div>
+                    <div class="contact_shared_view col-md-3" style="width:129px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@contact.Contact_Email">@contact.Contact_Email</div>
+                    <div class="contact_shared_view col-md-2">@contact.Contact_WeChat</div>
+                    <div class="contact_shared_view col-md-2">@contact.Contact_Type</div>
 
-
-
-
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">拜访次数</label>
+            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                @Model.VM_VisitRecord.Count() 次
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">
@@ -78,3 +114,15 @@
         </div>
     </div>
 </div>
+<script>
+    $(".angle_btn").on("click", function () {
+        var that = $(this)
+        if (that.children("i").hasClass("fa-angle-double-down")) {
+            that.children("i").removeClass("fa-angle-double-down")
+            that.children("i").addClass("fa-angle-double-up")
+        } else {
+            that.children("i").removeClass("fa-angle-double-up")
+            that.children("i").addClass("fa-angle-double-down")
+        }
+    })
+</script>

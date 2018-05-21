@@ -15,6 +15,7 @@ ul,li,a{
 }
 a:hover,a:visited,a:focus{
     text-decoration:none;
+    outline:none;
 }
 .ver_icon:before{
     vertical-align:middle;
@@ -290,11 +291,8 @@ body,html{
 }    
 #comment_text{
     width:60%;
-    position:fixed;
-    bottom:5px;
     border-radius:5px;
-    left:50%;
-    margin-left:-30%;
+    margin:10px auto
 }
 #comment_container{
     width:80%;
@@ -316,3 +314,10 @@ body,html{
     margin-top: -2px
 }
 /*评论样式结束*/
+/*公司详细信息样式*/
+.contact_shared_view{
+    display:inline-block;
+    margin-bottom:5px;
+    font-size: 12px;
+}
+/*公司详细信息样式结束*/

@@ -1,89 +1,109 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.VM_VisitRecord>
 @using PagedList.Mvc;
-<style>
-</style>
-<div style="padding:0 20px;width:1400px">
-    <table class="table table-hover">
-        <tr style="background-color:#f9f9f9">
-            <th>公司名称</th>
-            <th>拜访日期</th>
-            <th>渠道名称</th>
-            <th>参与同事</th>
-            <th>顺利与否</th>
-            <th>是否需要我方回复</th>
-            <th>回复详细</th>
-            <th>等待对方回复</th>
-            <th>对方回复详细</th>
-            <th>意向产品</th>
-            <th>下次拜访时间</th>
-            <th>客户来源</th>
-            <th>业务员</th>
-            <th></th>
-        </tr>
-        @foreach (var item in Model)
-        {
-           <tr>
-               <td>
-                   <a href="#" data-id="@item.Company_Id" title="@item.VM_Company.Company_Name" style="display: inline-block;overflow: hidden;width: 100px;text-overflow: ellipsis;white-space: nowrap;" class="company_select_a" data-toggle="modal" data-target="#myModal">
-                       @item.VM_Company.Company_Name
-                   </a>
-               </td>
-               <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
-               <td>
-                   <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
-                       @item.VM_Company.Source_Name
-                   </div>
-               </td>
-               <td></td>
-               <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
-               <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
-               <td>
-                   <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
-                       @item.Reply_Detail
-                   </div>
-               </td>
-               <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
-               <td>
-                   <div style="width:130px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
-                       @item.CustomerReply_Detail
-                   </div>
-               
-               </td>
-               @if (item.Intentional_Products != null)
-               {
+<table class="table table-hover">
+    <tr style="background-color:#f9f9f9">
+        <th>公司名称</th>
+        <th>拜访日期</th>
+        <th>渠道名称</th>
+        <th>参与同事</th>
+        <th>顺利与否</th>
+        <th>是否需要我方回复</th>
+        <th>回复详细</th>
+        <th>等待对方回复</th>
+        <th>对方回复详细</th>
+        <th>意向产品</th>
+        <th>下次拜访时间</th>
+        <th>客户来源</th>
+        <th>业务员</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a href="#" data-id="@item.Company_Id" title="@item.VM_Company.Company_Name" style="display: inline-block;overflow: hidden;width: 100px;text-overflow: ellipsis;white-space: nowrap;" class="company_select_a" data-toggle="modal" data-target="#myModal">
+                    @item.VM_Company.Company_Name
+                </a>
+            </td>
+            <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+            <td>
+                <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
+                    @item.VM_Company.Source_Name
+                </div>
+            </td>
+            <td>
+                <div style="width:80px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" class="visitors_name">
+                    @foreach (var name in item.AttendEmployee)
+                    {
+                        <span>@name.Employee_Name&nbsp;</span>
+                    }
+                </div>
+
+            </td>
+            <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
+            <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
+            <td>
+                <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
+                    @item.Reply_Detail
+                </div>
+            </td>
+            <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
+            <td>
+                <div style="width:130px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
+                    @item.CustomerReply_Detail
+                </div>
+
+            </td>
+            @if (item.Intentional_Products != null)
+            {
                 <td>
                     <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Intentional_Products">
-                       @item.Intentional_Products
+                        @item.Intentional_Products
                     </div>
                 </td>
-               }
-               else
-               {
+            }
+            else
+            {
                 <td>无</td>
-               }
+            }
 
-               <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
-               <td>@item.VM_Company.Company_Source</td>
-               <td>@item.VM_Employee.Employee_Name</td>
-               <td>
-                   <a href="" data-id="@item.Id" class="comment_select_a">评论</a>
-                   <a href="#">管理</a>
-               </td>
-           </tr>
-        }
-    </table>
-    <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
-    </div>
+            <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+            <td>
+                <div style="width:155px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Company_Source">
+                    @item.VM_Company.Company_Source
+                </div>
+            </td>
+            <td>@item.VM_Employee.Employee_Name</td>
+            <td>
+                <a href="#" data-id="@item.Id" class="comment_select_a" data-toggle="modal" data-target="#myCommentModal">评论</a>
+                <a href="#">管理</a>
+            </td>
+        </tr>
+    }
+</table>
+<div class="text-right">
+    @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
 </div>
-
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-content">
         </div>
     </div>
 </div>
+<div class="modal fade" id="myCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-comment-content">
+        </div>
+    </div>
+</div>
 <script>
+    $(function () {
+        $(".visitors_name").hover(function () {
+            var that = $(this)
+            var Visitor_name = that.children("span").text();
+            that.attr("title", Visitor_name)
+        })
+    })
     $(".pagination > li > a").click(function () {
         var l = $(this).attr("href");
         $.ajax({
@@ -116,6 +136,17 @@
     })
     // 评论
     $(".comment_select_a").on("click", function () {
-        $(this).attr("href", "/VisitManagement/Comment_View?rec_id="+$(this).attr("data-id"))
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/Comment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
     })
 </script>

@@ -116,13 +116,16 @@
         public string Contact_Name { get; set; }
 
         [StringLength(16)]
-        public string Departmental_Positions { get; set; }
+        public string Contact_Type { get; set; }
 
         [StringLength(16)]
         public string Contact_Mobile { get; set; }
 
         [StringLength(16)]
         public string Contact_WeChat { get; set; }
+
+        [StringLength(32)]
+        public string Contact_Email { get; set; }
 
         public int Company_Id { get; set; }
 
@@ -228,6 +231,8 @@
         public int NextVisit_Type { get; set; }//下次拜访方式（0实地，1电话）
 
         public DateTime? NextVisit_Time { get; set; }//下次拜访时间
+
+        public int Visit_Type { get; set; }//拜访方式（0面谈，1电话，2微信）
 
         public string NextVisit_Detail { get; set; }//下次拜访事项
 
