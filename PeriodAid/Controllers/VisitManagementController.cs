@@ -21,7 +21,7 @@ using System.Xml;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize(Roles = "Staff")]
+    [Authorize(Roles = "SuperAdmin")]
     public class VisitManagementController : Controller
     {
         // GET: VisitManagement
