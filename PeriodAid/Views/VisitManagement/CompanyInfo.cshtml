@@ -9,7 +9,7 @@
     </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2>公司信息</h2>
+    <h3>公司信息</h3>
 </div>
 <div class="hidden" id="orderId_show"></div>
 <div class="modal-body" id="modal-body">
@@ -24,6 +24,12 @@
             <label class="col-md-3 control-label">公司类别</label>
             <div class="col-md-9" style="line-height: 34px;font-size: 14px">
                 @Model.Company_Type
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">客户来源</label>
+            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                @Model.Company_Source
             </div>
         </div>
         <div class="form-group">
@@ -51,11 +57,21 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label" style="white-space: nowrap;">特殊渠道详情</label>
+            <label class="col-md-3 control-label" style="white-space: nowrap;">有无特殊渠道</label>
             <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.SpecialSource_Detail
+                @Html.SpecialSource(Model.Special_Source)
             </div>
         </div>
+        @if (Model.Special_Source != -1)
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label" style="white-space: nowrap;">特殊渠道详情</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    @Model.SpecialSource_Detail
+                </div>
+            </div>
+        }
+        
         <div class="form-group">
             <label class="col-md-3 control-label">是否有专用仓库</label>
             <div class="col-md-9" style="line-height: 34px;font-size: 14px">
@@ -100,12 +116,150 @@
                 }
             </div>
         </div>
-        <div class="form-group">
+        @*<div class="form-group">
             <label class="col-md-3 control-label">拜访次数</label>
             <div class="col-md-9" style="line-height: 34px;font-size: 14px">
                 @Model.VM_VisitRecord.Count() 次
             </div>
+        </div>*@
+        @*@if (ViewBag.Record.Cooperation_Intention == 0)
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">有无合作意向</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    有
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">兴趣品相</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    @ViewBag.Record.Intentional_Products
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">操作资金</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    @ViewBag.Record.Intentional_Funds
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">有无合作意向</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    无
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">无意向原因</label>
+                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
+                    <span style="float:left">@ViewBag.Record.NoIntention_Reason</span>
+                </div>
+            </div>
+        }
+        @if (ViewBag.Record.Smoothly == 0)
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">是否顺利</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    是
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">预计拿货时间</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    @ViewBag.Record.ExpectedDelivery_Time.ToString("yyyy-MM-dd")
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">预计拿货金额</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    @ViewBag.Record.ExpectedDelivery_Funds
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">是否顺利</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    否
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">核心问题</label>
+                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
+                    <span style="float:left">@ViewBag.Record.Core_Problem</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">需要支持</label>
+                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
+                    <span style="float:left">@ViewBag.Record.Support</span>
+                </div>
+            </div>
+        }
+        @if (ViewBag.Reply_Status == 0)
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">是否需要我司回复</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    是
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">回复详细</label>
+                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
+                    <span style="float:left">@ViewBag.Record.Reply_Detail</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">是否需要我司回复</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    否
+                </div>
+            </div>
+        }
+        @if (ViewBag.CustomerReply_Status == 0)
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">是否需要对方回复</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    是
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">对方回复详细</label>
+                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
+                    <span style="float:left">@ViewBag.Record.CustomerReply_Detail</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="col-md-3 control-label">是否需要对方回复</label>
+                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                    否
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            <label class="col-md-3 control-label">下次拜访时间</label>
+            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+                @ViewBag.Record.NextVisit_Time.ToString("yyyy-MM-dd")
+            </div>
         </div>
+        <div class="form-group">
+            <label class="col-md-3 control-label">下次拜访事项</label>
+            <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
+                <span style="float:left">@ViewBag.Record.NextVisit_Detail</span>
+            </div>
+        </div>*@
 
         <div class="form-group">
             <div class="col-md-offset-3 col-md-9">

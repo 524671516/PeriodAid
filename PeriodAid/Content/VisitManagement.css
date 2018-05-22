@@ -316,7 +316,7 @@ body,html{
 /*公司详细信息样式*/
 .contact_shared_view{
     display:inline-block;
-    margin-bottom:5px;
+    padding-bottom:10px;
     font-size: 12px;
 }
 /*公司详细信息样式结束*/

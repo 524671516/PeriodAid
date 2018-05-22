@@ -2,7 +2,6 @@
 @using PagedList.Mvc;
 <style>
     tr>:first-child{  
-    width :  100px;  
     position : relative;  
 }  
 </style>
@@ -11,16 +10,25 @@
         <tr style="background-color:#f9f9f9">
             <th id="fixed_th">公司名称</th>
             <th>拜访日期</th>
+            <th>拜访次数</th>
             <th>渠道名称</th>
             <th>参与同事</th>
+            <th>合作意向</th>
+            <th>无意向原因</th>
+            <th>意向产品</th>
+            <th>操作资金</th>
             <th>顺利与否</th>
+            <th>预计拿货时间</th>
+            <th>预计拿货金额</th>
+            <th>核心问题</th>
+            <th>需要支持</th>
             <th>是否需要我方回复</th>
             <th>回复详细</th>
-            <th>等待对方回复</th>
+            <th>是否等待对方回复</th>
+            <th>对方回复时间</th>
             <th>对方回复详细</th>
-            <th>意向产品</th>
             <th>下次拜访时间</th>
-            <th>客户来源</th>
+            <th>下次拜访事宜</th>
             <th>业务员</th>
             <th></th>
         </tr>
@@ -28,26 +36,65 @@
         {
             <tr>
                 <td>
-                    <a href="#" data-id="@item.Company_Id" title="@item.VM_Company.Company_Name" style="display: inline-block;overflow: hidden;width: 100px;text-overflow: ellipsis;white-space: nowrap;" class="company_select_a" data-toggle="modal" data-target="#myModal">
+                    <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" title="@item.VM_Company.Company_Name" class="company_select_a" data-toggle="modal" data-target="#myModal">
                         @item.VM_Company.Company_Name
                     </a>
                 </td>
                 <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+                <td style="text-indent:10px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
                 <td>
-                    <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
+                    <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
                         @item.VM_Company.Source_Name
                     </div>
                 </td>
                 <td>
-                    <div style="width:80px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" class="visitors_name">
+                    <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" class="visitors_name">
                         @foreach (var name in item.AttendEmployee)
                         {
                             <span>@name.Employee_Name&nbsp;</span>
                         }
                     </div>
-
                 </td>
+                <td style="text-indent:14px">@Html.SmoothlyStatus(item.Cooperation_Intention)</td>
+                @if (item.Cooperation_Intention == 0)
+                {
+                    <td></td>
+                    <td>@item.Intentional_Products</td>
+                    <td>@item.Intentional_Funds 万元</td>
+                }
+                else
+                {
+                    <td>
+                        <div>
+                            @item.NoIntention_Reason
+                        </div>
+                    </td>
+                    <td></td>
+                    <td></td>
+                }
                 <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
+                @if (item.Smoothly==0)
+                {
+                    <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
+                    <td>@item.ExpectedDelivery_Funds</td>
+                    <td></td>
+                    <td></td>
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Core_Problem">
+                            @item.Core_Problem
+                        </div>
+                    </td>
+                    <td>
+                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Support">
+                            @item.Support
+                        </div>
+                    </td>
+                }
                 <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
                 <td>
                     <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
@@ -55,29 +102,24 @@
                     </div>
                 </td>
                 <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
-                <td>
-                    <div style="width:130px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
-                        @item.CustomerReply_Detail
-                    </div>
-
-                </td>
-                @if (item.Intentional_Products != null)
+                @if (item.CustomerReply_Status == 0)
                 {
+                    <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <div style="width:90px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Intentional_Products">
-                            @item.Intentional_Products
+                        <div style="width:130px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
+                            @item.CustomerReply_Detail
                         </div>
                     </td>
                 }
                 else
                 {
-                    <td>无</td>
+                    <td></td>
+                    <td></td>
                 }
-
                 <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <div style="width:155px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Company_Source">
-                        @item.VM_Company.Company_Source
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
+                        @item.NextVisit_Detail
                     </div>
                 </td>
                 <td>@item.VM_Employee.Employee_Name</td>
@@ -88,11 +130,11 @@
             </tr>
         }
     </table>
-    <div class="text-right">
-        @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
-    </div>
+    
 </div>
-
+<div class="text-right">
+    @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
+</div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-content">
@@ -122,7 +164,8 @@
                 dep_id: $(".team_select.active").attr("data-val"),
                 com_type: $(".company_type.active").text(),
                 com_name: $("#company_id .shared_view_span").attr("data-name"),
-                vis_name: $("#visitor_id .shared_view_span").attr("data-name")
+                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                sort: $(".sort_type.active").attr("data-val")
             },
             success: function (data) {
                 $("#visit_list_content").html(data)
@@ -136,6 +179,7 @@
             url: '/VisitManagement/CompanyInfo/',
             data: {
                 com_id: $(this).attr('data-id'),
+                rec_id: $(this).attr('data-rid')
             },
             success: function (data) {
                 $('#modal-content').html(data)
@@ -160,17 +204,18 @@
     })
     // 固定第一列
     function freezing() {
-        $("tr>:first-child").css("left", $("#freezing").scrollLeft() - 1);
+        $("tr>:first-child").css("left", $("#freezing").scrollLeft());
         var thWidth = $("#fixed_th").width();
-        var step = thWidth / 5;//分5次过渡，每step像素过渡一次  
-        var scroLeft = $("#freezing").scrollLeft(); //向左滚动的距离  
-        var tol = Math.ceil(scroLeft / step);
+        var scroLeft = $("#freezing").scrollLeft(); 
         if (scroLeft == 0) {
             $("tr>:first-child").removeClass("isScrolling").css("background", "#eef1f5");
+            $("#fixed_th").css("background", "#f9f9f9")
         } else if (scroLeft > 0 && scroLeft < thWidth) {
             $("tr>:first-child").addClass("isScrolling").css("background", "#eef1f5");
+            $("#fixed_th").css("background", "#f9f9f9")
         } else {
             $("tr>:first-child").addClass("isScrolling").css("background", "#eef1f5");
+            $("#fixed_th").css("background", "#f9f9f9")
         }
     }
 </script>
