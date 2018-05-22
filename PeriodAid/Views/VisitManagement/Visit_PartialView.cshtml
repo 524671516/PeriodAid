@@ -10,6 +10,7 @@
         <tr style="background-color:#f9f9f9">
             <th id="fixed_th">公司名称</th>
             <th>拜访日期</th>
+            <th>拜访方式</th>
             <th>拜访次数</th>
             <th>渠道名称</th>
             <th>参与同事</th>
@@ -28,6 +29,7 @@
             <th>对方回复时间</th>
             <th>对方回复详细</th>
             <th>下次拜访时间</th>
+            <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
             <th>业务员</th>
             <th></th>
@@ -41,6 +43,7 @@
                     </a>
                 </td>
                 <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+                <td style="text-indent:5px">@Html.VisitType(item.Visit_Type)</td>
                 <td style="text-indent:1px">第 @item.VM_Company.VM_VisitRecord.Count() 次</td>
                 <td>
                     <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
@@ -117,6 +120,7 @@
                     <td></td>
                 }
                 <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+                <td style="text-indent:15px">@Html.VisitType(item.NextVisit_Type)</td>
                 <td>
                     <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
                         @item.NextVisit_Detail

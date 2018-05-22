@@ -366,12 +366,21 @@ namespace System.Web.Mvc
             }
         }
 
-
-
-
-
-
-
+        public static string VisitType(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "面谈";
+                case 1:
+                    return "电话";
+                case 2:
+                    return "微信";
+                default:
+                    return "未知";
+            }
+        }
+        
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
             if (username == null)

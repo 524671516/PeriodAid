@@ -42,23 +42,32 @@
                     rec_id: $("#modal-body").attr("data-id")
                 },
                 success: function (data) {
-                    $.ajax({
-                        url: "/VisitManagement/Visit_PartialView/",
-                        type: "post",
-                        data: {
-                            visit_date: $("#select_date").val(),
-                            dep_id: $(".team_select.active").attr("data-val"),
-                            com_type: $(".company_type.active").text(),
-                            com_name: $("#company_id .shared_view_span").attr("data-name"),
-                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                            sort: $(".sort_type.active").attr("data-val")
-                        },
-                        success: function (data) {
-                            $("#visit_list_content").html(data)
-                            $('.modal-backdrop.in').remove()
-                            $('body').removeClass('modal-open')
-                        }
-                    })
+                    if (data.result == "SUCCESS") {
+                        $.ajax({
+                            url: "/VisitManagement/Visit_PartialView/",
+                            type: "post",
+                            data: {
+                                visit_date: $("#select_date").val(),
+                                dep_id: $(".team_select.active").attr("data-val"),
+                                com_type: $(".company_type.active").text(),
+                                com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                sort: $(".sort_type.active").attr("data-val")
+                            },
+                            success: function (data) {
+                                $("#visit_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        })
+                    } else {
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "请联系管理员开通权限",
+                        });
+                    }
+                    
                 }
             })
             return false;

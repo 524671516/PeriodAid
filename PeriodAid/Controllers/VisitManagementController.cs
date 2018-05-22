@@ -28,9 +28,11 @@ namespace PeriodAid.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private VisitManagementModels _vmdb;
+        private ApplicationDbContext memdb;
         public VisitManagementController()
         {
             _vmdb = new VisitManagementModels();
+            memdb = new ApplicationDbContext();
         }
         public VisitManagementController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
@@ -77,7 +79,7 @@ namespace PeriodAid.Controllers
         public ActionResult Visit_PartialView(DateTime? visit_date,int dep_id,string com_type,string com_name,string vis_name,int? page,int sort)
         {
             int _page = page ?? 1;
-            IQueryable<VM_VisitRecord> record;
+            IQueryable<VM_VisitRecord>record;
             if (visit_date != null)
             {
                 var _DateTime = visit_date.Value.Year + "-" + visit_date.Value.Month + "-" + visit_date.Value.Day;
@@ -147,24 +149,31 @@ namespace PeriodAid.Controllers
             return PartialView(comment);
         }
 
-        public VM_Employee getUser(string username)
+        public ApplicationUser getUser(string username)
         {
-            var user = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Email == username);
+            var user = memdb.Users.SingleOrDefault(m => m.UserName == username);
             return user;
         }
 
         [HttpPost]
         public ActionResult CreateComment(string detail,int rec_id)
         {
-            var visitor = getUser(User.Identity.Name);
-            VM_Comment comment = new VM_Comment();
-            comment.Comment_Time = DateTime.Now;
-            comment.Employee_Id = visitor.Id;
-            comment.VisitRecord_Id = rec_id;
-            comment.Comment_Detail = detail;
-            _vmdb.VM_Comment.Add(comment);
-            _vmdb.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            var user = getUser(User.Identity.Name);
+            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Mobile == user.PhoneNumber);
+            if (visitor!=null)
+            {
+                VM_Comment comment = new VM_Comment();
+                comment.Comment_Time = DateTime.Now;
+                comment.Employee_Id = visitor.Id;
+                comment.VisitRecord_Id = rec_id;
+                comment.Comment_Detail = detail;
+                _vmdb.VM_Comment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
     }
 }
