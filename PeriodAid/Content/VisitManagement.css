@@ -122,7 +122,7 @@ body,html{
     font-size: 12px;
     display: inline-block;
     padding: 4px 15px 4px 0;
-    width: 160px;
+    width: 200px;
     text-align: center;
     margin-left: 0;
 }
@@ -145,7 +145,7 @@ body,html{
 .hidden_div{
     font-size: 12px;
     display: inline-block;
-    width: 160px;
+    width: 200px;
     text-align: center;
     border:1px solid #5897fb;
     position:absolute;
@@ -159,7 +159,7 @@ body,html{
     font-size: 12px;
     display: inline-block;
     padding: 4px 15px 4px 0;
-    width: 150px;
+    width: 190px;
     margin-left: 0;
 }
 .hidden_div select{
@@ -167,7 +167,7 @@ body,html{
     font-size: 12px;
     display: inline-block;
     padding: 4px 15px 4px 0;
-    width: 150px;
+    width: 190px;
     margin-left: 0;
     border: none
 }
@@ -184,8 +184,9 @@ body,html{
     height: 20px;
     background: url('images/select2.png')no-repeat 0 1px;
     background-position: 2px 2px;
-    margin-left: -28px;
-    right: 3px;
+    top: 2px;
+    right: -18px;
+    position: absolute;
 }
 /*.glass_view{
     display: block;
