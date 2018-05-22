@@ -41,7 +41,7 @@
                     </a>
                 </td>
                 <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
-                <td style="text-indent:10px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
+                <td style="text-indent:1px">第 @item.VM_Company.VM_VisitRecord.Count() 次</td>
                 <td>
                     <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
                         @item.VM_Company.Source_Name
@@ -76,7 +76,7 @@
                 @if (item.Smoothly==0)
                 {
                     <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
-                    <td>@item.ExpectedDelivery_Funds</td>
+                    <td>@item.ExpectedDelivery_Funds 万元</td>
                     <td></td>
                     <td></td>
                 }
