@@ -24,10 +24,10 @@
             <th>核心问题</th>
             <th>需要支持</th>
             <th>是否需要我方回复</th>
-            <th>回复详细</th>
+            <th>回复详情</th>
             <th>是否等待对方回复</th>
             <th>对方回复时间</th>
-            <th>对方回复详细</th>
+            <th>对方回复详情</th>
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
@@ -101,7 +101,7 @@
                 <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
                 <td>
                     <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
-                        @item.Reply_Detail
+                       <a href="#" title="点击评论">@item.Reply_Detail</a>
                     </div>
                 </td>
                 <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>

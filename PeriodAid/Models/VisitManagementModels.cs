@@ -30,8 +30,10 @@
         public virtual DbSet<VM_Employee> VM_Employee { get; set; }
         public virtual DbSet<VM_VisitRecord> VM_VisitRecord { get; set; }
         public virtual DbSet<VM_Comment> VM_Comment { get; set; }
+        public virtual DbSet<VM_ReplyComment> VM_ReplyComment { get; set; }
+        public virtual DbSet<VM_Contact> VM_Contact { get; set; }
         public virtual DbSet<VM_ContentConfig> VM_ContentConfig { get; set; }
-        
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -39,6 +41,8 @@
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_Company).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_Comment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_Comment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
+            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
+            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_Contact).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(false);
@@ -184,6 +188,9 @@
         public virtual ICollection<VM_Comment> VM_Comment { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_VisitRecord> VM_VisitRecord { get; set; }
     }
 
@@ -195,6 +202,8 @@
 
         public DateTime? Visit_Time { get; set; }//拜访时间
 
+        public int Visit_Type { get; set; }//拜访方式（0面谈，1电话，2微信）
+
         public int Cooperation_Intention { get; set; }//合作意向（0有，-1无）
 
         [StringLength(128)]
@@ -204,7 +213,7 @@
 
         public string NoIntention_Reason { get; set; }//无意向原因
 
-        public int Smoothly { get; set; }//是否顺利（0达到目的，-1未达到目的）
+        public int Smoothly { get; set; }//综合结果（0达到目的，-1未达到目的）
 
         public DateTime? ExpectedDelivery_Time { get; set; }//预计拿货时间
 
@@ -232,8 +241,6 @@
 
         public DateTime? NextVisit_Time { get; set; }//下次拜访时间
 
-        public int Visit_Type { get; set; }//拜访方式（0面谈，1电话，2微信）
-
         public string NextVisit_Detail { get; set; }//下次拜访事项
 
         public int status { get; set; }//拜访状态（待定）
@@ -248,6 +255,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_Comment> VM_Comment { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_Employee> AttendEmployee { get; set; }
@@ -267,6 +277,26 @@
         public int Employee_Id { get; set; }
 
         public DateTime? Comment_Time { get; set; }
+
+        public virtual VM_Employee VM_Employee { get; set; }
+
+        public virtual VM_VisitRecord VM_VisitRecord { get; set; }
+    }
+
+    //我方回复评论表
+    [Table("VM_ReplyComment")]
+    public partial class VM_ReplyComment
+    {
+        public int Id { get; set; }
+
+        [StringLength(1024)]
+        public string ReplyComment_Detail { get; set; }
+
+        public int VisitRecord_Id { get; set; }
+
+        public int Employee_Id { get; set; }
+
+        public DateTime? ReplyComment_Time { get; set; }
 
         public virtual VM_Employee VM_Employee { get; set; }
 
