@@ -4,6 +4,14 @@
     tr>:first-child{  
     position : relative;  
 }  
+    .btn-xs{
+        padding:0 5px
+    }
+    .jconfirm-box-container{
+        position: relative;
+        top: -240px;
+    }
+        
 </style>
 <div id="freezing" style="overflow-x:scroll" onscroll="javascript:freezing()">
     <table class="table table-hover">
@@ -31,6 +39,8 @@
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
+            <th>拜访状态</th>
+            <th>未通过详情</th>
             <th>业务员</th>
             <th></th>
         </tr>
@@ -89,7 +99,7 @@
                     <td></td>
                     <td>
                         <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Core_Problem">
-                            @item.Core_Problem
+                            <a style="cursor:pointer" data-id="@item.Id" data-toggle="tooltip" data-placement="left" title="点击查看评论" class="Corecomment_select_a" data-target="#myCoreCommentModal">@item.Core_Problem</a>
                         </div>
                     </td>
                     <td>
@@ -101,7 +111,7 @@
                 <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
                 <td>
                     <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
-                       <a href="#" data-id="@item.Id" title="点击评论" class="Replycomment_select_a" data-toggle="modal" data-target="#myReplyCommentModal">@item.Reply_Detail</a>
+                       <a style="cursor:pointer" data-id="@item.Id" data-toggle="tooltip" data-placement="left" title="点击查看评论" class="Replycomment_select_a" data-target="#myReplyCommentModal">@item.Reply_Detail</a>
                     </div>
                 </td>
                 <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
@@ -126,10 +136,21 @@
                         @item.NextVisit_Detail
                     </div>
                 </td>
+                <td>@Html.VisitStatus(item.status)</td>
+                @if (item.status == -1)
+                {
+                    <td>
+                        <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail">@item.Veto_Detail</div>
+                    </td>
+                }
+                else
+                {
+                    <td></td>
+                }
                 <td>@item.VM_Employee.Employee_Name</td>
                 <td>
-                    <a href="#" data-id="@item.Id" class="comment_select_a" data-toggle="modal" data-target="#myCommentModal">评论</a>
-                    <a href="#">管理</a>
+                    <a href="#" data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论</a>
+                    <a href="#" data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
                 </td>
             </tr>
         }
@@ -157,8 +178,16 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="myCoreCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-Corecomment-content">
+        </div>
+    </div>
+</div>
 <script>
     $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+        $('.supervise_btn[data-status="1"]').addClass("disabled")
         $(".visitors_name").hover(function () {
             var that = $(this)
             var Visitor_name = that.children("span").text();
@@ -216,16 +245,142 @@
     $(".Replycomment_select_a").on("click", function () {
         var that = $(this)
         $.ajax({
-            url: '/VisitManagement/Comment_PartialView',
+            url: '/VisitManagement/ReplyComment_PartialView',
             data: {
                 rec_id: that.attr("data-id"),
             },
             success: function (data) {
-                $('#modal-comment-content').html(data)
-                $("#myCommentModal").modal('show')
+                $('#modal-Replycomment-content').html(data)
+                $("#myReplyCommentModal").modal('show')
                 $("#modal-body").attr("data-id", that.attr("data-id"))
             }
         })
+    })
+    // 核心问题评论
+    $(".Corecomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/CoreComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-Corecomment-content').html(data)
+                $("#myCoreCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 管理
+    $(".supervise_btn").on("click", function () {
+        var that = $(this)
+        $.confirm({
+            title: '审批',
+            content: '',
+            boxWidth: '500px',
+            theme: 'modern',
+            useBootstrap: false,
+            buttons: {
+                审批通过: function () {
+                    btnClass: 'btn-red',
+                    $.ajax({
+                        url: "/VisitManagement/Supervise_Status/",
+                        type: "post",
+                        data: {
+                            rec_id: that.attr("data-id"),
+                            rec_status:1
+                        },
+                        success: function (data) {
+                            $.alert({
+                                title: '提示!',
+                                type: 'green',
+                                content: "操作成功",
+                            });
+                            $.ajax({
+                                url: "/VisitManagement/Visit_PartialView/",
+                                type: "post",
+                                data: {
+                                    visit_date: $("#select_date").val(),
+                                    dep_id: $(".team_select.active").attr("data-val"),
+                                    com_type: $(".company_type.active").text(),
+                                    com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                    sort: $(".sort_type.active").attr("data-val")
+                                },
+                                success: function (data) {
+                                    $("#visit_list_content").html(data)
+                                }
+                            })
+                        }
+                    })
+                },
+                heyThere: {
+                    text: '审批否决',
+                    action: function () {
+                        $.confirm({
+                            title: '否决原因',
+                            content: '<div class="form-group">' +
+                            '<textarea type="text" placeholder="原因" style="width:433px;height:124px" class="name form-control" required></textarea>' +
+                            '</div>',
+                            theme: 'modern',
+                            boxWidth: '500px',
+                            useBootstrap: false,
+                            buttons: {
+                                formSubmit: {
+                                    text: '提交',
+                                    btnClass: 'btn-blue',
+                                    action: function () {
+                                        $.ajax({
+                                            url: "/VisitManagement/Supervise_Status/",
+                                            type: "post",
+                                            data: {
+                                                rec_id: that.attr("data-id"),
+                                                detail: this.$content.find('.name').val(),
+                                                rec_status: -1
+                                            },
+                                            success: function (data) {
+                                                if (data.result == "SUCCESS") {
+                                                    $.alert({
+                                                        title: '提示!',
+                                                        type: 'green',
+                                                        content: "操作成功",
+                                                    });
+                                                    $.ajax({
+                                                        url: "/VisitManagement/Visit_PartialView/",
+                                                        type: "post",
+                                                        data: {
+                                                            visit_date: $("#select_date").val(),
+                                                            dep_id: $(".team_select.active").attr("data-val"),
+                                                            com_type: $(".company_type.active").text(),
+                                                            com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                                            sort: $(".sort_type.active").attr("data-val")
+                                                        },
+                                                        success: function (data) {
+                                                            $("#visit_list_content").html(data)
+                                                        }
+                                                    })
+                                                } else {
+                                                    $.alert({
+                                                        title: '提示!',
+                                                        type: 'red',
+                                                        content: "请联系管理员开通权限",
+                                                    });
+                                                }
+                                            }
+                                        })
+                                    }
+                                },
+                                取消: function () {
+                                    //close
+                                },
+                            }
+                        })
+                        
+                    }
+                }
+            }
+        });
     })
     // 固定第一列
     function freezing() {

@@ -33,7 +33,7 @@
         public virtual DbSet<VM_Contact> VM_Contact { get; set; }
         public virtual DbSet<VM_ContentConfig> VM_ContentConfig { get; set; }
         public virtual DbSet<VM_ReplyComment> VM_ReplyComment { get; set; }
-
+        public virtual DbSet<VM_CoreComment> VM_CoreComment { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -47,9 +47,12 @@
             modelBuilder.Entity<VM_Employee>().HasMany(m => m.AttendVisit).WithMany(e => e.AttendEmployee).Map(m => { m.MapLeftKey("EmployeeId"); m.MapRightKey("VisitRecordId"); m.ToTable("AttendEmployee_VisitRecord"); });
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
+            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_CoreComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
+            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_CoreComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
         }
     }
 
+    //公司表
     //公司表
     [Table("VM_Company")]
     public partial class VM_Company
@@ -64,6 +67,9 @@
 
         [StringLength(32)]
         public string Company_Source { get; set; }
+
+        [StringLength(32)]
+        public string Company_Source_Detail { get; set; }
 
         [StringLength(128)]
         public string Company_Address { get; set; }
@@ -90,6 +96,9 @@
 
         [StringLength(16)]
         public string SpecialSource_Detail { get; set; }//特殊渠道详情
+
+        [StringLength(16)]
+        public string SpecialSource_OtherDetail { get; set; }//特殊渠道其他详情
 
         public string Company_Phone { get; set; }
 
@@ -192,6 +201,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VM_CoreComment> VM_CoreComment { get; set; }
     }
 
     //拜访记录表
@@ -244,6 +256,8 @@
         public string NextVisit_Detail { get; set; }//下次拜访事项
 
         public int status { get; set; }//拜访状态（待定）
+        [StringLength(128)]
+        public string Veto_Detail { get; set; }
 
         public int Employee_Id { get; set; }//填表人
 
@@ -261,6 +275,9 @@
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<VM_CoreComment> VM_CoreComment { get; set; }
     }
 
     //拜访评论表
@@ -297,6 +314,26 @@
         public int Employee_Id { get; set; }
 
         public DateTime? ReplyComment_Time { get; set; }
+
+        public virtual VM_Employee VM_Employee { get; set; }
+
+        public virtual VM_VisitRecord VM_VisitRecord { get; set; }
+    }
+
+    //核心问题评论表
+    [Table("VM_CoreComment")]
+    public partial class VM_CoreComment
+    {
+        public int Id { get; set; }
+
+        [StringLength(1024)]
+        public string CoreComment_Detail { get; set; }
+
+        public int VisitRecord_Id { get; set; }
+
+        public int Employee_Id { get; set; }
+
+        public DateTime? CoreComment_Time { get; set; }
 
         public virtual VM_Employee VM_Employee { get; set; }
 

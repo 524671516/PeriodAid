@@ -1,7 +1,7 @@
-﻿@model IEnumerable<PeriodAid.Models.VM_Comment>
+﻿@model IEnumerable<PeriodAid.Models.VM_CoreComment>
 
 <div class="modal-header">
-    <h2>所有评论</h2>
+    <h3>评论</h3>
 </div>
 <div class="modal-body" id="modal-body">
     @foreach (var detial in Model)
@@ -10,13 +10,13 @@
             <div class="story">
                 <div class="opbtn"></div>
                 <p class="story_t">@detial.VM_Employee.Employee_Name</p>
-                <p class="story_time">@detial.Comment_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</p>
-                <p class="story_m">@detial.Comment_Detail</p>
+                <p class="story_time">@detial.CoreComment_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                <p class="story_m">@detial.CoreComment_Detail</p>
             </div>
         </div>
     }
     <div id="comment_text">
-        @using (Html.BeginForm("CreateComment", "VisitManagement", FormMethod.Post, new { @id = "comment-form" }))
+        @using (Html.BeginForm("CreateCoreComment", "VisitManagement", FormMethod.Post, new { @id = "comment-form" }))
         {
             <div class="form-horizontal" style="text-align:center">
                 <div>
@@ -35,7 +35,7 @@
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")
             $("#comment-form").ajaxSubmit({
-                url: '/VisitManagement/CreateComment',
+                url: '/VisitManagement/CreateCoreComment',
                 type: 'post',
                 data: {
                     detail: $("#com_detial").val(),
@@ -67,10 +67,11 @@
                             content: "请联系管理员开通权限",
                         });
                     }
-                    
+
                 }
             })
             return false;
         }
     })
 </script>
+

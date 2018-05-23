@@ -1202,6 +1202,8 @@
     <Content Include="Views\VisitManagement\CompanyInfo.cshtml" />
     <Content Include="Views\VisitManagement\Comment_View.cshtml" />
     <Content Include="Views\VisitManagement\Comment_PartialView.cshtml" />
+    <Content Include="Views\VisitManagement\ReplyComment_PartialView.cshtml" />
+    <Content Include="Views\VisitManagement\CoreComment_PartialView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -380,7 +380,23 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        
+
+        public static string VisitStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "审核未通过";
+                case 0:
+                    return "待审核";
+                case 1:
+                    return "已审核";
+                default:
+                    return "未知";
+            }
+        }
+
+
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
             if (username == null)

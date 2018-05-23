@@ -68,6 +68,7 @@ namespace PeriodAid.Controllers
         public ActionResult Visit_View()
         {
             var visitor = from m in _vmdb.VM_Employee
+                          where m.Employee_Name != "季锦良"
                           select m;
             ViewBag.Visitor = visitor;
             var company = from m in _vmdb.VM_Company
@@ -103,9 +104,9 @@ namespace PeriodAid.Controllers
             }
             if (sort == 0)
             {
-                return PartialView(record.OrderByDescending(m=>m.Visit_Time).ToPagedList(_page,20));
+                return PartialView(record.OrderByDescending(m => m.Visit_Time).ToPagedList(_page, 20));
             }
-            else if(sort == 1)
+            else if (sort == 1)
             {
                 return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).ToPagedList(_page, 20));
             }
@@ -119,7 +120,7 @@ namespace PeriodAid.Controllers
         public JsonResult QueryVisitor(string query)
         {
             var visitor = from m in _vmdb.VM_Employee
-                          where m.Employee_Name.Contains(query)
+                          where m.Employee_Name.Contains(query) && m.Employee_Name != "季锦良"
                           select new { Id = m.Id, VisitorName = m.Employee_Name };
             return Json(visitor);
         }
@@ -157,6 +158,14 @@ namespace PeriodAid.Controllers
             return PartialView(Replycomment);
         }
 
+        public ActionResult CoreComment_PartialView(int rec_id)
+        {
+            var Corecomment = from m in _vmdb.VM_CoreComment
+                               where m.VisitRecord_Id == rec_id
+                               select m;
+            return PartialView(Corecomment);
+        }
+
         public ApplicationUser getUser(string username)
         {
             var user = memdb.Users.SingleOrDefault(m => m.UserName == username);
@@ -167,7 +176,7 @@ namespace PeriodAid.Controllers
         public ActionResult CreateComment(string detail,int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Mobile == user.PhoneNumber);
+            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
             if (visitor!=null)
             {
                 VM_Comment comment = new VM_Comment();
@@ -176,6 +185,70 @@ namespace PeriodAid.Controllers
                 comment.VisitRecord_Id = rec_id;
                 comment.Comment_Detail = detail;
                 _vmdb.VM_Comment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CreateReplyComment(string detail, int rec_id)
+        {
+            var user = getUser(User.Identity.Name);
+            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
+            if (visitor != null)
+            {
+                VM_ReplyComment comment = new VM_ReplyComment();
+                comment.ReplyComment_Time = DateTime.Now;
+                comment.Employee_Id = visitor.Id;
+                comment.VisitRecord_Id = rec_id;
+                comment.ReplyComment_Detail = detail;
+                _vmdb.VM_ReplyComment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CreateCoreComment(string detail, int rec_id)
+        {
+            var user = getUser(User.Identity.Name);
+            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
+            if (visitor != null)
+            {
+                VM_CoreComment comment = new VM_CoreComment();
+                comment.CoreComment_Time = DateTime.Now;
+                comment.Employee_Id = visitor.Id;
+                comment.VisitRecord_Id = rec_id;
+                comment.CoreComment_Detail = detail;
+                _vmdb.VM_CoreComment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
+        // 审批
+        [HttpPost]
+        public JsonResult Supervise_Status(int rec_id,int rec_status, string detail)
+        {
+            var user = getUser(User.Identity.Name);
+            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
+            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
+            if (visitor!=null)
+            {
+                record.Veto_Detail = detail;
+                record.status = rec_status;
+                _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
                 _vmdb.SaveChanges();
                 return Json(new { result = "SUCCESS" });
             }else
