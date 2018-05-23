@@ -101,7 +101,7 @@
                 <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
                 <td>
                     <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
-                       <a href="#" title="点击评论">@item.Reply_Detail</a>
+                       <a href="#" data-id="@item.Id" title="点击评论" class="Replycomment_select_a" data-toggle="modal" data-target="#myReplyCommentModal">@item.Reply_Detail</a>
                     </div>
                 </td>
                 <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
@@ -151,6 +151,12 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="myReplyCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-Replycomment-content">
+        </div>
+    </div>
+</div>
 <script>
     $(function () {
         $(".visitors_name").hover(function () {
@@ -193,6 +199,21 @@
     })
     // 评论
     $(".comment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/Comment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 我方回复评论
+    $(".Replycomment_select_a").on("click", function () {
         var that = $(this)
         $.ajax({
             url: '/VisitManagement/Comment_PartialView',

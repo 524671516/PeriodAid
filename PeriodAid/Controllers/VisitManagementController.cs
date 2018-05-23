@@ -149,6 +149,14 @@ namespace PeriodAid.Controllers
             return PartialView(comment);
         }
 
+        public ActionResult ReplyComment_PartialView(int rec_id)
+        {
+            var Replycomment = from m in _vmdb.VM_ReplyComment
+                          where m.VisitRecord_Id == rec_id
+                          select m;
+            return PartialView(Replycomment);
+        }
+
         public ApplicationUser getUser(string username)
         {
             var user = memdb.Users.SingleOrDefault(m => m.UserName == username);

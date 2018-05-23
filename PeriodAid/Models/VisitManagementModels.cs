@@ -30,9 +30,9 @@
         public virtual DbSet<VM_Employee> VM_Employee { get; set; }
         public virtual DbSet<VM_VisitRecord> VM_VisitRecord { get; set; }
         public virtual DbSet<VM_Comment> VM_Comment { get; set; }
-        public virtual DbSet<VM_ReplyComment> VM_ReplyComment { get; set; }
         public virtual DbSet<VM_Contact> VM_Contact { get; set; }
         public virtual DbSet<VM_ContentConfig> VM_ContentConfig { get; set; }
+        public virtual DbSet<VM_ReplyComment> VM_ReplyComment { get; set; }
 
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -41,12 +41,12 @@
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_Company).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_Comment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_Comment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_Contact).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Employee>().HasMany(m => m.AttendVisit).WithMany(e => e.AttendEmployee).Map(m => { m.MapLeftKey("EmployeeId"); m.MapRightKey("VisitRecordId"); m.ToTable("AttendEmployee_VisitRecord"); });
+            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
+            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
         }
     }
 
@@ -188,10 +188,10 @@
         public virtual ICollection<VM_Comment> VM_Comment { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
+        public virtual ICollection<VM_VisitRecord> VM_VisitRecord { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_VisitRecord> VM_VisitRecord { get; set; }
+        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
     }
 
     //拜访记录表
@@ -257,10 +257,10 @@
         public virtual ICollection<VM_Comment> VM_Comment { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
+        public virtual ICollection<VM_Employee> AttendEmployee { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_Employee> AttendEmployee { get; set; }
+        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
     }
 
     //拜访评论表
