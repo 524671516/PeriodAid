@@ -1,0 +1,77 @@
+﻿@model IEnumerable<PeriodAid.Models.VM_SupportComment>
+
+<div class="modal-header">
+    <h3>需要支持评论</h3>
+</div>
+<div class="modal-body" id="modal-body">
+    @foreach (var detial in Model)
+    {
+        <div id="messDivId">
+            <div class="story">
+                <div class="opbtn"></div>
+                <p class="story_t">@detial.VM_Employee.Employee_Name</p>
+                <p class="story_time">@detial.SupportComment_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                <p class="story_m">@detial.SupportComment_Detail</p>
+            </div>
+        </div>
+    }
+    <div id="comment_text">
+        @using (Html.BeginForm("CreateSupportComment", "VisitManagement", FormMethod.Post, new { @id = "comment-form" }))
+        {
+            <div class="form-horizontal" style="text-align:center">
+                <div>
+                    <div id="comment_container">
+                        <input id="com_detial" autocomplete="off" placeholder="评论内容" />
+                        <input type="button" value="确定" id="save-btn" class="btn btn-danger" name="save-btn" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $("#save-btn").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#comment-form").ajaxSubmit({
+                url: '/VisitManagement/CreateSupportComment',
+                type: 'post',
+                data: {
+                    detail: $("#com_detial").val(),
+                    rec_id: $("#modal-body").attr("data-id")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $.ajax({
+                            url: "/VisitManagement/Visit_PartialView/",
+                            type: "post",
+                            data: {
+                                visit_date: $("#select_date").val(),
+                                dep_id: $(".team_select.active").attr("data-val"),
+                                com_type: $(".company_type.active").text(),
+                                com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                sort: $(".sort_type.active").attr("data-val")
+                            },
+                            success: function (data) {
+                                $("#visit_list_content").html(data)
+                                $('.modal-backdrop.in').remove()
+                                $('body').removeClass('modal-open')
+                            }
+                        })
+                    } else {
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "请联系管理员开通权限",
+                        });
+                    }
+
+                }
+            })
+            return false;
+        }
+    })
+</script>
+

@@ -23,7 +23,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Company_Name</td>
+                <td>
+                    <a href="#" data-id="@item.Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
+                        @item.Company_Name
+                    </a>
+                </td>
                 <td>@item.Company_Type</td>
                 <td>@item.Company_Source</td>
                 <td>
@@ -46,6 +50,12 @@
         }
     </table>
 </div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
 <script>
     // 固定第一列
     function freezing() {
@@ -63,4 +73,17 @@
             $("#fixed_th").css("background", "#f9f9f9")
         }
     }
+    $('.company_select_a').click(function () {
+        $.ajax({
+            url: '/VisitManagement/CompanyInfo/',
+            data: {
+                com_id: $(this).attr('data-id'),
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
+    });
+    
 </script>

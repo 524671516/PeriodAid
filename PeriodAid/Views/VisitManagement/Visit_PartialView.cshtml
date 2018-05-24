@@ -55,7 +55,7 @@
                 </td>
                 <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
                 <td style="text-indent:5px">@Html.VisitType(item.Visit_Type)</td>
-                <td style="text-indent:1px">第 @item.VM_Company.VM_VisitRecord.Count() 次</td>
+                <td style="text-indent:1px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
                 <td>
                     <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
                         @item.VM_Company.Source_Name
@@ -104,10 +104,11 @@
                         </div>
                         <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论</a>
                     </td>
-                    <td>
-                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Support">
+                    <td style="position:relative">
+                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:18px" title="@item.Support">
                             @item.Support
                         </div>
+                        <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论</a>
                     </td>
                 }
                 <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
@@ -184,6 +185,12 @@
 <div class="modal fade" id="myCoreCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content" id="modal-Corecomment-content">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="mySupportCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-Supportcomment-content">
         </div>
     </div>
 </div>
@@ -270,6 +277,21 @@
             success: function (data) {
                 $('#modal-Corecomment-content').html(data)
                 $("#myCoreCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 需要支持评论
+    $(".Supportcomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/SupportComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-Supportcomment-content').html(data)
+                $("#mySupportCommentModal").modal('show')
                 $("#modal-body").attr("data-id", that.attr("data-id"))
             }
         })
@@ -381,7 +403,10 @@
                         })
                         
                     }
-                }
+                },
+                取消: function () {
+                   
+                },
             }
         });
     })

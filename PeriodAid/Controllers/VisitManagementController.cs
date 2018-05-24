@@ -134,7 +134,7 @@ namespace PeriodAid.Controllers
             return Json(company);
         }
 
-        public ActionResult CompanyInfo(int com_id, int rec_id)
+        public ActionResult CompanyInfo(int com_id, int? rec_id)
         {
             var item = _vmdb.VM_Company.SingleOrDefault(m => m.Id == com_id);
             var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
@@ -165,7 +165,15 @@ namespace PeriodAid.Controllers
                                select m;
             return PartialView(Corecomment);
         }
-
+        
+        public ActionResult SupportComment_PartialView(int rec_id)
+        {
+            var Supportcomment = from m in _vmdb.VM_SupportComment
+                              where m.VisitRecord_Id == rec_id
+                              select m;
+            return PartialView(Supportcomment);
+        }
+        
         public ApplicationUser getUser(string username)
         {
             var user = memdb.Users.SingleOrDefault(m => m.UserName == username);
@@ -237,6 +245,28 @@ namespace PeriodAid.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult CreateSupportComment(string detail, int rec_id)
+        {
+            var user = getUser(User.Identity.Name);
+            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
+            if (visitor != null)
+            {
+                VM_SupportComment comment = new VM_SupportComment();
+                comment.SupportComment_Time = DateTime.Now;
+                comment.Employee_Id = visitor.Id;
+                comment.VisitRecord_Id = rec_id;
+                comment.SupportComment_Detail = detail;
+                _vmdb.VM_SupportComment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
+        }
+
         // 审批
         [HttpPost]
         public JsonResult Supervise_Status(int rec_id,int rec_status, string detail)
@@ -282,5 +312,6 @@ namespace PeriodAid.Controllers
                            select m).ToPagedList(_page,20);
             return PartialView(company);
         }
+        
     }
 }

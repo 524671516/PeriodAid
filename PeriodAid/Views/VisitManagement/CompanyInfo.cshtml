@@ -69,8 +69,8 @@
                     @Html.SpecialSource(Model.Special_Source)
                 </div>
                 <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道详情:</label>
-                    <div class="col-md-3" style="line-height: 36px;font-size: 14px">
-                        @Model.SpecialSource_Detail
+                    <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                        <span style="float:left">@Model.SpecialSource_Detail</span>
                     </div>
             }
             else
@@ -104,7 +104,6 @@
     <hr style="margin:0;border:1px solid #e5e5e5" />
     <div class="form-group" style="margin-bottom:50px">
         <label class="col-md-2 control-label" style="font-size:15px;font-weight:600">联系人信息:</label>
-        @*<div class="col-md-9 angle_btn" style="line-height: 38px;font-size: 14px" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">点击展开&nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i></div>*@
         <div class="col-md-11 col-md-offset-1" style="margin-top:10px;flex-wrap: wrap;">
             <div class="contact_shared_view col-md-2">姓名</div>
             <div class="contact_shared_view col-md-3">联系电话</div>
@@ -113,168 +112,22 @@
             <div class="contact_shared_view col-md-2">职务</div>
             @foreach (var contact in Model.VM_Contact)
             {
-                <div class="contact_shared_view col-md-2">@contact.Contact_Name</div>
+                    <div class="contact_shared_view col-md-2" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="@contact.Contact_Name">
+                        @contact.Contact_Name
+                    </div>
                     <div class="contact_shared_view col-md-3">@contact.Contact_Mobile</div>
                     <div class="contact_shared_view col-md-3">@contact.Contact_Email</div>
                     <div class="contact_shared_view col-md-2">@contact.Contact_WeChat</div>
                     <div class="contact_shared_view col-md-2">@contact.Contact_Type</div>
-
             }
         </div>
     </div>
-
-    @*<div class="form-group">
-            <label class="col-md-3 control-label">拜访次数</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.VM_VisitRecord.Count() 次
-            </div>
-        </div>*@
-    @*@if (ViewBag.Record.Cooperation_Intention == 0)
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">有无合作意向</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    有
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">兴趣品相</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    @ViewBag.Record.Intentional_Products
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">操作资金</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    @ViewBag.Record.Intentional_Funds
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">有无合作意向</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    无
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">无意向原因</label>
-                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
-                    <span style="float:left">@ViewBag.Record.NoIntention_Reason</span>
-                </div>
-            </div>
-        }
-        @if (ViewBag.Record.Smoothly == 0)
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">是否顺利</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    是
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">预计拿货时间</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    @ViewBag.Record.ExpectedDelivery_Time.ToString("yyyy-MM-dd")
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">预计拿货金额</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    @ViewBag.Record.ExpectedDelivery_Funds
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">是否顺利</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    否
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">核心问题</label>
-                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
-                    <span style="float:left">@ViewBag.Record.Core_Problem</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">需要支持</label>
-                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
-                    <span style="float:left">@ViewBag.Record.Support</span>
-                </div>
-            </div>
-        }
-        @if (ViewBag.Reply_Status == 0)
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">是否需要我司回复</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    是
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">回复详细</label>
-                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
-                    <span style="float:left">@ViewBag.Record.Reply_Detail</span>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">是否需要我司回复</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    否
-                </div>
-            </div>
-        }
-        @if (ViewBag.CustomerReply_Status == 0)
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">是否需要对方回复</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    是
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-3 control-label">对方回复详细</label>
-                <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
-                    <span style="float:left">@ViewBag.Record.CustomerReply_Detail</span>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label">是否需要对方回复</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    否
-                </div>
-            </div>
-        }
-        <div class="form-group">
-            <label class="col-md-3 control-label">下次拜访时间</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @ViewBag.Record.NextVisit_Time.ToString("yyyy-MM-dd")
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">下次拜访事项</label>
-            <div class="col-md-9" style="white-space: normal;float:left;font-size:14px;line-height: 34px;">
-                <span style="float:left">@ViewBag.Record.NextVisit_Detail</span>
-            </div>
-        </div>*@
-
     <div class="form-group">
         <div class="col-md-offset-1 col-md-9">
             <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
         </div>
     </div>
 </div>
-
 </div>
 <script>
     $(".angle_btn").on("click", function () {
