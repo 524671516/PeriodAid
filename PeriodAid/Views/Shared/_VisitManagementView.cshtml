@@ -14,6 +14,7 @@
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/share.css" rel="stylesheet" />
     <link href="~/Content/VisitManagement.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @RenderSection("header", required: false)
@@ -39,8 +40,14 @@
         }
         a:focus{
         outline:none;
-         text-decoration:none;
+        text-decoration:none;
     }
+        .navbar-default .navbar-nav > li > a{
+            color: #393232;
+        }
+        .container{
+                margin-left: 40px;
+        }
     </style>
 </head>
 <body>
@@ -49,6 +56,12 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="#"><strong class="color-blue">新客户拜访管理</strong></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav" id="ul-hover">
+                    <li><a href="/VisitManagement/Visit_View">拜访信息管理</a></li>
+                    <li><a href="/VisitManagement/Company_View">公司列表</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -77,3 +90,12 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+<script>
+    var locUrl = window.location.pathname;
+    $("#ul-hover li a").each(function (index, el) {
+        var href = this.getAttribute("href");
+        if( href == locUrl){
+            $(this).parent("li").addClass('current');
+        }
+    });
+</script>

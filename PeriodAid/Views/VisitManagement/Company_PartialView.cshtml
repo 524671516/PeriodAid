@@ -1,0 +1,66 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.VM_Company>
+@using PagedList.Mvc;
+<style>
+    tr>:first-child{  
+    position : relative;  
+}  
+</style>
+<div id="freezing" style="overflow-x:scroll" onscroll="javascript:freezing()">
+    <table class="table table-hover">
+        <tr>
+            <th>公司名称</th>
+            <th>公司类型</th>
+            <th>公司来源</th>
+            <th>公司渠道</th>
+            <th>渠道类型</th>
+            <th>代理过知名品牌</th>
+            <th>所属区域</th>
+            <th>年销售额</th>
+            <th>公司地址</th>
+            <th>联系电话</th>
+            <th>业务员</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Company_Name</td>
+                <td>@item.Company_Type</td>
+                <td>@item.Company_Source</td>
+                <td>
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Source_Name">
+                        @item.Source_Name
+                    </div>
+                </td>
+                <td>@item.Source_Type</td>
+                <td>
+                    <div style="width:170px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Agent_FamousBrand">
+                        @item.Agent_FamousBrand
+                    </div>
+                </td>
+                <td>@item.Region</td>
+                <td>@item.Sales_Amount 万元</td>
+                <td>@item.Company_Address</td>
+                <td>@item.Company_Phone</td>
+                <td>@item.VM_Employee.Employee_Name</td>
+            </tr>
+        }
+    </table>
+</div>
+<script>
+    // 固定第一列
+    function freezing() {
+        $("tr>:first-child").css("left", $("#freezing").scrollLeft());
+        var thWidth = $("#fixed_th").width();
+        var scroLeft = $("#freezing").scrollLeft();
+        if (scroLeft == 0) {
+            $("tr>:first-child").removeClass("isScrolling").css("background", "#eef1f5");
+            $("#fixed_th").css("background", "#f9f9f9")
+        } else if (scroLeft > 0 && scroLeft < thWidth) {
+            $("tr>:first-child").addClass("isScrolling").css("background", "#eef1f5");
+            $("#fixed_th").css("background", "#f9f9f9")
+        } else {
+            $("tr>:first-child").addClass("isScrolling").css("background", "#eef1f5");
+            $("#fixed_th").css("background", "#f9f9f9")
+        }
+    }
+</script>

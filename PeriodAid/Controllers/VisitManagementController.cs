@@ -256,5 +256,31 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "FAIL" });
             }
         }
+
+        // 公司
+        public ActionResult Company_View()
+        {
+            var visitor = from m in _vmdb.VM_Employee
+                          where m.Employee_Name != "季锦良"
+                          select m;
+            ViewBag.Visitor = visitor;
+            var company = from m in _vmdb.VM_Company
+                          select m;
+            ViewBag.Company = company;
+            return View();
+        }
+
+        public ActionResult Company_PartialView(int dep_id, string com_type, string com_name, string vis_name, int? page)
+        {
+            int _page = page ?? 1;
+            var company = (from m in _vmdb.VM_Company
+                           where m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
+                           && m.Company_Type == (com_type != "全部类型" ? com_type : m.Company_Type)
+                           && m.Company_Name == (com_name != "" ? com_name : m.Company_Name)
+                           && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
+                           orderby m.Id descending
+                           select m).ToPagedList(_page,20);
+            return PartialView(company);
+        }
     }
 }

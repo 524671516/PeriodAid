@@ -1,128 +1,135 @@
 ﻿@model PeriodAid.Models.VM_Company
     <style>
-        .collapse.in{
-            display: -webkit-box;
-            display: -webkit-flex;
-            display: -ms-flexbox;
-            display: flex;
+        .form-group{
+            margin-bottom:10px
+        }
+        label{
+            font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+            font-weight:500
+        }
+        .col-md-2{
+            padding-right:0;
+            width: 14%;
+            margin-left: 6px;
+        }
+        .col-md-3{
+            padding-right:0;
         }
     </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h3>公司信息</h3>
+    <h3 style="padding-left: 50px;display:inline-block">@Model.Company_Name</h3>
 </div>
 <div class="hidden" id="orderId_show"></div>
-<div class="modal-body" id="modal-body">
+<div class="modal-body" id="modal-body" style="padding-top:10px">
     <div class="form-horizontal">
         <div class="form-group">
-            <label class="col-md-3 control-label">公司名称</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Company_Name
-             </div>
+            <label class="col-md-2 control-label" style="font-size:15px;font-weight:600">基本信息:</label>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label">公司类别</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+            <label class="col-md-2 control-label" style="font-size:15px">公司类别:</label>
+            <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                 @Model.Company_Type
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">客户来源</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Company_Source
+            <label class="col-md-1 control-label" style="font-size:15px">客户来源:</label>
+            <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                <span style="float:left" class="replace_text">@Model.Company_Source</span>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">渠道名称</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Source_Name
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">渠道类型</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Source_Type
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label">年销售额</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+
+            <label class="col-md-1 control-label" style="font-size:15px">年销售额:</label>
+            <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                 @Model.Sales_Amount 万元
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label" style="white-space: nowrap;">代理知名品牌</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Agent_FamousBrand
+            <label class="col-md-2 control-label " style="font-size:15px">所属区域:</label>
+            <div class="col-md-2" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                <span style="float:left">@Model.Region</span>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-3 control-label" style="white-space: nowrap;">有无特殊渠道</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Html.SpecialSource(Model.Special_Source)
+            <label class="col-md-1 control-label" style="font-size:15px">渠道类型:</label>
+            <div class="col-md-3" style="line-height: 36px;font-size: 14px">
+                @Model.Source_Type
             </div>
-        </div>
-        @if (Model.Special_Source != -1)
-        {
-            <div class="form-group">
-                <label class="col-md-3 control-label" style="white-space: nowrap;">特殊渠道详情</label>
-                <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                    @Model.SpecialSource_Detail
-                </div>
-            </div>
-        }
-        
-        <div class="form-group">
-            <label class="col-md-3 control-label">是否有专用仓库</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+            <label class="col-md-1 control-label" style="font-size:15px">专用仓库:</label>
+            <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                 @Html.SpecialSource(Model.Dedicated_Warehouse)
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label">所属区域</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Region
+            <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">渠道名称:</label>
+            <div class="col-md-10" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                <span style="float:left">@Model.Source_Name</span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label">公司地址</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
-                @Model.Company_Address
+            @if (Model.Special_Source != -1)
+            {
+                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
+                <div class="col-md-4" style="line-height: 36px;font-size: 14px">
+                    @Html.SpecialSource(Model.Special_Source)
+                </div>
+                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道详情:</label>
+                    <div class="col-md-3" style="line-height: 36px;font-size: 14px">
+                        @Model.SpecialSource_Detail
+                    </div>
+            }
+            else
+            {
+                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
+                <div class="col-md-9" style="line-height: 36px;font-size: 14px">
+                    @Html.SpecialSource(Model.Special_Source)
+                </div>
+            }
+
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">代理知名品牌:</label>
+            <div class="col-md-10" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                <span style="float:left">@Model.Agent_FamousBrand</span>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label">联系电话</label>
-            <div class="col-md-9" style="line-height: 34px;font-size: 14px">
+            <label class="col-md-2 control-label" style="font-size:15px">联系电话:</label>
+            <div class="col-md-9" style="line-height: 36px;font-size: 14px">
                 @Model.Company_Phone
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-3 control-label">联系人信息</label>
-            <div class="col-md-9 angle_btn" style="line-height: 34px;font-size: 14px" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">点击展开&nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i></div>
-            <div class="collapse col-md-11 col-md-offset-1" style="margin-top:10px;flex-wrap: wrap;" id="collapseExample">
-                <div class="contact_shared_view col-md-3">姓名</div>
-                <div class="contact_shared_view col-md-2">联系电话</div>
-                <div class="contact_shared_view col-md-3">邮箱</div>
-                <div class="contact_shared_view col-md-2">微信</div>
-                <div class="contact_shared_view col-md-2">职务</div>
-                @foreach (var contact in Model.VM_Contact)
-                {
-                    <div class="contact_shared_view col-md-3">@contact.Contact_Name</div>
-                    <div class="contact_shared_view col-md-2">@contact.Contact_Mobile</div>
-                    <div class="contact_shared_view col-md-3" style="width:129px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@contact.Contact_Email">@contact.Contact_Email</div>
+            <label class="col-md-2 control-label" style="font-size:15px">公司地址:</label>
+            <div class="col-md-9" style="line-height: 36px;font-size: 14px">
+                @Model.Company_Address
+            </div>
+        </div>
+
+    <hr style="margin:0;border:1px solid #e5e5e5" />
+    <div class="form-group" style="margin-bottom:50px">
+        <label class="col-md-2 control-label" style="font-size:15px;font-weight:600">联系人信息:</label>
+        @*<div class="col-md-9 angle_btn" style="line-height: 38px;font-size: 14px" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">点击展开&nbsp;&nbsp;<i class="fa fa-angle-double-down" aria-hidden="true"></i></div>*@
+        <div class="col-md-11 col-md-offset-1" style="margin-top:10px;flex-wrap: wrap;">
+            <div class="contact_shared_view col-md-2">姓名</div>
+            <div class="contact_shared_view col-md-3">联系电话</div>
+            <div class="contact_shared_view col-md-3">邮箱</div>
+            <div class="contact_shared_view col-md-2">微信</div>
+            <div class="contact_shared_view col-md-2">职务</div>
+            @foreach (var contact in Model.VM_Contact)
+            {
+                <div class="contact_shared_view col-md-2">@contact.Contact_Name</div>
+                    <div class="contact_shared_view col-md-3">@contact.Contact_Mobile</div>
+                    <div class="contact_shared_view col-md-3">@contact.Contact_Email</div>
                     <div class="contact_shared_view col-md-2">@contact.Contact_WeChat</div>
                     <div class="contact_shared_view col-md-2">@contact.Contact_Type</div>
 
-                }
-            </div>
+            }
         </div>
-        @*<div class="form-group">
+    </div>
+
+    @*<div class="form-group">
             <label class="col-md-3 control-label">拜访次数</label>
             <div class="col-md-9" style="line-height: 34px;font-size: 14px">
                 @Model.VM_VisitRecord.Count() 次
             </div>
         </div>*@
-        @*@if (ViewBag.Record.Cooperation_Intention == 0)
+    @*@if (ViewBag.Record.Cooperation_Intention == 0)
         {
             <div class="form-group">
                 <label class="col-md-3 control-label">有无合作意向</label>
@@ -261,12 +268,13 @@
             </div>
         </div>*@
 
-        <div class="form-group">
-            <div class="col-md-offset-3 col-md-9">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
+    <div class="form-group">
+        <div class="col-md-offset-1 col-md-9">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
         </div>
     </div>
+</div>
+
 </div>
 <script>
     $(".angle_btn").on("click", function () {
@@ -279,4 +287,7 @@
             that.children("i").addClass("fa-angle-double-down")
         }
     })
+    // 替换
+    var str = $(".replace_text").text()
+    $(".replace_text").text(str.replace("/"," "))
 </script>

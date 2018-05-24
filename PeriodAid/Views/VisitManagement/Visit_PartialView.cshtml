@@ -3,6 +3,7 @@
 <style>
     tr>:first-child{  
     position : relative;  
+    z-index:31
 }  
     .btn-xs{
         padding:0 5px
@@ -48,7 +49,7 @@
         {
             <tr>
                 <td>
-                    <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" title="@item.VM_Company.Company_Name" class="company_select_a" data-toggle="modal" data-target="#myModal">
+                    <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
                         @item.VM_Company.Company_Name
                     </a>
                 </td>
@@ -97,10 +98,11 @@
                 {
                     <td></td>
                     <td></td>
-                    <td>
-                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Core_Problem">
-                            <a style="cursor:pointer" data-id="@item.Id" data-toggle="tooltip" data-placement="left" title="点击查看评论" class="Corecomment_select_a" data-target="#myCoreCommentModal">@item.Core_Problem</a>
+                    <td style="position:relative">
+                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Core_Problem">
+                            @item.Core_Problem
                         </div>
+                        <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论</a>
                     </td>
                     <td>
                         <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Support">
@@ -109,10 +111,11 @@
                     </td>
                 }
                 <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
-                <td>
-                    <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Reply_Detail">
-                       <a style="cursor:pointer" data-id="@item.Id" data-toggle="tooltip" data-placement="left" title="点击查看评论" class="Replycomment_select_a" data-target="#myReplyCommentModal">@item.Reply_Detail</a>
+                <td style="position:relative">
+                    <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Reply_Detail">
+                        @item.Reply_Detail
                     </div>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论</a>
                 </td>
                 <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
                 @if (item.CustomerReply_Status == 0)
@@ -160,8 +163,8 @@
 <div class="text-right">
     @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
 </div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modal-content">
         </div>
     </div>
