@@ -67,8 +67,8 @@
         [StringLength(32)]
         public string Company_Type { get; set; }//客户类型（现代渠道，流通，餐饮，电商和APP）
 
-        [StringLength(32)]
-        public string Company_Category { get; set; }//客户类别（经销商，渠道终端）
+        //[StringLength(32)]
+        //public string Company_Category { get; set; }//客户类别（经销商，渠道终端）
 
         [StringLength(32)]
         public string Company_Source { get; set; }//客户来源
@@ -81,7 +81,7 @@
 
         public int Employee_Count { get; set; }
 
-        public int Store_Count { get; set; }//门店数量
+        //public int Store_Count { get; set; }//门店数量
 
         [StringLength(256)]
         public string Source_Name { get; set; }//渠道名称
@@ -92,11 +92,11 @@
         [StringLength(32)]
         public string Source_Type { get; set; }//渠道类型
 
-        public int Entrance_Fee { get; set; }//进场费用（0有，-1无）
+        //public int Entrance_Fee { get; set; }//进场费用（0有，-1无）
 
-        public decimal EntranceFee_Count { get; set; }//进场费用数额
+        //public decimal EntranceFee_Count { get; set; }//进场费用数额
 
-        public string Entrance_SKU { get; set; }//SKU（门店/系统）
+        //public string Entrance_SKU { get; set; }//SKU（门店/系统）
 
         public int Dedicated_Warehouse { get; set; }//专用仓库（0有，-1无）
 
