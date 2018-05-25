@@ -244,13 +244,13 @@
 
         public decimal Intentional_Funds { get; set; }//操作资金
 
-        public int Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
+        //public int Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
 
-        public string Company_Name { get; set; }//公司名称
+        //public string Company_Name { get; set; }//公司名称
 
-        public string Contact_Mobile { get; set; }//联系人电话
+        //public string Contact_Mobile { get; set; }//联系人电话
 
-        public DateTime? Reply_Time { get; set; }//回复日期
+        //public DateTime? Reply_Time { get; set; }//回复日期
 
         public string NoIntention_Reason { get; set; }//无意向原因
 
