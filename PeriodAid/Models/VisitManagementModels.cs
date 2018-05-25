@@ -35,7 +35,6 @@
         public virtual DbSet<VM_ReplyComment> VM_ReplyComment { get; set; }
         public virtual DbSet<VM_CoreComment> VM_CoreComment { get; set; }
         public virtual DbSet<VM_SupportComment> VM_SupportComment { get; set; }
-        
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -57,7 +56,6 @@
     }
 
     //公司表
-    //公司表
     [Table("VM_Company")]
     public partial class VM_Company
     {
@@ -66,47 +64,63 @@
         [StringLength(32)]
         public string Company_Name { get; set; }
 
-        [StringLength(16)]
-        public string Company_Type { get; set; }
+        [StringLength(32)]
+        public string Company_Type { get; set; }//客户类型（现代渠道，流通，餐饮，电商和APP）
 
         [StringLength(32)]
-        public string Company_Source { get; set; }
+        public string Company_Category { get; set; }//客户类别（经销商，渠道终端）
+
+        [StringLength(32)]
+        public string Company_Source { get; set; }//客户来源
 
         [StringLength(32)]
         public string Company_Source_Detail { get; set; }
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Company_Address { get; set; }
 
         public int Employee_Count { get; set; }
 
-        [StringLength(128)]
+        public int Store_Count { get; set; }//门店数量
+
+        [StringLength(256)]
         public string Source_Name { get; set; }//渠道名称
 
-        [StringLength(16)]
+        [StringLength(256)]
         public string Region { get; set; }//所属区域
 
-        [StringLength(16)]
+        [StringLength(32)]
         public string Source_Type { get; set; }//渠道类型
+
+        public int Entrance_Fee { get; set; }//进场费用（0有，-1无）
+
+        public decimal EntranceFee_Count { get; set; }//进场费用数额
+
+        public string Entrance_SKU { get; set; }//SKU（门店/系统）
 
         public int Dedicated_Warehouse { get; set; }//专用仓库（0有，-1无）
 
+        public int Warehouse_Area { get; set; }//仓库面积/平方米
+
         public decimal Sales_Amount { get; set; }//年销售额
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Agent_FamousBrand { get; set; }//代理知名品牌
 
         public int Special_Source { get; set; }//特殊渠道（0有，-1无）
 
-        [StringLength(16)]
+        [StringLength(256)]
         public string SpecialSource_Detail { get; set; }//特殊渠道详情
 
-        [StringLength(16)]
+        [StringLength(256)]
         public string SpecialSource_OtherDetail { get; set; }//特殊渠道其他详情
 
+        [StringLength(32)]
         public string Company_Phone { get; set; }
 
         public int Company_Status { get; set; }
+
+        public DateTime? Create_Time { get; set; }
 
         public DateTime? Update_Time { get; set; }
 
@@ -132,13 +146,13 @@
         [StringLength(32)]
         public string Contact_Name { get; set; }
 
-        [StringLength(16)]
+        [StringLength(32)]
         public string Contact_Type { get; set; }
 
-        [StringLength(16)]
+        [StringLength(32)]
         public string Contact_Mobile { get; set; }
 
-        [StringLength(16)]
+        [StringLength(32)]
         public string Contact_WeChat { get; set; }
 
         [StringLength(32)]
@@ -158,7 +172,7 @@
         [StringLength(32)]
         public string Department_Name { get; set; }
 
-        [StringLength(16)]
+        [StringLength(32)]
         public string Department_Type { get; set; }
 
         public int Department_Status { get; set; }
@@ -181,7 +195,7 @@
 
         public int Employee_Status { get; set; }
 
-        [StringLength(11)]
+        [StringLength(32)]
         public string Employee_Mobile { get; set; }
 
         [StringLength(32)]
@@ -221,16 +235,22 @@
 
         public DateTime? Visit_Time { get; set; }//拜访时间
 
-        //public int Visit_Number { get; set; }//拜访次数
-
         public int Visit_Type { get; set; }//拜访方式（0面谈，1电话，2微信）
 
         public int Cooperation_Intention { get; set; }//合作意向（0有，-1无）
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Intentional_Products { get; set; }//兴趣品相
 
         public decimal Intentional_Funds { get; set; }//操作资金
+
+        public int Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
+
+        public string Company_Name { get; set; }//公司名称
+
+        public string Contact_Mobile { get; set; }//联系人电话
+
+        public DateTime? Reply_Time { get; set; }//回复日期
 
         public string NoIntention_Reason { get; set; }//无意向原因
 
@@ -240,22 +260,22 @@
 
         public decimal ExpectedDelivery_Funds { get; set; }//预计拿货金额
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Core_Problem { get; set; }//核心问题
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Support { get; set; }//需要支持
 
         public int Reply_Status { get; set; }//需要我司回复（0是，-1否）
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Reply_Detail { get; set; }//我司回复的详细
 
         public int CustomerReply_Status { get; set; }//需要对方回复（0是，-1否）
 
         public DateTime? CustomerReply_Time { get; set; }//对方回复的时间
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string CustomerReply_Detail { get; set; }//对方回复的详情
 
         public int NextVisit_Type { get; set; }//下次拜访方式（0实地，1电话）
@@ -265,7 +285,8 @@
         public string NextVisit_Detail { get; set; }//下次拜访事项
 
         public int status { get; set; }//拜访状态（待定）
-        [StringLength(128)]
+
+        [StringLength(256)]
         public string Veto_Detail { get; set; }
 
         public int Employee_Id { get; set; }//填表人
@@ -298,7 +319,7 @@
     {
         public int Id { get; set; }
 
-        [StringLength(1024)]
+        [StringLength(256)]
         public string Comment_Detail { get; set; }
 
         public int VisitRecord_Id { get; set; }
@@ -318,7 +339,7 @@
     {
         public int Id { get; set; }
 
-        [StringLength(1024)]
+        [StringLength(256)]
         public string ReplyComment_Detail { get; set; }
 
         public int VisitRecord_Id { get; set; }
@@ -338,7 +359,7 @@
     {
         public int Id { get; set; }
 
-        [StringLength(1024)]
+        [StringLength(256)]
         public string CoreComment_Detail { get; set; }
 
         public int VisitRecord_Id { get; set; }
@@ -378,10 +399,10 @@
     {
         public int Id { get; set; }
 
-        [StringLength(16)]
+        [StringLength(32)]
         public string Content_Name { get; set; }
 
-        [StringLength(128)]
+        [StringLength(256)]
         public string Content_Detail { get; set; }
 
         public int Content_Type { get; set; }
