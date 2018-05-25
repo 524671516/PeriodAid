@@ -81,9 +81,16 @@ body,html{
 /*颜色结束*/
 /*头部筛选*/
 #shared_select_condition{
-    margin:20px;
+    background:#f7fbfe;
+    margin:20px
+}
+#toggle_view_div{
+    position:relative;
     background:#f7fbfe
-    
+}
+.toggle_hide_div{
+    margin-left: 10px;
+    line-height: 38px;
 }
 .select_condition_div{
     margin-left:10px;

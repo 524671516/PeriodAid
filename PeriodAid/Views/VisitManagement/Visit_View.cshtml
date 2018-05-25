@@ -3,106 +3,119 @@
     ViewBag.Title = "Visit_View";
     Layout = "~/Views/Shared/_VisitManagementView.cshtml";
 }
+<style>
+    .toggle_hide_div {
+        display: inline-block;
+    }
+</style>
 <div>
-    <div id="shared_select_condition">
-        <div class="select_condition_div">
-            <label class="pull-left">销售团队：</label>
-            <ul class="shared_ul visitor_ul">
-                <li class="shared_section_li_active" style="margin-left: 12px">
-                    <a class="team_select active" data-val="0">全部</a>
-                </li>
-                <li style="margin-left: 12px">
-                    <a class="team_select" data-val="2">王者队</a>
-                </li>
-                <li>
-                    <a class="team_select" data-val="5">飞龙队</a>
-                </li>
-            </ul>
-        </div>
-        <div class="select_condition_div">
-            <label class="pull-left">公司类型：</label>
-            <ul class="shared_ul company_ul">
-                <li class="shared_section_li_active" style="margin-left: 12px">
-                    <a class="company_type active" data-val="1">全部类型</a>
-                </li>
-                <li>
-                    <a class="company_type" data-val="1">现代渠道</a>
-                </li>
-                <li>
-                    <a class="company_type" data-val="2">流通</a>
-                </li>
-                <li>
-                    <a class="company_type" data-val="3">电商和APP</a>
-                </li>
-                <li>
-                    <a class="company_type" data-val="4">餐饮</a>
-                </li>
-            </ul>
-        </div>
-        <div class="select_condition_div">
-            <label class="pull-left">排序方式：</label>
-            <ul class="shared_ul sort_ul">
-                <li class="shared_section_li_active" style="margin-left: 12px">
-                    <a class="sort_type active" data-val="0">默认</a>
-                </li>
-                <li>
-                    <a class="sort_type" data-val="1">按有无意向</a>
-                </li>
-                <li>
-                    <a class="sort_type" data-val="2">按拜访次数</a>
-                </li>
-            </ul>
-        </div>
-        <div class="select_condition_div">
-            <label class="pull-left">拜访日期：</label>
-            <div class="select_condition_div2">
-                <input type="text" class="file-date shared_view_date" id="select_date" value="" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
-                <b class="arrows_view"></b>
+    <div id="toggle_view_div" style="margin-bottom:40px">
+        <div id="shared_select_condition">
+            <div class="select_condition_div">
+                <label class="pull-left">销售团队：</label>
+                <ul class="shared_ul visitor_ul">
+                    <li class="shared_section_li_active" style="margin-left: 12px">
+                        <a class="team_select active" data-val="0">全部</a>
+                    </li>
+                    <li style="margin-left: 12px">
+                        <a class="team_select" data-val="2">王者队</a>
+                    </li>
+                    <li>
+                        <a class="team_select" data-val="5">飞龙队</a>
+                    </li>
+                </ul>
             </div>
-        </div>
-        <div class="select_condition_div">
-            <label class="pull-left">公司名称：</label>
-            <div class="select_condition_div2">
-                <div type="text" class="shared_view_div" id="company_id" style="margin-left: 12px;background:#fff">
-                    <span class="shared_view_span company_view_span" data-name="" style="color:#757575">请选择公司</span>
-                    <b class="glass_view background_view"></b>
-                    <div class="hidden_div hidden">
-                        <input class="company_search_input search_input" />
-                        <select class="select_view" style="font-size:14px" size="8">
-                            @foreach (var name in ViewBag.Company)
-                            {
-                                <option>@name.Company_Name</option>
-                            }
-                        </select>
-                    </div>
+            <div class="select_condition_div">
+                <label class="pull-left">公司类型：</label>
+                <ul class="shared_ul company_ul">
+                    <li class="shared_section_li_active" style="margin-left: 12px">
+                        <a class="company_type active" data-val="1">全部类型</a>
+                    </li>
+                    <li>
+                        <a class="company_type" data-val="1">现代渠道</a>
+                    </li>
+                    <li>
+                        <a class="company_type" data-val="2">流通</a>
+                    </li>
+                    <li>
+                        <a class="company_type" data-val="3">电商和APP</a>
+                    </li>
+                    <li>
+                        <a class="company_type" data-val="4">餐饮</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="select_condition_div">
+                <label class="pull-left">排序方式：</label>
+                <ul class="shared_ul sort_ul">
+                    <li class="shared_section_li_active" style="margin-left: 12px">
+                        <a class="sort_type active" data-val="0">默认</a>
+                    </li>
+                    <li>
+                        <a class="sort_type" data-val="1">按有无意向</a>
+                    </li>
+                    <li>
+                        <a class="sort_type" data-val="2">按拜访次数</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="select_condition_div">
+                <label class="pull-left">拜访日期：</label>
+                <div class="select_condition_div2">
+                    <input type="text" class="file-date shared_view_date" id="select_date" value="" readonly="readonly" autocomplete="off" name="file-date" placeholder="选择日期" style="margin-left: 12px;cursor: default;" />
+                    <b class="arrows_view"></b>
                 </div>
             </div>
-        </div>
-        <div class="select_condition_div">
-            <label class="pull-left">业务员名称：</label>
-            <div class="select_condition_div2">
-                <div type="text" class="shared_view_div" id="visitor_id" style="top:2px;background:#fff">
-                    <span class="shared_view_span visitor_view_span" data-name="" style="color:#757575">请选择业务员</span>
-                    <b class="glass_view background_view"></b>
-                    <div class="hidden_div hidden">
-                        <div class="search_contain_div">
-                            <input class="visitor_search_input search_input"/>
-                            <b class="search_icon"></b>
+            <div class="select_condition_div">
+                <label class="pull-left">公司名称：</label>
+                <div class="select_condition_div2">
+                    <div type="text" class="shared_view_div" id="company_id" style="margin-left: 12px;background:#fff">
+                        <span class="shared_view_span company_view_span" data-name="" style="color:#757575">请选择公司</span>
+                        <b class="glass_view background_view"></b>
+                        <div class="hidden_div hidden">
+                            <input class="company_search_input search_input" />
+                            <select class="select_view" style="font-size:14px" size="8">
+                                @foreach (var name in ViewBag.Company)
+                            {
+                                    <option>@name.Company_Name</option>
+                            }
+                            </select>
                         </div>
-                        <select class="select_view" size="8" style="font-size:14px">
-                            @foreach (var name in ViewBag.Visitor)
-                            {
-                                <option>@name.Employee_Name</option>
-                            }
-                        </select>
                     </div>
                 </div>
+            </div>
+            <div class="select_condition_div">
+                <label class="pull-left">业务员名称：</label>
+                <div class="select_condition_div2">
+                    <div type="text" class="shared_view_div" id="visitor_id" style="top:2px;background:#fff">
+                        <span class="shared_view_span visitor_view_span" data-name="" style="color:#757575">请选择业务员</span>
+                        <b class="glass_view background_view"></b>
+                        <div class="hidden_div hidden">
+                            <div class="search_contain_div">
+                                <input class="visitor_search_input search_input" />
+                                <b class="search_icon"></b>
+                            </div>
+                            <select class="select_view" size="8" style="font-size:14px">
+                                @foreach (var name in ViewBag.Visitor)
+                            {
+                                    <option>@name.Employee_Name</option>
+                            }
+                            </select>
+                        </div>
+                    </div>
 
+                </div>
             </div>
         </div>
+        <div style="text-align: center;" id="toggle_hide_container" class="hidden">
+            <div class="toggle_hide_div"><label class="pull-left">销售团队：</label><span id="team_text"></span></div>
+            <div class="toggle_hide_div"><label class="pull-left">公司类型：</label><span id="type_text"></span></div>
+            <div class="toggle_hide_div"><label class="pull-left">公司名称：</label><span id="name_text"></span></div>
+            <div class="toggle_hide_div"><label class="pull-left">业务员名称：</label><span id="visitor_text"></span></div>
+        </div>
+        <div class="text-center" style="font-size:16px"><i class="fa fa-angle-double-up" id="toggle_btn" style="display:block;width:60px;height:20px;background:#f7fbfe;position:absolute;left:50%;bottom:-20px"></i></div>
     </div>
-
-    <div id="visit_list_content" style="padding:0 20px;width:100%;overflow-x: scroll;white-space: nowrap;"></div>
+        <div id="visit_list_content" style="padding:0 20px;width:100%;overflow-x: scroll;white-space: nowrap;margin-top:40px"></div>
 </div>
 @section scripts{
     <script>
@@ -349,6 +362,32 @@
                         })
                     }
                     $("#company_id select").addClass("hidden")
+                }
+            })
+            // toggle
+            $("#toggle_btn").on("click", function () {
+                var that = $(this)
+                if (that.hasClass("fa-angle-double-up")) {
+                    that.addClass("fa-angle-double-down")
+                    that.removeClass("fa-angle-double-up")
+                    $("#shared_select_condition").hide()
+                    $("#toggle_hide_container").removeClass("hidden")
+                    $("#team_text").text($(".team_select.active").text())
+                    $("#type_text").text($(".company_type.active").text())
+                    $("#name_text").text($(".company_view_span").text())
+                    $("#visitor_text").text($(".visitor_view_span").text())
+                    
+                    console.log(1)
+                } else {
+                    console.log(2)
+                    that.addClass("fa-angle-double-up")
+                    that.removeClass("fa-angle-double-down")
+                    $("#shared_select_condition").show()
+                    $("#toggle_hide_container").addClass("hidden")
+                    $("#team_text").text()
+                    $("#type_text").text()
+                    $("#name_text").text()
+                    $("#visitor_text").text()
                 }
             })
         })

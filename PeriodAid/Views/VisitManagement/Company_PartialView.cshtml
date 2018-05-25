@@ -1,14 +1,20 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.VM_Company>
 @using PagedList.Mvc;
 <style>
-    tr>:first-child{  
+    tr>:nth-child(1){  
     position : relative;  
-}  
+    z-index:31
+}
+    tr>:nth-child(2){  
+    position : relative;  
+    z-index:31
+}
 </style>
 <div id="freezing" style="overflow-x:scroll" onscroll="javascript:freezing()">
     <table class="table table-hover">
         <tr>
-            <th>公司名称</th>
+            <th id="first_th">公司名称</th>
+            <th id="second_th">业务员</th>
             <th>公司类型</th>
             <th>公司来源</th>
             <th>公司渠道</th>
@@ -18,7 +24,6 @@
             <th>年销售额</th>
             <th>公司地址</th>
             <th>联系电话</th>
-            <th>业务员</th>
         </tr>
         @foreach (var item in Model)
         {
@@ -28,6 +33,7 @@
                         @item.Company_Name
                     </a>
                 </td>
+                <td>@item.VM_Employee.Employee_Name</td>
                 <td>@item.Company_Type</td>
                 <td>@item.Company_Source</td>
                 <td>
@@ -45,7 +51,6 @@
                 <td>@item.Sales_Amount 万元</td>
                 <td>@item.Company_Address</td>
                 <td>@item.Company_Phone</td>
-                <td>@item.VM_Employee.Employee_Name</td>
             </tr>
         }
     </table>
@@ -57,20 +62,27 @@
     </div>
 </div>
 <script>
-    // 固定第一列
+    // 固定第一、二列
     function freezing() {
-        $("tr>:first-child").css("left", $("#freezing").scrollLeft());
-        var thWidth = $("#fixed_th").width();
+        $("tr>:nth-child(2)").css("left", $("#freezing").scrollLeft());
+        $("tr>:nth-child(1)").css("left", $("#freezing").scrollLeft());
+        var thWidth = $("#first_th").width() + $("#second_th").width();
         var scroLeft = $("#freezing").scrollLeft();
         if (scroLeft == 0) {
-            $("tr>:first-child").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#fixed_th").css("background", "#f9f9f9")
+            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
+            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
+            $("#first_th").css("background", "#f9f9f9")
+            $("#second_th").css("background", "#f9f9f9")
         } else if (scroLeft > 0 && scroLeft < thWidth) {
-            $("tr>:first-child").addClass("isScrolling").css("background", "#eef1f5");
-            $("#fixed_th").css("background", "#f9f9f9")
+            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
+            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
+            $("#first_th").css("background", "#f9f9f9")
+            $("#second_th").css("background", "#f9f9f9")
         } else {
-            $("tr>:first-child").addClass("isScrolling").css("background", "#eef1f5");
-            $("#fixed_th").css("background", "#f9f9f9")
+            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
+            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
+            $("#first_th").css("background", "#f9f9f9")
+            $("#second_th").css("background", "#f9f9f9")
         }
     }
     $('.company_select_a').click(function () {

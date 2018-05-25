@@ -40,17 +40,13 @@
         {
             modelBuilder.Entity<VM_Department>().HasMany(e => e.VM_Employee).WithRequired(e => e.VM_Department).HasForeignKey(e => e.Department_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_Company).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_Comment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_Comment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_Contact).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Employee>().HasMany(m => m.AttendVisit).WithMany(e => e.AttendEmployee).Map(m => { m.MapLeftKey("EmployeeId"); m.MapRightKey("VisitRecordId"); m.ToTable("AttendEmployee_VisitRecord"); });
-            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_CoreComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_CoreComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_Employee>().HasMany(e => e.VM_SupportComment).WithRequired(e => e.VM_Employee).HasForeignKey(e => e.Employee_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_SupportComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
         }
     }
@@ -67,8 +63,7 @@
         [StringLength(32)]
         public string Company_Type { get; set; }//客户类型（现代渠道，流通，餐饮，电商和APP）
 
-        //[StringLength(32)]
-        //public string Company_Category { get; set; }//客户类别（经销商，渠道终端）
+        public int Company_Category { get; set; }//客户类别（0经销商，1渠道终端）
 
         [StringLength(32)]
         public string Company_Source { get; set; }//客户来源
@@ -81,7 +76,7 @@
 
         public int Employee_Count { get; set; }
 
-        //public int Store_Count { get; set; }//门店数量
+        public int Store_Count { get; set; }//门店数量
 
         [StringLength(256)]
         public string Source_Name { get; set; }//渠道名称
@@ -92,11 +87,11 @@
         [StringLength(32)]
         public string Source_Type { get; set; }//渠道类型
 
-        //public int Entrance_Fee { get; set; }//进场费用（0有，-1无）
+        public int Entrance_Fee { get; set; }//进场费用（0有，-1无）
 
-        //public decimal EntranceFee_Count { get; set; }//进场费用数额
+        public decimal EntranceFee_Count { get; set; }//进场费用数额
 
-        //public string Entrance_SKU { get; set; }//SKU（门店/系统）
+        public int? Entrance_Type { get; set; }//进场类型（0门店，1系统）
 
         public int Dedicated_Warehouse { get; set; }//专用仓库（0有，-1无）
 
@@ -212,19 +207,7 @@
         public virtual ICollection<VM_VisitRecord> AttendVisit { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_Comment> VM_Comment { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_VisitRecord> VM_VisitRecord { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_CoreComment> VM_CoreComment { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_SupportComment> VM_SupportComment { get; set; }
     }
 
     //拜访记录表
@@ -244,13 +227,13 @@
 
         public decimal Intentional_Funds { get; set; }//操作资金
 
-        //public int Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
+        public int Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
 
-        //public string Company_Name { get; set; }//公司名称
+        public string Company_Name { get; set; }//公司名称
 
-        //public string Contact_Mobile { get; set; }//联系人电话
+        public string Contact_Mobile { get; set; }//联系人电话
 
-        //public DateTime? Reply_Time { get; set; }//回复日期
+        public DateTime? Reply_Time { get; set; }//回复日期
 
         public string NoIntention_Reason { get; set; }//无意向原因
 
@@ -324,11 +307,13 @@
 
         public int VisitRecord_Id { get; set; }
 
-        public int Employee_Id { get; set; }
+        [StringLength(32)]
+        public string Nick_Name { get; set; }
+
+        [StringLength(64)]
+        public string User_Name { get; set; }
 
         public DateTime? Comment_Time { get; set; }
-
-        public virtual VM_Employee VM_Employee { get; set; }
 
         public virtual VM_VisitRecord VM_VisitRecord { get; set; }
     }
@@ -342,13 +327,15 @@
         [StringLength(256)]
         public string ReplyComment_Detail { get; set; }
 
+        [StringLength(32)]
+        public string Nick_Name { get; set; }
+
+        [StringLength(64)]
+        public string User_Name { get; set; }
+
         public int VisitRecord_Id { get; set; }
 
-        public int Employee_Id { get; set; }
-
         public DateTime? ReplyComment_Time { get; set; }
-
-        public virtual VM_Employee VM_Employee { get; set; }
 
         public virtual VM_VisitRecord VM_VisitRecord { get; set; }
     }
@@ -362,13 +349,15 @@
         [StringLength(256)]
         public string CoreComment_Detail { get; set; }
 
+        [StringLength(32)]
+        public string Nick_Name { get; set; }
+
+        [StringLength(64)]
+        public string User_Name { get; set; }
+
         public int VisitRecord_Id { get; set; }
 
-        public int Employee_Id { get; set; }
-
         public DateTime? CoreComment_Time { get; set; }
-
-        public virtual VM_Employee VM_Employee { get; set; }
 
         public virtual VM_VisitRecord VM_VisitRecord { get; set; }
     }
@@ -382,13 +371,15 @@
         [StringLength(1024)]
         public string SupportComment_Detail { get; set; }
 
+        [StringLength(32)]
+        public string Nick_Name { get; set; }
+
+        [StringLength(64)]
+        public string User_Name { get; set; }
+
         public int VisitRecord_Id { get; set; }
 
-        public int Employee_Id { get; set; }
-
         public DateTime? SupportComment_Time { get; set; }
-
-        public virtual VM_Employee VM_Employee { get; set; }
 
         public virtual VM_VisitRecord VM_VisitRecord { get; set; }
     }
@@ -406,5 +397,18 @@
         public string Content_Detail { get; set; }
 
         public int Content_Type { get; set; }
+    }
+
+    public class VM_EmployeeViewModel
+    {
+        public string OpenId { get; set; }
+
+        public string Name { get; set; }
+
+        public string Mobile { get; set; }
+
+        public string ImgUrl { get; set; }
+
+        public string NickName { get; set; }
     }
 }

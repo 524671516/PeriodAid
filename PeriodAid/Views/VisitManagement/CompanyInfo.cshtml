@@ -27,15 +27,14 @@
             <label class="col-md-2 control-label" style="font-size:15px;font-weight:600">基本信息:</label>
         </div>
         <div class="form-group">
-            <label class="col-md-2 control-label" style="font-size:15px">公司类别:</label>
+            <label class="col-md-2 control-label" style="font-size:15px">公司类型:</label>
             <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                 @Model.Company_Type
             </div>
-            <label class="col-md-1 control-label" style="font-size:15px">客户来源:</label>
-            <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
-                <span style="float:left" class="replace_text">@Model.Company_Source</span>
+            <label class="col-md-1 control-label" style="font-size:15px">公司类别:</label>
+            <div class="col-md-3" style="font-size:14px;line-height: 36px;">
+                @Html.CategoryType(Model.Company_Category)
             </div>
-
             <label class="col-md-1 control-label" style="font-size:15px">年销售额:</label>
             <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                 @Model.Sales_Amount 万元
@@ -50,15 +49,23 @@
             <div class="col-md-3" style="line-height: 36px;font-size: 14px">
                 @Model.Source_Type
             </div>
-            <label class="col-md-1 control-label" style="font-size:15px">专用仓库:</label>
+            <label class="col-md-1 control-label" style="font-size:15px">客户来源:</label>
+            <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                <span style="float:left" class="replace_text">@Model.Company_Source</span>
+            </div>
+            @*<label class="col-md-1 control-label" style="font-size:15px">专用仓库:</label>
             <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                 @Html.SpecialSource(Model.Dedicated_Warehouse)
-            </div>
+            </div>*@
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">渠道名称:</label>
-            <div class="col-md-10" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+            <div class="col-md-6" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
                 <span style="float:left">@Model.Source_Name</span>
+            </div>
+            <label class="col-md-1 control-label" style="white-space: nowrap;font-size:15px;padding-left:0">门店数量:</label>
+            <div class="col-md-2" style="font-size:14px;line-height: 36px;padding-left:0">
+                @Model.Store_Count
             </div>
         </div>
         <div class="form-group">

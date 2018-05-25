@@ -182,87 +182,60 @@ namespace PeriodAid.Controllers
         public ActionResult CreateComment(string detail,int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
-            if (visitor!=null)
-            {
-                VM_Comment comment = new VM_Comment();
-                comment.Comment_Time = DateTime.Now;
-                comment.Employee_Id = visitor.Id;
-                comment.VisitRecord_Id = rec_id;
-                comment.Comment_Detail = detail;
-                _vmdb.VM_Comment.Add(comment);
-                _vmdb.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }else
-            {
-                return Json(new { result = "FAIL" });
-            }
+            VM_Comment comment = new VM_Comment();
+            comment.Comment_Time = DateTime.Now;
+            comment.Nick_Name = user.NickName;
+            comment.User_Name = user.UserName;
+            comment.VisitRecord_Id = rec_id;
+            comment.Comment_Detail = detail;
+            _vmdb.VM_Comment.Add(comment);
+            _vmdb.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         [HttpPost]
         public ActionResult CreateReplyComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
-            if (visitor != null)
-            {
-                VM_ReplyComment comment = new VM_ReplyComment();
-                comment.ReplyComment_Time = DateTime.Now;
-                comment.Employee_Id = visitor.Id;
-                comment.VisitRecord_Id = rec_id;
-                comment.ReplyComment_Detail = detail;
-                _vmdb.VM_ReplyComment.Add(comment);
-                _vmdb.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            else
-            {
-                return Json(new { result = "FAIL" });
-            }
+            VM_ReplyComment comment = new VM_ReplyComment();
+            comment.ReplyComment_Time = DateTime.Now;
+            comment.Nick_Name = user.NickName;
+            comment.User_Name = user.UserName;
+            comment.VisitRecord_Id = rec_id;
+            comment.ReplyComment_Detail = detail;
+            _vmdb.VM_ReplyComment.Add(comment);
+            _vmdb.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         [HttpPost]
         public ActionResult CreateCoreComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
-            if (visitor != null)
-            {
-                VM_CoreComment comment = new VM_CoreComment();
-                comment.CoreComment_Time = DateTime.Now;
-                comment.Employee_Id = visitor.Id;
-                comment.VisitRecord_Id = rec_id;
-                comment.CoreComment_Detail = detail;
-                _vmdb.VM_CoreComment.Add(comment);
-                _vmdb.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            else
-            {
-                return Json(new { result = "FAIL" });
-            }
+            VM_CoreComment comment = new VM_CoreComment();
+            comment.CoreComment_Time = DateTime.Now;
+            comment.Nick_Name = user.NickName;
+            comment.User_Name = user.UserName;
+            comment.VisitRecord_Id = rec_id;
+            comment.CoreComment_Detail = detail;
+            _vmdb.VM_CoreComment.Add(comment);
+            _vmdb.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         [HttpPost]
         public ActionResult CreateSupportComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
-            if (visitor != null)
-            {
-                VM_SupportComment comment = new VM_SupportComment();
-                comment.SupportComment_Time = DateTime.Now;
-                comment.Employee_Id = visitor.Id;
-                comment.VisitRecord_Id = rec_id;
-                comment.SupportComment_Detail = detail;
-                _vmdb.VM_SupportComment.Add(comment);
-                _vmdb.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }
-            else
-            {
-                return Json(new { result = "FAIL" });
-            }
+            VM_SupportComment comment = new VM_SupportComment();
+            comment.SupportComment_Time = DateTime.Now;
+            comment.Nick_Name = user.NickName;
+            comment.User_Name = user.UserName;
+            comment.VisitRecord_Id = rec_id;
+            comment.SupportComment_Detail = detail;
+            _vmdb.VM_SupportComment.Add(comment);
+            _vmdb.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         // 审批

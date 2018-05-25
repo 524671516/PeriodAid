@@ -396,6 +396,33 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string CooperationType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case -1:
+                    return "无";
+                case 0:
+                    return "直营";
+                case 1:
+                    return "通过经销商";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string CategoryType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "经销商";
+                case 1:
+                    return "渠道终端";
+                default:
+                    return "未知";
+            }
+        }
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
