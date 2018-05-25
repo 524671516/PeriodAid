@@ -134,11 +134,9 @@ namespace PeriodAid.Controllers
             return Json(company);
         }
 
-        public ActionResult CompanyInfo(int com_id, int? rec_id)
+        public ActionResult CompanyInfo(int com_id)
         {
             var item = _vmdb.VM_Company.SingleOrDefault(m => m.Id == com_id);
-            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
-            ViewBag.Record = record;
             return PartialView(item);
         }
         
