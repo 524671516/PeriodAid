@@ -77,10 +77,11 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult Visit_PartialView(DateTime? visit_date,int dep_id,string com_type,string com_name,string vis_name,int? page,int sort)
+        public ActionResult Visit_PartialView(DateTime? visit_date, int dep_id, string com_type, string com_name, string vis_name, int? page, int sort)
         {
             int _page = page ?? 1;
-            IQueryable<VM_VisitRecord>record;
+            ViewBag.CurrentPage = _page;
+            IQueryable<VM_VisitRecord> record;
             if (visit_date != null)
             {
                 var _DateTime = visit_date.Value.Year + "-" + visit_date.Value.Month + "-" + visit_date.Value.Day;
@@ -94,28 +95,28 @@ namespace PeriodAid.Controllers
             }
             else
             {
-               record = from m in _vmdb.VM_VisitRecord
-                        where m.Visit_Time.Value < DateTime.Now
-                        && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
-                        && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
-                        && m.VM_Company.Company_Type == (com_type != "全部类型" ? com_type : m.VM_Company.Company_Type)
-                        && m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
-                        select m;
+                record = from m in _vmdb.VM_VisitRecord
+                         where m.Visit_Time.Value < DateTime.Now
+                         && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
+                         && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
+                         && m.VM_Company.Company_Type == (com_type != "全部类型" ? com_type : m.VM_Company.Company_Type)
+                         && m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
+                         select m;
             }
             if (sort == 0)
             {
-                return PartialView(record.OrderByDescending(m => m.Visit_Time).ToPagedList(_page, 20));
+                return PartialView(record.OrderByDescending(m => m.Visit_Time).OrderByDescending(m => m.Id).ToPagedList(_page, 20));
             }
             else if (sort == 1)
             {
-                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).ToPagedList(_page, 20));
+                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).OrderByDescending(m => m.Id).ToPagedList(_page, 20));
             }
             else
             {
-                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).ToPagedList(_page, 20));
+                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).OrderByDescending(m => m.Id).ToPagedList(_page, 20));
             }
         }
-        
+
         [HttpPost]
         public JsonResult QueryVisitor(string query)
         {
@@ -139,7 +140,7 @@ namespace PeriodAid.Controllers
             var item = _vmdb.VM_Company.SingleOrDefault(m => m.Id == com_id);
             return PartialView(item);
         }
-        
+
         public ActionResult Comment_PartialView(int rec_id)
         {
             var comment = from m in _vmdb.VM_Comment
@@ -151,27 +152,27 @@ namespace PeriodAid.Controllers
         public ActionResult ReplyComment_PartialView(int rec_id)
         {
             var Replycomment = from m in _vmdb.VM_ReplyComment
-                          where m.VisitRecord_Id == rec_id
-                          select m;
+                               where m.VisitRecord_Id == rec_id
+                               select m;
             return PartialView(Replycomment);
         }
 
         public ActionResult CoreComment_PartialView(int rec_id)
         {
             var Corecomment = from m in _vmdb.VM_CoreComment
-                               where m.VisitRecord_Id == rec_id
-                               select m;
+                              where m.VisitRecord_Id == rec_id
+                              select m;
             return PartialView(Corecomment);
         }
-        
+
         public ActionResult SupportComment_PartialView(int rec_id)
         {
             var Supportcomment = from m in _vmdb.VM_SupportComment
-                              where m.VisitRecord_Id == rec_id
-                              select m;
+                                 where m.VisitRecord_Id == rec_id
+                                 select m;
             return PartialView(Supportcomment);
         }
-        
+
         public ApplicationUser getUser(string username)
         {
             var user = memdb.Users.SingleOrDefault(m => m.UserName == username);
@@ -179,7 +180,7 @@ namespace PeriodAid.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateComment(string detail,int rec_id)
+        public ActionResult CreateComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
             VM_Comment comment = new VM_Comment();
@@ -240,15 +241,23 @@ namespace PeriodAid.Controllers
 
         // 审批
         [HttpPost]
-        public JsonResult Supervise_Status(int rec_id,int rec_status, string detail)
+        public JsonResult Supervise_Status(int rec_id, int rec_status, string detail)
         {
-            var user = getUser(User.Identity.Name);
-            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
-            record.Veto_Detail = detail;
-            record.status = rec_status;
-            _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
-            _vmdb.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            try
+            {
+                var user = getUser(User.Identity.Name);
+
+                var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
+                record.Veto_Detail = detail;
+                record.status = rec_status;
+                _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            catch
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
 
         // 公司
@@ -273,9 +282,9 @@ namespace PeriodAid.Controllers
                            && m.Company_Name == (com_name != "" ? com_name : m.Company_Name)
                            && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                            orderby m.Id descending
-                           select m).ToPagedList(_page,20);
+                           select m).ToPagedList(_page, 20);
             return PartialView(company);
         }
-        
+
     }
 }

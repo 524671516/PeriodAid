@@ -55,6 +55,9 @@
         }
     </table>
 </div>
+<div class="text-right">
+    @Html.PagedListPager(Model, page => Url.Action("Company_PartialView", new { page }))
+</div>
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modal-content">
@@ -97,5 +100,24 @@
             }
         })
     });
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    dep_id: $(".team_select.active").attr("data-val"),
+                    com_type: $(".company_type.active").text(),
+                    com_name: $("#company_id .shared_view_span").attr("data-name"),
+                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                },
+                success: function (data) {
+                    $("#company_list_content").html(data)
+                }
+            });
+            return false;
+        });
+    });
+    
     
 </script>
