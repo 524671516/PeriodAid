@@ -23,7 +23,11 @@
         <tr style="background-color:#f9f9f9">
             <th id="first_th">公司名称</th>
             <th id="second_th">业务员</th>
+            <th>序号</th>
+            <th>交表时间</th>
             <th>拜访日期</th>
+            <th>交表考核</th>
+            <th>内容考核</th>
             <th>拜访方式</th>
             <th>拜访次数</th>
             <th>渠道名称</th>
@@ -53,135 +57,170 @@
             <th>未通过详情</th>
             <th></th>
         </tr>
+        @{ 
+            var current_count = (int)ViewBag.CurrentPage*20 -20;
+        }
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
-                        @item.VM_Company.Company_Name
-                    </a>
-                </td>
-                <td>@item.VM_Employee.Employee_Name</td>
-                <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
-                <td style="text-indent:5px">@Html.VisitType(item.Visit_Type)</td>
-                <td style="text-indent:8px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
-                <td>
-                    <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
-                        @item.VM_Company.Source_Name
-                    </div>
-                </td>
-                <td>
-                    <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" class="visitors_name">
-                        @foreach (var name in item.AttendEmployee)
-                        {
-                            <span>@name.Employee_Name&nbsp;</span>
-                        }
-                    </div>
-                </td>
-                <td style="text-indent:14px">@Html.SmoothlyStatus(item.Cooperation_Intention)</td>
-                @if (item.Cooperation_Intention == 0)
+            current_count++;
+        <tr>
+            <td>
+                <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
+                    @item.VM_Company.Company_Name
+                </a>
+            </td>
+            <td>@item.VM_Employee.Employee_Name</td>
+            <td>@current_count</td>
+            <td>@item.Create_Time</td>
+            <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+            @if (item.Create_Time == null)
+            {
+                <td class="color-red">超时</td>
+            }
+            else
+            {
+                if (Convert.ToDateTime(item.Create_Time) > item.Visit_Time.Value.AddDays(1))
                 {
-                    <td></td>
-                    <td>@item.Intentional_Products</td>
-                    <td>@item.Intentional_Funds 万元</td>
-                    <td>@Html.CooperationType(item.Cooperation_Type)</td>
-                    if (item.Cooperation_Type == 1)
-                    {
-                        <td>@item.Company_Name</td>
-                        <td>@item.Contact_Mobile</td>
-                        <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
-                    }
-                    else
-                    {
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    }
+                    <td class="color-red">超时</td>
                 }
                 else
                 {
-                    <td>
-                        <div>
-                            @item.NoIntention_Reason
-                        </div>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td class="color-green">正常</td>
                 }
-                <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
-                @if (item.Smoothly==0)
+            }
+            @if (item.status == 0)
+            {
+                <td class="color-blue">待审核</td>
+            }
+            else if (item.status == -1)
+            {
+                <td class="color-red">驳回</td>
+            }
+            else if (item.status == 1)
+            {
+                <td class="color-green">通过</td>
+            }
+
+            <td style="text-indent:5px">@Html.VisitType(item.Visit_Type)</td>
+            <td style="text-indent:8px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
+            <td>
+                <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
+                    @item.VM_Company.Source_Name
+                </div>
+            </td>
+            <td>
+                <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" class="visitors_name">
+                    @foreach (var name in item.AttendEmployee)
+                    {
+                        <span>@name.Employee_Name&nbsp;</span>
+                    }
+                </div>
+            </td>
+            <td style="text-indent:14px">@Html.SmoothlyStatus(item.Cooperation_Intention)</td>
+            @if (item.Cooperation_Intention == 0)
+            {
+                <td></td>
+                <td>@item.Intentional_Products</td>
+                <td>@item.Intentional_Funds 万元</td>
+                <td>@Html.CooperationType(item.Cooperation_Type)</td>
+                if (item.Cooperation_Type == 1)
                 {
-                    <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
-                    <td>@item.ExpectedDelivery_Funds 万元</td>
-                    <td></td>
-                    <td></td>
+                    <td>@item.Company_Name</td>
+                    <td>@item.Contact_Mobile</td>
+                    <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
                 }
                 else
                 {
                     <td></td>
                     <td></td>
-                    <td style="position:relative">
-                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Core_Problem">
-                            @item.Core_Problem
-                        </div>
-                        <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论</a>
-                    </td>
-                    <td style="position:relative">
-                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:18px" title="@item.Support">
-                            @item.Support
-                        </div>
-                        <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论</a>
-                    </td>
+                    <td></td>
                 }
-                <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
+            }
+            else
+            {
+                <td>
+                    <div>
+                        @item.NoIntention_Reason
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            }
+            <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
+            @if (item.Smoothly == 0)
+            {
+                <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
+                <td>@item.ExpectedDelivery_Funds 万元</td>
+                <td></td>
+                <td></td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
                 <td style="position:relative">
-                    <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Reply_Detail">
-                        @item.Reply_Detail
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Core_Problem">
+                        @item.Core_Problem
                     </div>
-                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论</a>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论</a>
                 </td>
-                <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
-                @if (item.CustomerReply_Status == 0)
-                {
-                    <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
-                            @item.CustomerReply_Detail
-                        </div>
-                    </td>
-                }
-                else
-                {
-                    <td></td>
-                    <td></td>
-                }
-                <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
-                <td style="text-indent:15px">@Html.VisitType(item.NextVisit_Type)</td>
+                <td style="position:relative">
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:18px" title="@item.Support">
+                        @item.Support
+                    </div>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论</a>
+                </td>
+            }
+            <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
+            <td style="position:relative">
+                <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Reply_Detail">
+                    @item.Reply_Detail
+                </div>
+                <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论</a>
+            </td>
+            <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
+            @if (item.CustomerReply_Status == 0)
+            {
+                <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
                 <td>
-                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
-                        @item.NextVisit_Detail
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
+                        @item.CustomerReply_Detail
                     </div>
                 </td>
-                <td>@Html.VisitStatus(item.status)</td>
-                @if (item.status == -1)
-                {
-                    <td>
-                        <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail">@item.Veto_Detail</div>
-                    </td>
-                }
-                else
-                {
-                    <td></td>
-                }
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+            }
+            <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+            <td style="text-indent:15px">@Html.VisitType(item.NextVisit_Type)</td>
+            <td>
+                <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
+                    @item.NextVisit_Detail
+                </div>
+            </td>
+            <td>@Html.VisitStatus(item.status)</td>
+            @if (item.status == -1)
+            {
                 <td>
-                    <a href="#" data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论</a>
-                    <a href="#" data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail">@item.Veto_Detail</div>
                 </td>
-            </tr>
+            }
+            else
+            {
+                <td></td>
+            }
+            <td>
+                <a href="#" data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论</a>
+                <a href="#" data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
+            </td>
+        </tr>
+
         }
     </table>
     

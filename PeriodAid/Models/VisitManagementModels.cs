@@ -276,6 +276,8 @@
 
         public int Company_Id { get; set; }
 
+        public DateTime? Create_Time { get; set; }
+
         public virtual VM_Company VM_Company { get; set; }
 
         public virtual VM_Employee VM_Employee { get; set; }
