@@ -243,19 +243,12 @@ namespace PeriodAid.Controllers
         public JsonResult Supervise_Status(int rec_id,int rec_status, string detail)
         {
             var user = getUser(User.Identity.Name);
-            var visitor = _vmdb.VM_Employee.SingleOrDefault(m => m.Employee_Name == user.NickName);
             var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
-            if (visitor!=null)
-            {
-                record.Veto_Detail = detail;
-                record.status = rec_status;
-                _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
-                _vmdb.SaveChanges();
-                return Json(new { result = "SUCCESS" });
-            }else
-            {
-                return Json(new { result = "FAIL" });
-            }
+            record.Veto_Detail = detail;
+            record.status = rec_status;
+            _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
+            _vmdb.SaveChanges();
+            return Json(new { result = "SUCCESS" });
         }
 
         // 公司
