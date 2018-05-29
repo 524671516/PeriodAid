@@ -230,6 +230,7 @@
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
+                        $(".select_view option").removeAttr("selected")
                     }
                 })
             })
@@ -251,6 +252,7 @@
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
+                        $(".select_view option").removeAttr("selected")
                     }
                 })
             })
@@ -332,7 +334,6 @@
                     $("#company_id select").addClass("hidden")
                 }
             })
-            
         })
     </script>
 }
