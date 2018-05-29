@@ -447,7 +447,7 @@
                         var html = ""
                         for (var i = 0; i < config_list.length; i++) {
                             html += '<input type="radio" class="detail_select" data-val="' + $(config_list[i]).attr("data-id") + '" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>' +
-                                '<textarea class="textarea_detail hidden" style="font-size:12px;text-indent:17px;padding-top:7px;" data-val="'+ $(config_list[i]).attr("data-id") +'" placeholder="具体原因"></textarea></br>'
+                                '<textarea class="textarea_detail hidden" style="font-size:12px" data-val="'+ $(config_list[i]).attr("data-id") +'" placeholder="具体原因"></textarea></br>'
                         }
                         $.confirm({
                             title: '否决原因',
