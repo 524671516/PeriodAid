@@ -258,7 +258,7 @@ namespace PeriodAid.Controllers
 
         // 审批
         [HttpPost]
-        public JsonResult Supervise_Status(int rec_id, int rec_status, string detail)
+        public JsonResult Supervise_Status(int rec_id, int rec_status, string detail,string cause)
         {
             try
             {
@@ -266,6 +266,7 @@ namespace PeriodAid.Controllers
                 var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
                 record.Veto_Detail = detail;
                 record.status = rec_status;
+                record.Veto_Cause = cause;
                 _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
                 _vmdb.SaveChanges();
                 return Json(new { result = "SUCCESS" });

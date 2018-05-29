@@ -15,6 +15,11 @@
     .pagination-container{
         display:inline-block!important
     }
+    .textarea_detail{
+        width:100%;
+        margin:10px 0 10px -80px;
+        height: 70px;
+    }
 </style>
 <div id="freezing_record" class="freezing" onscroll="javascript:freezing()">
     <table class="table table-hover">
@@ -203,7 +208,7 @@
             @if (item.status == -1)
             {
                 <td>
-                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail">@item.Veto_Detail</div>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail @item.Veto_Cause">@item.Veto_Detail @item.Veto_Cause</div>
                 </td>
             }
             else
@@ -211,8 +216,8 @@
                 <td></td>
             }
             <td>
-                <a href="#" data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论<span class="badge"></span></a>
-                <a href="#" data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
+                <a data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论<span class="badge"></span></a>
+                <a data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
             </td>
         </tr>
         }
@@ -223,7 +228,7 @@
 </div>
 @foreach (var item in ViewBag.Config)
 {
-    <div class="hidden hidden_config" data-detail="@item.Content_Detail"></div>
+    <div class="hidden hidden_config" data-id="@item.Id" data-detail="@item.Content_Detail"></div>
 }
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -281,6 +286,44 @@
                     $(".comment_select_a[data-id=" + data.rid + "]").children("span").text(data.comment)
                 }
             })
+        }
+        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+    })
+    // toggle
+    $("#toggle_btn").on("click", function () {
+        var that = $(this)
+        if (that.hasClass("fa-angle-double-up")) {
+            that.addClass("fa-angle-double-down")
+            that.removeClass("fa-angle-double-up")
+            $("#shared_select_condition").hide()
+            $("#toggle_hide_container").removeClass("hidden")
+            $("#team_text").text($(".team_select.active").text())
+            $("#type_text").text($(".company_type.active").text())
+            $("#name_text").text($(".company_view_span").text())
+            $("#visitor_text").text($(".visitor_view_span").text())
+            $("#sort_text").text($(".sort_type.active").text())
+            $("#status_text").text($(".status_type.active").text())
+            if ($("#select_date").val() == "") {
+                $("#visit_date").text("选择日期")
+            }
+            else {
+                $("#visit_date").text($("#select_date").val())
+            }
+            $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6+20 + "px")
+        }
+        else {
+            that.addClass("fa-angle-double-up")
+            that.removeClass("fa-angle-double-down")
+            $("#shared_select_condition").show()
+            $("#toggle_hide_container").addClass("hidden")
+            $("#team_text").text("")
+            $("#type_text").text("")
+            $("#name_text").text("")
+            $("#visitor_text").text("")
+            $("#visit_date").text("")
+            $("#sort_text").text("")
+            $("#status_text").text("")
+            $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
         }
     })
     $(".pagination > li > a").click(function () {
@@ -436,11 +479,12 @@
                         var config_list = $(".hidden_config")
                         var html = ""
                         for (var i = 0; i < config_list.length; i++) {
-                            html += '<input type="radio" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>'
+                            html += '<input type="radio" class="detail_select" data-val="' + $(config_list[i]).attr("data-id") + '" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>' +
+                                '<textarea class="textarea_detail hidden" style="font-size:12px" data-val="'+ $(config_list[i]).attr("data-id") +'" placeholder="具体原因"></textarea></br>'
                         }
                         $.confirm({
                             title: '否决原因',
-                            content: '<div class="form-group" style="text-align: left;margin-left: 33%;">' +
+                            content: '<div class="form-group" style="text-align: left;margin-left: 41%;">' +
                             html +
                             '</div>',
                             theme: 'modern',
@@ -457,6 +501,7 @@
                                             data: {
                                                 rec_id: that.attr("data-id"),
                                                 detail: this.$content.find('.form-group input[name="config"]:checked').val(),
+                                                cause: this.$content.find('.form-group .textarea_detail.active').val(),
                                                 rec_status: -1
                                             },
                                             success: function (data) {
@@ -501,7 +546,17 @@
                                 取消: function () {
                                     //close
                                 },
+                            },
+                            onContentReady: function () {
+                                $(".detail_select").on('click', function (e) {
+                                    var that = $(this);
+                                    $(".textarea_detail").addClass("hidden").removeClass("active")
+                                    $(".textarea_detail").val("")
+                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden")
+                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden").addClass("active")
+                                });
                             }
+
                         })
                     }
                 },

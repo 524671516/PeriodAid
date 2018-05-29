@@ -388,10 +388,10 @@ body,html{
     }
 #freezing_record{
     overflow:scroll;
-    height: 268px;
+    /*height: 268px;*/
 }
 #freezing_company{
     overflow:scroll;
-    height: 344px;
+    /*height: 344px;*/
 }
 /*部分视图样式结束*/

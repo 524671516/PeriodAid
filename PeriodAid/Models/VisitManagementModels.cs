@@ -267,10 +267,11 @@
 
         public string NextVisit_Detail { get; set; }//下次拜访事项
 
-        public int status { get; set; }//拜访状态（待定）
-
-        [StringLength(256)]
+        public int status { get; set; }//审核状态
+        [StringLength(64)]
         public string Veto_Detail { get; set; }
+        [StringLength(256)]
+        public string Veto_Cause { get; set; }
 
         public int Employee_Id { get; set; }//填表人
 

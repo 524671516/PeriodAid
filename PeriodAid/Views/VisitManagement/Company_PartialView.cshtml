@@ -91,6 +91,7 @@
         })
     });
     $(function () {
+        $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
             $.ajax({
@@ -112,5 +113,30 @@
             });
             return false;
         });
+        // toggle
+        $("#toggle_btn").on("click", function () {
+            var that = $(this)
+            if (that.hasClass("fa-angle-double-up")) {
+                that.addClass("fa-angle-double-down")
+                that.removeClass("fa-angle-double-up")
+                $("#shared_select_condition").hide()
+                $("#toggle_hide_container").removeClass("hidden")
+                $("#team_text").text($(".team_select.active").text())
+                $("#type_text").text($(".company_type.active").text())
+                $("#name_text").text($(".company_view_span").text())
+                $("#visitor_text").text($(".visitor_view_span").text())
+                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+            } else {
+                that.addClass("fa-angle-double-up")
+                that.removeClass("fa-angle-double-down")
+                $("#shared_select_condition").show()
+                $("#toggle_hide_container").addClass("hidden")
+                $("#team_text").text("")
+                $("#type_text").text("")
+                $("#name_text").text("")
+                $("#visitor_text").text("")
+                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+            }
+        })
     });
 </script>

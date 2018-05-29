@@ -332,31 +332,7 @@
                     $("#company_id select").addClass("hidden")
                 }
             })
-            // toggle
-            $("#toggle_btn").on("click", function () {
-                var that = $(this)
-                if (that.hasClass("fa-angle-double-up")) {
-                    that.addClass("fa-angle-double-down")
-                    that.removeClass("fa-angle-double-up")
-                    $("#shared_select_condition").hide()
-                    $("#toggle_hide_container").removeClass("hidden")
-                    $("#team_text").text($(".team_select.active").text())
-                    $("#type_text").text($(".company_type.active").text())
-                    $("#name_text").text($(".company_view_span").text())
-                    $("#visitor_text").text($(".visitor_view_span").text())
-                    $("#freezing_company").css("height", "442px")
-                } else {
-                    that.addClass("fa-angle-double-up")
-                    that.removeClass("fa-angle-double-down")
-                    $("#shared_select_condition").show()
-                    $("#toggle_hide_container").addClass("hidden")
-                    $("#team_text").text("")
-                    $("#type_text").text("")
-                    $("#name_text").text("")
-                    $("#visitor_text").text("")
-                    $("#freezing_company").css("height", "344px")
-                }
-            })
+            
         })
     </script>
 }
