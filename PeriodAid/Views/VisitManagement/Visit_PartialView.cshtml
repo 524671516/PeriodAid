@@ -12,21 +12,18 @@
     .btn-xs{
         padding:0 5px
     }
-    .jconfirm-box-container{
-        position: relative;
-        top: -240px;
+    .pagination-container{
+        display:inline-block!important
     }
 </style>
-<div id="freezing" style="overflow-x:scroll" onscroll="javascript:freezing()">
+<div id="freezing_record" class="freezing" onscroll="javascript:freezing()">
     <table class="table table-hover">
-        <tr style="background-color:#f9f9f9">
+        <tr>
             <th id="first_th">公司名称</th>
             <th id="second_th">业务员</th>
             <th>序号</th>
             <th>交表时间</th>
             <th>拜访日期</th>
-            <th>交表考核</th>
-            <th>内容考核</th>
             <th>拜访方式</th>
             <th>拜访次数</th>
             <th>渠道名称</th>
@@ -52,8 +49,9 @@
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
-            <th>拜访状态</th>
-            <th>未通过详情</th>
+            <th>交表考核</th>
+            <th>内容考核</th>
+            <th>驳回详情</th>
             <th></th>
         </tr>
         @{ 
@@ -69,38 +67,10 @@
                 </a>
             </td>
             <td>@item.VM_Employee.Employee_Name</td>
-            <td>@current_count</td>
+            <td style="text-indent:5px">@current_count</td>
             <td>@item.Create_Time</td>
             <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
-            @if (item.Create_Time == null)
-            {
-                <td class="color-red">超时</td>
-            }
-            else
-            {
-                if (Convert.ToDateTime(item.Create_Time) > item.Visit_Time.Value.AddDays(1))
-                {
-                    <td class="color-red">超时</td>
-                }
-                else
-                {
-                    <td class="color-green">正常</td>
-                }
-            }
-            @if (item.status == 0)
-            {
-                <td class="color-blue">待审核</td>
-            }
-            else if (item.status == -1)
-            {
-                <td class="color-red">驳回</td>
-            }
-            else if (item.status == 1)
-            {
-                <td class="color-green">通过</td>
-            }
-
-            <td style="text-indent:5px">@Html.VisitType(item.Visit_Type)</td>
+            <td style="text-indent:8px">@Html.VisitType(item.Visit_Type)</td>
             <td style="text-indent:8px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
             <td>
                 <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
@@ -162,16 +132,16 @@
                 <td></td>
                 <td></td>
                 <td style="position:relative">
-                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Core_Problem">
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 40px;" title="@item.Core_Problem">
                         @item.Core_Problem
                     </div>
-                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论</a>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论<span class="badge"></span></a>
                 </td>
                 <td style="position:relative">
                     <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:18px" title="@item.Support">
                         @item.Support
                     </div>
-                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论</a>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span class="badge"></span></a>
                 </td>
             }
             <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
@@ -179,9 +149,9 @@
                 <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 18px;" title="@item.Reply_Detail">
                     @item.Reply_Detail
                 </div>
-                <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论</a>
+                <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论<span class="badge"></span></a>
             </td>
-            <td style="text-indent:20px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
+            <td style="text-indent:35px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
             @if (item.CustomerReply_Status == 0)
             {
                 <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
@@ -203,7 +173,33 @@
                     @item.NextVisit_Detail
                 </div>
             </td>
-            <td>@Html.VisitStatus(item.status)</td>
+            @if (item.Create_Time == null)
+            {
+                <td style="text-indent:10px" class="color-red">超时</td>
+            }
+            else
+            {
+                if (Convert.ToDateTime(item.Create_Time) > item.Visit_Time.Value.AddDays(1))
+                {
+                    <td style="text-indent:10px" class="color-red">超时</td>
+                }
+                else
+                {
+                    <td style="text-indent:10px" class="color-green">正常</td>
+                }
+            }
+            @if (item.status == 0)
+            {
+                <td style="text-indent:5px" class="color-blue">待审核</td>
+            }
+            else if (item.status == -1)
+            {
+                <td style="text-indent:5px" class="color-red">驳回</td>
+            }
+            else if (item.status == 1)
+            {
+                <td style="text-indent:5px" class="color-green">通过</td>
+            }
             @if (item.status == -1)
             {
                 <td>
@@ -215,18 +211,20 @@
                 <td></td>
             }
             <td>
-                <a href="#" data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论</a>
+                <a href="#" data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论<span class="badge"></span></a>
                 <a href="#" data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
             </td>
         </tr>
-
         }
     </table>
-    
 </div>
 <div class="text-right">
     @Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))
 </div>
+@foreach (var item in ViewBag.Config)
+{
+    <div class="hidden hidden_config" data-detail="@item.Content_Detail"></div>
+}
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" id="modal-content">
@@ -266,6 +264,24 @@
             var Visitor_name = that.children("span").text();
             that.attr("title", Visitor_name)
         })
+        // 评论数量
+        var comment_list = $(".comment_select_a")
+        for (i = 0 ; i < comment_list.length; i++) {
+            var that = $(comment_list[i])
+            $.ajax({
+                url: "/VisitManagement/Comment_Count",
+                type: "post",
+                data: {
+                    rec_id: that.attr("data-id"),
+                },
+                success: function (data) {
+                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Corecomment_select_a span").text(data.core)
+                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Supportcomment_select_a span").text(data.support)
+                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Replycomment_select_a span").text(data.reply)
+                    $(".comment_select_a[data-id=" + data.rid + "]").children("span").text(data.comment)
+                }
+            })
+        }
     })
     $(".pagination > li > a").click(function () {
         var l = $(this).attr("href");
@@ -277,10 +293,16 @@
                 com_type: $(".company_type.active").text(),
                 com_name: $("#company_id .shared_view_span").attr("data-name"),
                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                sort: $(".sort_type.active").attr("data-val")
+                sort: $(".sort_type.active").attr("data-val"),
+                status: $(".status_type.active").attr("data-val"),
             },
             success: function (data) {
                 $("#visit_list_content").html(data)
+                if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                    $("#freezing_record").css("height", "268px")
+                } else {
+                    $("#freezing_record").css("height", "442px")
+                }
             }
         });
         return false;
@@ -393,10 +415,16 @@
                                     com_type: $(".company_type.active").text(),
                                     com_name: $("#company_id .shared_view_span").attr("data-name"),
                                     vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                                    sort: $(".sort_type.active").attr("data-val")
+                                    sort: $(".sort_type.active").attr("data-val"),
+                                    status: $(".status_type.active").attr("data-val"),
                                 },
                                 success: function (data) {
                                     $("#visit_list_content").html(data)
+                                    if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                        $("#freezing_record").css("height", "268px")
+                                    } else {
+                                        $("#freezing_record").css("height", "442px")
+                                    }
                                 }
                             })
                         }
@@ -405,10 +433,15 @@
                 heyThere: {
                     text: '审批否决',
                     action: function () {
+                        var config_list = $(".hidden_config")
+                        var html = ""
+                        for (var i = 0; i < config_list.length; i++) {
+                            html += '<input type="radio" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>'
+                        }
                         $.confirm({
                             title: '否决原因',
-                            content: '<div class="form-group">' +
-                            '<textarea type="text" placeholder="原因" style="width:433px;height:124px" class="name form-control" required></textarea>' +
+                            content: '<div class="form-group" style="text-align: left;margin-left: 33%;">' +
+                            html +
                             '</div>',
                             theme: 'modern',
                             boxWidth: '500px',
@@ -423,7 +456,7 @@
                                             type: "post",
                                             data: {
                                                 rec_id: that.attr("data-id"),
-                                                detail: this.$content.find('.name').val(),
+                                                detail: this.$content.find('.form-group input[name="config"]:checked').val(),
                                                 rec_status: -1
                                             },
                                             success: function (data) {
@@ -442,10 +475,16 @@
                                                             com_type: $(".company_type.active").text(),
                                                             com_name: $("#company_id .shared_view_span").attr("data-name"),
                                                             vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                                                            sort: $(".sort_type.active").attr("data-val")
+                                                            sort: $(".sort_type.active").attr("data-val"),
+                                                            status: $(".status_type.active").attr("data-val"),
                                                         },
                                                         success: function (data) {
                                                             $("#visit_list_content").html(data)
+                                                            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                                                $("#freezing_record").css("height", "268px")
+                                                            } else {
+                                                                $("#freezing_record").css("height", "442px")
+                                                            }
                                                         }
                                                     })
                                                 } else {
@@ -464,7 +503,6 @@
                                 },
                             }
                         })
-                        
                     }
                 },
                 取消: function () {
@@ -477,23 +515,8 @@
     function freezing() {
         $("tr>:nth-child(2)").css("left", $("#freezing").scrollLeft());
         $("tr>:nth-child(1)").css("left", $("#freezing").scrollLeft());
-        var thWidth = $("#first_th").width() + $("#second_th").width();
-        var scroLeft = $("#freezing").scrollLeft(); 
-        if (scroLeft == 0) {
-            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#first_th").css("background", "#f9f9f9")
-            $("#second_th").css("background", "#f9f9f9")
-        } else if (scroLeft > 0 && scroLeft < thWidth) {
-            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#first_th").css("background", "#f9f9f9")
-            $("#second_th").css("background", "#f9f9f9")
-        } else {
-            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#first_th").css("background", "#f9f9f9")
-            $("#second_th").css("background", "#f9f9f9")
-        }
+        $("tr>:nth-child(2)").css("background", "#eef1f5");
+        $("tr>:nth-child(1)").css("background", "#eef1f5");
+       
     }
 </script>

@@ -10,11 +10,12 @@
     z-index:31
 }
 </style>
-<div id="freezing" style="overflow-x:scroll" onscroll="javascript:freezing()">
+<div id="freezing_company" class="freezing" onscroll="javascript:freezing()">
     <table class="table table-hover">
         <tr>
             <th id="first_th">公司名称</th>
             <th id="second_th">业务员</th>
+            <th>序号</th>
             <th>公司类型</th>
             <th>公司来源</th>
             <th>公司渠道</th>
@@ -25,8 +26,12 @@
             <th>公司地址</th>
             <th>联系电话</th>
         </tr>
+        @{
+            var current_count = (int)ViewBag.CurrentPage * 20 - 20;
+        }
         @foreach (var item in Model)
         {
+            current_count++;
             <tr>
                 <td>
                     <a href="#" data-id="@item.Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
@@ -34,6 +39,7 @@
                     </a>
                 </td>
                 <td>@item.VM_Employee.Employee_Name</td>
+                <td>@current_count</td>
                 <td>@item.Company_Type</td>
                 <td>@item.Company_Source</td>
                 <td>
@@ -69,24 +75,8 @@
     function freezing() {
         $("tr>:nth-child(2)").css("left", $("#freezing").scrollLeft());
         $("tr>:nth-child(1)").css("left", $("#freezing").scrollLeft());
-        var thWidth = $("#first_th").width() + $("#second_th").width();
-        var scroLeft = $("#freezing").scrollLeft();
-        if (scroLeft == 0) {
-            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#first_th").css("background", "#f9f9f9")
-            $("#second_th").css("background", "#f9f9f9")
-        } else if (scroLeft > 0 && scroLeft < thWidth) {
-            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#first_th").css("background", "#f9f9f9")
-            $("#second_th").css("background", "#f9f9f9")
-        } else {
-            $("tr>:nth-child(2)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("tr>:nth-child(1)").removeClass("isScrolling").css("background", "#eef1f5");
-            $("#first_th").css("background", "#f9f9f9")
-            $("#second_th").css("background", "#f9f9f9")
-        }
+        $("tr>:nth-child(2)").css("background", "#eef1f5");
+        $("tr>:nth-child(1)").css("background", "#eef1f5");
     }
     $('.company_select_a').click(function () {
         $.ajax({
@@ -113,11 +103,14 @@
                 },
                 success: function (data) {
                     $("#company_list_content").html(data)
+                    if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                        $("#freezing_company").css("height", "344px")
+                    } else {
+                        $("#freezing_company").css("height", "442px")
+                    }
                 }
             });
             return false;
         });
     });
-    
-    
 </script>

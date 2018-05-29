@@ -77,10 +77,14 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public ActionResult Visit_PartialView(DateTime? visit_date, int dep_id, string com_type, string com_name, string vis_name, int? page, int sort)
+        public ActionResult Visit_PartialView(DateTime? visit_date, string dep_id, string com_type, string com_name, string vis_name, int? page, int sort,int status)  
         {
             int _page = page ?? 1;
             ViewBag.CurrentPage = _page;
+            var config = from m in _vmdb.VM_ContentConfig
+                         where m.Content_Type == 5
+                         select m;
+            ViewBag.Config = config;
             IQueryable<VM_VisitRecord> record;
             if (visit_date != null)
             {
@@ -89,8 +93,9 @@ namespace PeriodAid.Controllers
                          where m.Visit_Time.Value.Year + "-" + m.Visit_Time.Value.Month + "-" + m.Visit_Time.Value.Day == _DateTime
                          && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
                          && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
-                         && m.VM_Company.Company_Type == (com_type != "全部类型" ? com_type : m.VM_Company.Company_Type)
-                         && m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
+                         && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
+                         && m.VM_Employee.VM_Department.Department_Name == (dep_id != "" ? dep_id : m.VM_Employee.VM_Department.Department_Name)
+                         && m.status == (status != 2 ? status :m.status)
                          select m;
             }
             else
@@ -99,8 +104,9 @@ namespace PeriodAid.Controllers
                          where m.Visit_Time.Value < DateTime.Now
                          && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
                          && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
-                         && m.VM_Company.Company_Type == (com_type != "全部类型" ? com_type : m.VM_Company.Company_Type)
-                         && m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
+                         && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
+                         && m.VM_Employee.VM_Department.Department_Name == (dep_id != "" ? dep_id : m.VM_Employee.VM_Department.Department_Name)
+                         && m.status == (status != 2 ? status : m.status)
                          select m;
             }
             if (sort == 0)
@@ -147,6 +153,17 @@ namespace PeriodAid.Controllers
                           where m.VisitRecord_Id == rec_id
                           select m;
             return PartialView(comment);
+        }
+        // 评论数量
+        [HttpPost]
+        public JsonResult Comment_Count(int rec_id)
+        {
+            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
+            var com_count = record.VM_Comment.Count() == 0 ? 0 : record.VM_Comment.Count();
+            var replyCom_count = record.VM_ReplyComment.Count() == 0 ? 0 : record.VM_ReplyComment.Count();
+            var coreCom_count = record.VM_CoreComment.Count() == 0 ? 0 : record.VM_CoreComment.Count();
+            var supportCom_count = record.VM_SupportComment.Count() == 0 ? 0 : record.VM_SupportComment.Count();
+            return Json(new { result = "SUCCESS", comment = com_count, reply = replyCom_count, core = coreCom_count, support = supportCom_count, rid = rec_id });
         }
 
         public ActionResult ReplyComment_PartialView(int rec_id)
@@ -246,7 +263,6 @@ namespace PeriodAid.Controllers
             try
             {
                 var user = getUser(User.Identity.Name);
-
                 var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
                 record.Veto_Detail = detail;
                 record.status = rec_status;
@@ -276,9 +292,10 @@ namespace PeriodAid.Controllers
         public ActionResult Company_PartialView(int dep_id, string com_type, string com_name, string vis_name, int? page)
         {
             int _page = page ?? 1;
+            ViewBag.CurrentPage = _page;
             var company = (from m in _vmdb.VM_Company
                            where m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
-                           && m.Company_Type == (com_type != "全部类型" ? com_type : m.Company_Type)
+                           && m.Company_Type == (com_type != "全部" ? com_type : m.Company_Type)
                            && m.Company_Name == (com_name != "" ? com_name : m.Company_Name)
                            && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                            orderby m.Id descending

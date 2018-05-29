@@ -52,10 +52,16 @@
                                 com_type: $(".company_type.active").text(),
                                 com_name: $("#company_id .shared_view_span").attr("data-name"),
                                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                                sort: $(".sort_type.active").attr("data-val")
+                                sort: $(".sort_type.active").attr("data-val"),
+                                status: $(".status_type.active").attr("data-val"),
                             },
                             success: function (data) {
                                 $("#visit_list_content").html(data)
+                                if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                    $("#freezing_record").css("height", "268px")
+                                } else {
+                                    $("#freezing_record").css("height", "442px")
+                                }
                                 $('.modal-backdrop.in').remove()
                                 $('body').removeClass('modal-open')
                             }

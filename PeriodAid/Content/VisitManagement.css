@@ -91,10 +91,22 @@ body,html{
 .toggle_hide_div{
     margin-left: 10px;
     line-height: 38px;
+    display:inline-block
 }
+.toggle_hide_div span{
+    background: #deefff;
+    color: #0b73df;
+    padding: 5px;
+}
+
+
 .select_condition_div{
     margin-left:10px;
     line-height:38px;
+}
+.share_inline_div{
+    display: inline-block;
+    margin-left: 50px;
 }
 .select_condition_div2{
     position:relative;
@@ -188,58 +200,70 @@ body,html{
             width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
             height: 4px;
         }
-        .select_view::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+.select_view::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
             border-radius: 5px;
             -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
             background: rgba(0,0,0,0.2);
-        }
-    .select_view::-webkit-scrollbar-track { /*滚动条里面轨道*/
+}
+.select_view::-webkit-scrollbar-track { /*滚动条里面轨道*/
         -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         border-radius: 0;
         background: rgba(0,0,0,0.1);
     }
+
 /*修改滚动条样式结束*/
 /*隐藏的DIV结束*/
 /*小图标样式*/
 .arrows_view {
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    background: url('images/select2.png')no-repeat 0 1px;
-    background-position: 2px 2px;
-    top: 2px;
-    right: -18px;
+    width: 10px;
+    height: 10px;
+    background: url(images/select2.png)no-repeat 0 1px;
+    background-position: -4px -7px;
+    top: 12px;
+    right: -17px;
     position: absolute;
 }
-/*.glass_view{
-    display: block;
-    width: 20px;
-    height: 20px;
-    background: url('images/select2.png')no-repeat 0 1px;
-    background-position: -38px -21px;
-    position: absolute;
-    right: 23px;
-    top: 6px;
-}*/
 .glass_view {
     display: block;
-    width: 20px;
-    height: 20px;
-    background: url('images/select2.png')no-repeat 0 1px;
-    background-position: 2px 2px;
+    width: 10px;
+    height: 10px;
+    background: url(images/select2.png)no-repeat 0 1px;
+    background-position: -4px -8px;
     position: absolute;
     right: 3px;
-    top: -3px;
+    top: 7px;
 }
 .glass_view_active {
     display: block;
-    width: 20px;
-    height: 20px;
-    background: url('images/select2.png')no-repeat 0 1px;
-    background-position: -17px 2px;
+    width: 10px;
+    height: 10px;
+    background: url(images/select2.png)no-repeat 0 1px;
+    background-position: -22px -7px;
     position: absolute;
     right: 3px;
-    top: -3px;
+    top: 7px;
+}
+
+.cancel_view_btn{
+     display: inline-block;
+     width: 10px;
+     height: 10px;
+     background: url(images/select2.png)no-repeat 0 1px;
+     background-position: -47px -2px;
+     top: 13px;
+     right: 0px;
+     position: absolute;
+}
+.glass_cancel_view_btn{
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: url(images/select2.png)no-repeat 0 1px;
+    background-position: -48px -2px;
+    position: absolute;
+    right: 19px;
+    top: 7px;
 }
 /*小图标结束*/
 /*搜索*/
@@ -258,8 +282,6 @@ body,html{
 }
 /*搜索结束*/
 /*头部筛选结束*/
-/*表格内样式*/
-/*表格内样式结束*/
 /*默认样式结束*/
 /*评论样式*/
  .ylcon {
@@ -344,5 +366,32 @@ body,html{
     font-size: 14px;
 }
 /*公司详细信息样式结束*/
-/*联系人开始*/
-/*联系人结束*/
+/*部分视图样式*/
+.list_content_container{
+    padding:0 20px;
+    width:100%;
+    white-space: nowrap;
+}
+.freezing::-webkit-scrollbar {/*滚动条整体样式*/
+            width: 4px;     /*高宽分别对应横竖滚动条的尺寸*/
+            height: 6px;
+        }
+.freezing::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+            border-radius: 5px;
+            -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.2);
+}
+.freezing::-webkit-scrollbar-track { /*滚动条里面轨道*/
+        -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+        border-radius: 0;
+        background: rgba(0,0,0,0.1);
+    }
+#freezing_record{
+    overflow:scroll;
+    height: 268px;
+}
+#freezing_company{
+    overflow:scroll;
+    height: 344px;
+}
+/*部分视图样式结束*/

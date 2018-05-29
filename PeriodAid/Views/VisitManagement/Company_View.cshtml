@@ -4,8 +4,8 @@
     Layout = "~/Views/Shared/_VisitManagementView.cshtml";
 }
 <style>
-    .toggle_hide_div{
-        display:inline-block
+    body{
+        padding-bottom:0 !important
     }
 </style>
 <div>
@@ -17,7 +17,7 @@
                     <li class="shared_section_li_active" style="margin-left: 12px">
                         <a class="team_select active" data-val="0">全部</a>
                     </li>
-                    <li style="margin-left: 12px">
+                    <li >
                         <a class="team_select" data-val="2">王者队</a>
                     </li>
                     <li>
@@ -29,7 +29,7 @@
                 <label class="pull-left">公司类型：</label>
                 <ul class="shared_ul company_ul">
                     <li class="shared_section_li_active" style="margin-left: 12px">
-                        <a class="company_type active" data-val="1">全部类型</a>
+                        <a class="company_type active" data-val="1">全部</a>
                     </li>
                     <li>
                         <a class="company_type" data-val="1">现代渠道</a>
@@ -45,11 +45,12 @@
                     </li>
                 </ul>
             </div>
-            <div class="select_condition_div">
+            <div class="select_condition_div share_inline_div" style="margin-left:10px">
                 <label class="pull-left">公司名称：</label>
                 <div class="select_condition_div2">
                     <div type="text" class="shared_view_div" id="company_id" style="margin-left: 12px;background:#fff">
                         <span class="shared_view_span company_view_span" data-name="" style="color:#757575">请选择公司</span>
+                        <b class="glass_cancel_view_btn hidden" id="company_cancel_btn"></b>
                         <b class="glass_view background_view"></b>
                         <div class="hidden_div hidden">
                             <input class="company_search_input search_input" />
@@ -63,11 +64,12 @@
                     </div>
                 </div>
             </div>
-            <div class="select_condition_div">
+            <div class="select_condition_div share_inline_div">
                 <label class="pull-left">业务员名称：</label>
                 <div class="select_condition_div2">
                     <div type="text" class="shared_view_div" id="visitor_id" style="top:2px;background:#fff">
                         <span class="shared_view_span visitor_view_span" data-name="" style="color:#757575">请选择业务员</span>
+                        <b class="glass_cancel_view_btn hidden" id="visitor_cancel_btn"></b>
                         <b class="glass_view background_view"></b>
                         <div class="hidden_div hidden">
                             <div class="search_contain_div">
@@ -86,7 +88,7 @@
                 </div>
             </div>
         </div>
-        <div style="text-align: center;" id="toggle_hide_container" class="hidden">
+        <div id="toggle_hide_container" class="hidden text-center">
             <div class="toggle_hide_div"><label class="pull-left">销售团队：</label><span id="team_text"></span></div>
             <div class="toggle_hide_div"><label class="pull-left">公司类型：</label><span id="type_text"></span></div>
             <div class="toggle_hide_div"><label class="pull-left">公司名称：</label><span id="name_text"></span></div>
@@ -94,11 +96,30 @@
         </div>
         <div class="text-center" style="font-size:16px"><i class="fa fa-angle-double-up" id="toggle_btn" style="display:block;width:60px;height:20px;background:#f7fbfe;position:absolute;left:50%;bottom:-20px"></i></div>
     </div>
-        <div id="company_list_content" style="padding:0 20px;width:100%;overflow-x: scroll;white-space: nowrap;"></div>
+        <div id="company_list_content" class="list_content_container"></div>
     </div>
 @section scripts{
     <script>
         $(function () {
+            $.ajax({
+                url: "/VisitManagement/Company_PartialView/",
+                type: "post",
+                data: {
+                    dep_id: $(".team_select.active").attr("data-val"),
+                    com_type: $(".company_type.active").text(),
+                    com_name: $("#company_id .shared_view_span").attr("data-name"),
+                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                },
+                success: function (data) {
+                    $("#company_list_content").html(data)
+                }
+            })
+            // 取消
+            $("#company_cancel_btn").on("click", function (event) {
+                event.stopPropagation();
+                $("#company_cancel_btn").addClass("hidden")
+                $("#company_id .shared_view_span").attr("data-name", "")
+                $("#company_id .shared_view_span").text("请选择公司")
                 $.ajax({
                     url: "/VisitManagement/Company_PartialView/",
                     type: "post",
@@ -111,8 +132,27 @@
                     success: function (data) {
                         $("#company_list_content").html(data)
                     }
+                })
             })
-            
+            $("#visitor_cancel_btn").on("click", function (event) {
+                event.stopPropagation();
+                $("#visitor_cancel_btn").addClass("hidden")
+                $("#visitor_id .shared_view_span").attr("data-name", "")
+                $("#visitor_id .shared_view_span").text("请选择业务员")
+                $.ajax({
+                    url: "/VisitManagement/Company_PartialView/",
+                    type: "post",
+                    data: {
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                    },
+                    success: function (data) {
+                        $("#company_list_content").html(data)
+                    }
+                })
+            })
             // 团队
             $(".team_select").on("click", function () {
                 var that = $(this)
@@ -173,6 +213,7 @@
                 $(".shared_view_div ").removeClass("shared_view_span_active")
             });
             $("#visitor_id .select_view").click(function (event) {
+                $("#visitor_cancel_btn").removeClass("hidden")
                 event.stopPropagation();
                 var options = $("#visitor_id .select_view option:selected")
                 $(this).parents(".hidden_div").addClass("hidden").siblings(".visitor_view_span").html(options.text()).attr("data-name", options.text())
@@ -193,6 +234,7 @@
                 })
             })
             $("#company_id .select_view").click(function (event) {
+                $("#company_cancel_btn").removeClass("hidden")
                 event.stopPropagation();
                 var options = $("#company_id .select_view option:selected")
                 $(this).parents(".hidden_div").addClass("hidden").siblings(".company_view_span").html(options.text()).attr("data-name", options.text())
@@ -234,6 +276,7 @@
                         $(".background_view").removeClass("glass_view_active").addClass("glass_view")
                         $(".visitor_search_input").val("")
                         $("#visitor_id select").removeClass("hidden")
+                        $("#visitor_cancel_btn").removeClass("hidden")
                         $.ajax({
                             url: "/VisitManagement/Company_PartialView/",
                             type: "post",
@@ -271,6 +314,7 @@
                         $(".background_view").removeClass("glass_view_active").addClass("glass_view")
                         $(".company_search_input").val("")
                         $("#company_id select").removeClass("hidden")
+                        $("#company_cancel_btn").removeClass("hidden")
                         $.ajax({
                             url: "/VisitManagement/Company_PartialView/",
                             type: "post",
@@ -300,18 +344,17 @@
                     $("#type_text").text($(".company_type.active").text())
                     $("#name_text").text($(".company_view_span").text())
                     $("#visitor_text").text($(".visitor_view_span").text())
-
-                    console.log(1)
+                    $("#freezing_company").css("height", "442px")
                 } else {
-                    console.log(2)
                     that.addClass("fa-angle-double-up")
                     that.removeClass("fa-angle-double-down")
                     $("#shared_select_condition").show()
                     $("#toggle_hide_container").addClass("hidden")
-                    $("#team_text").text()
-                    $("#type_text").text()
-                    $("#name_text").text()
-                    $("#visitor_text").text()
+                    $("#team_text").text("")
+                    $("#type_text").text("")
+                    $("#name_text").text("")
+                    $("#visitor_text").text("")
+                    $("#freezing_company").css("height", "344px")
                 }
             })
         })

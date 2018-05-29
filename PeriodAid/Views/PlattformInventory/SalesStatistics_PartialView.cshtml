@@ -34,22 +34,6 @@
             $('#file-loading').hide()
         }
     })
-    // 分页
-    //$(".pagination > li > a").click(function () {
-    //    var l = $(this).attr("href");
-    //    $.ajax({
-    //        url: l,
-    //        data: {
-    //            plattformId: $("#ul_view").children(".active").children(".shop_select").attr("data-id"),
-    //            query: $("#sales_product_query").val(),
-    //            sortVal: $(".sort_i").eq(0).attr("data-sort")
-    //        },
-    //        success: function (data) {
-    //            $("#sort_partialView").html(data);
-    //        }
-    //    });
-    //    return false;
-    //});
     // 排序
     $(".sales_sort").on("click", function () {
         $('#file-loading').show()
