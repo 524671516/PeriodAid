@@ -420,18 +420,15 @@ body,html{
     line-height:18px;
     width:28px
 }
-.san_zuo {
-    display:inline-block;
-    width: 0;
-
-    height: 0;
-
-    border-left: 0px solid transparent;
-
-    border-right: 5px solid transparent;
-
-    border-top: 10px solid #333;
-
+.page_san_zuo {
+    width:0;
+    height:0;
+    border-width:8px 0 8px 15px;
+    border-style:solid;
+    border-color:transparent transparent transparent #ccc;
+    float:right;
+    margin-top: 3px;
+    margin-left: 9px;
 }
 .page_san_you {
     width: 0;

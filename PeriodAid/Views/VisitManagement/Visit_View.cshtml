@@ -168,7 +168,7 @@
                     <option value="50">每页显示50条</option>
                 </select>
             </div>
-            <div class="share_view_paging"><span class="page_san_you"></span>第 <input type="text" class="page_info" /> 页</div>
+            <div class="share_view_paging"><span class="page_san_you"></span>第 <input type="text" value="1" class="page_info" /> 页<span class="page_san_zuo"></span></div>
         </div>
         @*@Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))*@
     </div>
