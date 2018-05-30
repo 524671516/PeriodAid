@@ -299,64 +299,64 @@
                     })
                 }
             })
-            $(".page_san_you").hover(function () {
-                var that = $(this)
-                var _page = Math.floor($(".page_info").val())
-                if (_page < 2) {
-                    that.css({
-                    width: "0",
-                    height: "0",
-                    borderTop: "8px solid transparent",
-                    borderRight: "15px solid #ccc",
-                    borderBottom: "8px solid transparent",
-                    float:"left",
-                    marginTop: "3px",
-                    marginRight: "9px",
-                    cursor: "pointer"
-                    })
-                } else {
-                    that.css({
-                        width: "0",
-                        height: "0",
-                        borderTop: "8px solid transparent",
-                        borderRight: "15px solid #607d9a",
-                        borderBottom: "8px solid transparent",
-                        float: "left",
-                        marginTop: "3px",
-                        marginRight: "9px",
-                        cursor: "pointer"
-                    })
-                }
-            })
-            $(".page_san_zuo").hover(function () {
-                var that = $(this)
-                var _page = Math.floor($(".page_info").val())
-                if (_page < $(".page_sum_view").text()) {
-                    that.css({
-                        width: "0",
-                        height: "0",
-                        borderWidth: "8px 0 8px 15px",
-                        borderStyle: "solid",
-                        borderColor: "transparent transparent transparent #607d9a",
-                        float: "right",
-                        marginTop: "3px",
-                        marginLeft: "9px",
-                        cursor: "pointer"
-                    })
-                } else {
-                    that.css({
-                        width: "0",
-                        height: "0",
-                        borderWidth: "8px 0 8px 15px",
-                        borderStyle: "solid",
-                        borderColor: "transparent transparent transparent #ccc",
-                        float: "right",
-                        marginTop: "3px",
-                        marginLeft: "9px",
-                        cursor: "pointer"
-                    })
-                }
-            })
+            //$(".page_san_you").hover(function () {
+            //    var that = $(this)
+            //    var _page = Math.floor($(".page_info").val())
+            //    if (_page < 2) {
+            //        that.css({
+            //        width: "0",
+            //        height: "0",
+            //        borderTop: "8px solid transparent",
+            //        borderRight: "15px solid #ccc",
+            //        borderBottom: "8px solid transparent",
+            //        float:"left",
+            //        marginTop: "3px",
+            //        marginRight: "9px",
+            //        cursor: "pointer"
+            //        })
+            //    } else {
+            //        that.css({
+            //            width: "0",
+            //            height: "0",
+            //            borderTop: "8px solid transparent",
+            //            borderRight: "15px solid #607d9a",
+            //            borderBottom: "8px solid transparent",
+            //            float: "left",
+            //            marginTop: "3px",
+            //            marginRight: "9px",
+            //            cursor: "pointer"
+            //        })
+            //    }
+            //})
+            //$(".page_san_zuo").hover(function () {
+            //    var that = $(this)
+            //    var _page = Math.floor($(".page_info").val())
+            //    if (_page < $(".page_sum_view").text()) {
+            //        that.css({
+            //            width: "0",
+            //            height: "0",
+            //            borderWidth: "8px 0 8px 15px",
+            //            borderStyle: "solid",
+            //            borderColor: "transparent transparent transparent #607d9a",
+            //            float: "right",
+            //            marginTop: "3px",
+            //            marginLeft: "9px",
+            //            cursor: "pointer"
+            //        })
+            //    } else {
+            //        that.css({
+            //            width: "0",
+            //            height: "0",
+            //            borderWidth: "8px 0 8px 15px",
+            //            borderStyle: "solid",
+            //            borderColor: "transparent transparent transparent #ccc",
+            //            float: "right",
+            //            marginTop: "3px",
+            //            marginLeft: "9px",
+            //            cursor: "pointer"
+            //        })
+            //    }
+            //})
             // 键盘
             $(".page_info").keydown(function (event) {
                 var that = $(this)
