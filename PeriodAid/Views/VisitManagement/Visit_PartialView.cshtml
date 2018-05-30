@@ -223,14 +223,7 @@
         }
     </table>
 </div>
-<div class="text-center">
-    <div class="paging_container">
-        <div class="share_view_count">共 @ViewBag.Recore  条</div>
-        <div class="share_view_page">每页个</div>
-        <div class="share_view_paging">分页</div>
-    </div>
-    @*@Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))*@
-</div>
+
 @foreach (var item in ViewBag.Config)
 {
     <div class="hidden hidden_config" data-id="@item.Id" data-detail="@item.Content_Detail"></div>
@@ -296,7 +289,6 @@
             })
         }
         $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
-
     })
     $(".pagination > li > a").click(function () {
         var l = $(this).attr("href");
@@ -310,6 +302,7 @@
                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                 sort: $(".sort_type.active").attr("data-val"),
                 status: $(".status_type.active").attr("data-val"),
+                page_count: $(".share_select_page option:selected").val(),
             },
             success: function (data) {
                 $("#visit_list_content").html(data)
@@ -432,6 +425,7 @@
                                     vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                                     sort: $(".sort_type.active").attr("data-val"),
                                     status: $(".status_type.active").attr("data-val"),
+                                    page_count: $(".share_select_page option:selected").val(),
                                 },
                                 success: function (data) {
                                     $("#visit_list_content").html(data)
@@ -494,6 +488,7 @@
                                                             vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                                                             sort: $(".sort_type.active").attr("data-val"),
                                                             status: $(".status_type.active").attr("data-val"),
+                                                            page_count: $(".share_select_page option:selected").val(),
                                                         },
                                                         success: function (data) {
                                                             $("#visit_list_content").html(data)
@@ -538,6 +533,7 @@
             }
         });
     })
+    
     // 固定第一、二列
     function freezing() {
         $("tr>:nth-child(2)").css("left", $("#freezing").scrollLeft());

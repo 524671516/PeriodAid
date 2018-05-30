@@ -68,16 +68,18 @@ namespace PeriodAid.Controllers
         public ActionResult Visit_View()
         {
             var visitor = from m in _vmdb.VM_Employee
-                          where m.Employee_Name != "季锦良"
                           select m;
             ViewBag.Visitor = visitor;
             var company = from m in _vmdb.VM_Company
                           select m;
             ViewBag.Company = company;
+            var Record = from m in _vmdb.VM_VisitRecord
+                         select m;
+            ViewBag.Recore = Record.Count();
             return View();
         }
 
-        public ActionResult Visit_PartialView(DateTime? visit_date, string dep_id, string com_type, string com_name, string vis_name, int? page, int sort,int status)  
+        public ActionResult Visit_PartialView(DateTime? visit_date, string dep_id, string com_type, string com_name, string vis_name, int? page, int sort,int status,int page_count)  
         {
             int _page = page ?? 1;
             ViewBag.CurrentPage = _page;
@@ -85,9 +87,6 @@ namespace PeriodAid.Controllers
                          where m.Content_Type == 5
                          select m;
             ViewBag.Config = config;
-            var Record = from m in _vmdb.VM_VisitRecord
-                         select m;
-            ViewBag.Recore = Record.Count();
             IQueryable<VM_VisitRecord> record;
             if (visit_date != null)
             {
@@ -114,15 +113,15 @@ namespace PeriodAid.Controllers
             }
             if (sort == 0)
             {
-                return PartialView(record.OrderByDescending(m => m.Visit_Time).OrderByDescending(m => m.Id).ToPagedList(_page, 20));
+                return PartialView(record.OrderByDescending(m => m.Visit_Time).OrderByDescending(m => m.Id).ToPagedList(_page, page_count));
             }
             else if (sort == 1)
             {
-                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).OrderByDescending(m => m.Id).ToPagedList(_page, 20));
+                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).OrderByDescending(m => m.Id).ToPagedList(_page, page_count));
             }
             else
             {
-                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).OrderByDescending(m => m.Id).ToPagedList(_page, 20));
+                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).OrderByDescending(m => m.Id).ToPagedList(_page, page_count));
             }
         }
 
@@ -130,7 +129,7 @@ namespace PeriodAid.Controllers
         public JsonResult QueryVisitor(string query)
         {
             var visitor = from m in _vmdb.VM_Employee
-                          where m.Employee_Name.Contains(query) && m.Employee_Name != "季锦良"
+                          where m.Employee_Name.Contains(query)
                           select new { Id = m.Id, VisitorName = m.Employee_Name };
             return Json(visitor);
         }
@@ -153,7 +152,7 @@ namespace PeriodAid.Controllers
         public ActionResult Comment_PartialView(int rec_id)
         {
             var comment = from m in _vmdb.VM_Comment
-                          where m.VisitRecord_Id == rec_id
+                          where m.VisitRecord_Id == rec_id && m.Comment_Type == 0
                           select m;
             return PartialView(comment);
         }
@@ -299,7 +298,6 @@ namespace PeriodAid.Controllers
         public ActionResult Company_View()
         {
             var visitor = from m in _vmdb.VM_Employee
-                          where m.Employee_Name != "季锦良"
                           select m;
             ViewBag.Visitor = visitor;
             var company = from m in _vmdb.VM_Company

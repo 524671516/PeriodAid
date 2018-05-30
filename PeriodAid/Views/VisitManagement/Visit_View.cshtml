@@ -158,6 +158,20 @@
         <div class="text-center" style="font-size:16px"><i class="fa fa-angle-double-up" id="toggle_btn" style="display:block;width:60px;height:20px;background:#f7fbfe;position:absolute;left:50%;bottom:-20px"></i></div>
     </div>
         <div id="visit_list_content" class="list_content_container"></div>
+    <div class="text-center">
+        <div class="paging_container">
+            <div class="share_view_count">共 @ViewBag.Recore  条</div>
+            <div class="share_view_page">
+                <select class="share_select_page">
+                    <option selected value="20">每页显示20条</option>
+                    <option value="30">每页显示30条</option>
+                    <option value="50">每页显示50条</option>
+                </select>
+            </div>
+            <div class="share_view_paging"><span class="page_san_you"></span>第 <input type="text" class="page_info" /> 页</div>
+        </div>
+        @*@Html.PagedListPager(Model, page => Url.Action("Visit_PartialView", new { page }))*@
+    </div>
 </div>
 @section scripts{
     <script>
@@ -173,6 +187,7 @@
                     vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                     sort: $(".sort_type.active").attr("data-val"),
                     status: $(".status_type.active").attr("data-val"),
+                    page_count:$(".share_select_page option:selected").val(),
                 },
                 success: function (data) {
                     $("#visit_list_content").html(data)
@@ -193,6 +208,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -215,6 +231,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -237,6 +254,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -258,6 +276,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -282,6 +301,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -306,6 +326,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -330,6 +351,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -353,7 +375,28 @@
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
-                        status:that.attr("data-val"),
+                        status: that.attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
+                    },
+                    success: function (data) {
+                        $("#visit_list_content").html(data)
+                    }
+                })
+            })
+            // 选择每页展示多少
+            $(".share_select_page").change(function () {
+                $.ajax({
+                    url: "/VisitManagement/Visit_PartialView/",
+                    type: "post",
+                    data: {
+                        visit_date: $("#select_date").val(),
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        sort: $(".sort_type.active").attr("data-val"),
+                        status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -394,6 +437,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -418,6 +462,7 @@
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                         sort: $(".sort_type.active").attr("data-val"),
                         status: $(".status_type.active").attr("data-val"),
+                        page_count: $(".share_select_page option:selected").val(),
                     },
                     success: function (data) {
                         $("#visit_list_content").html(data)
@@ -459,6 +504,7 @@
                                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                                 sort: $(".sort_type.active").attr("data-val"),
                                 status: $(".status_type.active").attr("data-val"),
+                                page_count: $(".share_select_page option:selected").val(),
                             },
                             success: function (data) {
                                 $("#visit_list_content").html(data)
@@ -500,6 +546,7 @@
                                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                                 sort: $(".sort_type.active").attr("data-val"),
                                 status: $(".status_type.active").attr("data-val"),
+                                page_count: $(".share_select_page option:selected").val(),
                             },
                             success: function (data) {
                                 $("#visit_list_content").html(data)

@@ -395,11 +395,53 @@ body,html{
     /*height: 344px;*/
 }
 /*分页样式*/
+.paging_container{
+    height:41px;
+    display:inline-block
+}
 .paging_container div{
     display:inline-block;
-    margin-top:15px;
+    margin-top:11px;
     margin-bottom:11px;
     font-size:14px;
+    float:left;
+}
+.share_view_count{
+    margin-left:-10px
+}
+.share_select_page{
+        height:22px;
+        line-height:18px;
+        padding: 0 10px 2px 15px;
+        margin:-1px 10px 0 10px;
+    }
+.page_info{
+    height:21px;
+    line-height:18px;
+    width:28px
+}
+.san_zuo {
+    display:inline-block;
+    width: 0;
+
+    height: 0;
+
+    border-left: 0px solid transparent;
+
+    border-right: 5px solid transparent;
+
+    border-top: 10px solid #333;
+
+}
+.page_san_you {
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-right: 15px solid #ccc;
+    border-bottom: 8px solid transparent;
+    float:left;
+    margin-top: 3px;
+    margin-right: 9px;
 }
 /*分页样式结束*/
 /*部分视图样式结束*/

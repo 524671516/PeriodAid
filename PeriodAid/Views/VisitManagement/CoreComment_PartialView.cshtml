@@ -1,7 +1,7 @@
-﻿@model IEnumerable<PeriodAid.Models.VM_CoreComment>
+﻿@model IEnumerable<PeriodAid.Models.VM_Comment>
 
 <div class="modal-header">
-    <h3>我方回复评论</h3>
+    <h3>核心问题评论</h3>
 </div>
 <div class="modal-body" id="modal-body">
     @foreach (var detial in Model)
@@ -10,8 +10,8 @@
             <div class="story">
                 <div class="opbtn"></div>
                 <p class="story_t">@detial.Nick_Name</p>
-                <p class="story_time">@detial.CoreComment_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</p>
-                <p class="story_m">@detial.CoreComment_Detail</p>
+                <p class="story_time">@detial.Comment_Time.Value.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                <p class="story_m">@detial.Comment_Detail</p>
             </div>
         </div>
     }
