@@ -397,7 +397,8 @@ body,html{
 /*分页样式*/
 .paging_container{
     height:41px;
-    display:inline-block
+    display:inline-block;
+    margin-left:-10px
 }
 .paging_container div{
     display:inline-block;
@@ -405,9 +406,6 @@ body,html{
     margin-bottom:11px;
     font-size:14px;
     float:left;
-}
-.share_view_count{
-    margin-left:-10px
 }
 .share_select_page{
         height:22px;
@@ -429,6 +427,7 @@ body,html{
     float:right;
     margin-top: 3px;
     margin-left: 9px;
+    cursor: pointer;
 }
 .page_san_you {
     width: 0;
@@ -439,6 +438,10 @@ body,html{
     float:left;
     margin-top: 3px;
     margin-right: 9px;
+    cursor: pointer;
+}
+.share_page_sum{
+    margin-left:10px
 }
 /*分页样式结束*/
 /*部分视图样式结束*/

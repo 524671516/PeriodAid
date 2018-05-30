@@ -290,31 +290,31 @@
         }
         $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
     })
-    $(".pagination > li > a").click(function () {
-        var l = $(this).attr("href");
-        $.ajax({
-            url: l,
-            data: {
-                visit_date: $("#select_date").val(),
-                dep_id: $(".team_select.active").attr("data-val"),
-                com_type: $(".company_type.active").text(),
-                com_name: $("#company_id .shared_view_span").attr("data-name"),
-                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                sort: $(".sort_type.active").attr("data-val"),
-                status: $(".status_type.active").attr("data-val"),
-                page_count: $(".share_select_page option:selected").val(),
-            },
-            success: function (data) {
-                $("#visit_list_content").html(data)
-                if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
-                    $("#freezing_record").css("height", "268px")
-                } else {
-                    $("#freezing_record").css("height", "442px")
-                }
-            }
-        });
-        return false;
-    });
+    //$(".pagination > li > a").click(function () {
+    //    var l = $(this).attr("href");
+    //    $.ajax({
+    //        url: l,
+    //        data: {
+    //            visit_date: $("#select_date").val(),
+    //            dep_id: $(".team_select.active").attr("data-val"),
+    //            com_type: $(".company_type.active").text(),
+    //            com_name: $("#company_id .shared_view_span").attr("data-name"),
+    //            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+    //            sort: $(".sort_type.active").attr("data-val"),
+    //            status: $(".status_type.active").attr("data-val"),
+    //            page_count: $(".share_select_page option:selected").val(),
+    //        },
+    //        success: function (data) {
+    //            $("#visit_list_content").html(data)
+    //            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+    //                $("#freezing_record").css("height", "268px")
+    //            } else {
+    //                $("#freezing_record").css("height", "442px")
+    //            }
+    //        }
+    //    });
+    //    return false;
+    //});
     // 公司详情
     $('.company_select_a').click(function () {
         $.ajax({
@@ -533,7 +533,6 @@
             }
         });
     })
-    
     // 固定第一、二列
     function freezing() {
         $("tr>:nth-child(2)").css("left", $("#freezing").scrollLeft());

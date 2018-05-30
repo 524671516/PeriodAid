@@ -97,10 +97,26 @@
         <div class="text-center" style="font-size:16px"><i class="fa fa-angle-double-up" id="toggle_btn" style="display:block;width:60px;height:20px;background:#f7fbfe;position:absolute;left:50%;bottom:-20px"></i></div>
     </div>
         <div id="company_list_content" class="list_content_container"></div>
+    <div class="text-center">
+        <div class="paging_container">
+            <div class="share_view_count">共 <span class="record_view_count">@ViewBag.Count</span>  条</div>
+            <div class="share_view_page">
+                <select class="share_select_page">
+                    <option selected value="20">每页显示20条</option>
+                    <option value="30">每页显示30条</option>
+                    <option value="50">每页显示50条</option>
+                </select>
+            </div>
+            <div class="share_view_paging"><span class="page_san_you"></span>第 <input type="text" value="1" class="page_info" /> 页<span class="page_san_zuo"></span></div>
+            <div class="share_page_sum">共 <span class="page_sum_view"></span> 页</div>
+        </div>
+    </div>
     </div>
 @section scripts{
     <script>
         $(function () {
+            var page_view = Math.ceil($(".record_view_count").text() / $(".share_select_page option:selected").val())
+            $(".page_sum_view").text(page_view)
             $.ajax({
                 url: "/VisitManagement/Company_PartialView/",
                 type: "post",
@@ -109,6 +125,8 @@
                     com_type: $(".company_type.active").text(),
                     com_name: $("#company_id .shared_view_span").attr("data-name"),
                     vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                    page_count: $(".share_select_page option:selected").val(),
+                    page: $(".page_info").val()
                 },
                 success: function (data) {
                     $("#company_list_content").html(data)
@@ -128,6 +146,8 @@
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
@@ -147,6 +167,8 @@
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
@@ -168,6 +190,8 @@
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
@@ -189,11 +213,92 @@
                         com_type: that.text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
                     }
                 })
+            })
+            // 选择每页展示多少
+            $(".share_select_page").change(function () {
+                $.ajax({
+                    url: "/VisitManagement/Company_PartialView/",
+                    type: "post",
+                    data: {
+                        dep_id: $(".team_select.active").attr("data-val"),
+                        com_type: $(".company_type.active").text(),
+                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
+                    },
+                    success: function (data) {
+                        $("#company_list_content").html(data)
+                        page_view = Math.ceil($(".record_view_count").text() / $(".share_select_page option:selected").val())
+                        $(".page_sum_view").text(page_view)
+                        if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                            $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                        } else {
+                            $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                        }
+                    }
+                })
+            })
+            // 分页
+            $(".page_san_you").on("click", function () {
+                var _page = Math.floor($(".page_info").val())
+                if (_page > 1) {
+                    $(".page_info").val(_page - 1)
+                    $.ajax({
+                        url: "/VisitManagement/Company_PartialView/",
+                        type: "post",
+                        data: {
+                            dep_id: $(".team_select.active").attr("data-val"),
+                            com_type: $(".company_type.active").text(),
+                            com_name: $("#company_id .shared_view_span").attr("data-name"),
+                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                            page_count: $(".share_select_page option:selected").val(),
+                            page: $(".page_info").val()
+                        },
+                        success: function (data) {
+                            $("#company_list_content").html(data)
+                            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                            } else {
+                                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                            }
+                        }
+                    })
+                }
+            })
+            $(".page_san_zuo").on("click", function () {
+                var _page = Math.floor($(".page_info").val())
+                if (_page < $(".page_sum_view").text()) {
+                    $(".page_info").val(_page + 1)
+                    $.ajax({
+                        url: "/VisitManagement/Company_PartialView/",
+                        type: "post",
+                        data: {
+                            dep_id: $(".team_select.active").attr("data-val"),
+                            com_type: $(".company_type.active").text(),
+                            com_name: $("#company_id .shared_view_span").attr("data-name"),
+                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                            page_count: $(".share_select_page option:selected").val(),
+                            page: $(".page_info").val()
+                        },
+                        success: function (data) {
+                            $("#company_list_content").html(data)
+                            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                            } else {
+                                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                            }
+                        }
+                    })
+                }
+
             })
             // span 点击
             $(".shared_view_div").on("click", function (event) {
@@ -226,6 +331,8 @@
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
@@ -247,6 +354,8 @@
                         com_type: $(".company_type.active").text(),
                         com_name: $("#company_id .shared_view_span").attr("data-name"),
                         vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                        page_count: $(".share_select_page option:selected").val(),
+                        page: $(".page_info").val()
                     },
                     success: function (data) {
                         $("#company_list_content").html(data)
@@ -285,6 +394,8 @@
                                 com_type: $(".company_type.active").text(),
                                 com_name: $("#company_id .shared_view_span").attr("data-name"),
                                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                page_count: $(".share_select_page option:selected").val(),
+                                page: $(".page_info").val()
                             },
                             success: function (data) {
                                 $("#company_list_content").html(data)
@@ -323,6 +434,8 @@
                                 com_type: $(".company_type.active").text(),
                                 com_name: $("#company_id .shared_view_span").attr("data-name"),
                                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                page_count: $(".share_select_page option:selected").val(),
+                                page: $(".page_info").val()
                             },
                             success: function (data) {
                                 $("#company_list_content").html(data)
@@ -330,6 +443,31 @@
                         })
                     }
                     $("#company_id select").addClass("hidden")
+                }
+            })
+            // toggle
+            $("#toggle_btn").on("click", function () {
+                var that = $(this)
+                if (that.hasClass("fa-angle-double-up")) {
+                    that.addClass("fa-angle-double-down")
+                    that.removeClass("fa-angle-double-up")
+                    $("#shared_select_condition").hide()
+                    $("#toggle_hide_container").removeClass("hidden")
+                    $("#team_text").text($(".team_select.active").text())
+                    $("#type_text").text($(".company_type.active").text())
+                    $("#name_text").text($(".company_view_span").text())
+                    $("#visitor_text").text($(".visitor_view_span").text())
+                    $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                } else {
+                    that.addClass("fa-angle-double-up")
+                    that.removeClass("fa-angle-double-down")
+                    $("#shared_select_condition").show()
+                    $("#toggle_hide_container").addClass("hidden")
+                    $("#team_text").text("")
+                    $("#type_text").text("")
+                    $("#name_text").text("")
+                    $("#visitor_text").text("")
+                    $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
                 }
             })
         })

@@ -303,10 +303,13 @@ namespace PeriodAid.Controllers
             var company = from m in _vmdb.VM_Company
                           select m;
             ViewBag.Company = company;
+            var count = from m in _vmdb.VM_Company
+                        select m;
+            ViewBag.Count = count.Count();
             return View();
         }
 
-        public ActionResult Company_PartialView(int dep_id, string com_type, string com_name, string vis_name, int? page)
+        public ActionResult Company_PartialView(int dep_id, string com_type, string com_name, string vis_name, int? page,int page_count)
         {
             int _page = page ?? 1;
             ViewBag.CurrentPage = _page;
@@ -316,7 +319,7 @@ namespace PeriodAid.Controllers
                            && m.Company_Name == (com_name != "" ? com_name : m.Company_Name)
                            && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                            orderby m.Id descending
-                           select m).ToPagedList(_page, 20);
+                           select m).ToPagedList(_page, page_count);
             return PartialView(company);
         }
 
