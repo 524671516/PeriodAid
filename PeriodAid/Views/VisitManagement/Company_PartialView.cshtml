@@ -39,7 +39,7 @@
                     </a>
                 </td>
                 <td>@item.VM_Employee.Employee_Name</td>
-                <td>@current_count</td>
+                <td style="text-indent:5px">@current_count</td>
                 <td>@item.Company_Type</td>
                 <td>@item.Company_Source</td>
                 <td>
@@ -89,27 +89,5 @@
     });
     $(function () {
         $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
-        //$(".pagination > li > a").click(function () {
-        //    var l = $(this).attr("href");
-        //    $.ajax({
-        //        url: l,
-        //        data: {
-        //            dep_id: $(".team_select.active").attr("data-val"),
-        //            com_type: $(".company_type.active").text(),
-        //            com_name: $("#company_id .shared_view_span").attr("data-name"),
-        //            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-        //        },
-        //        success: function (data) {
-        //            $("#company_list_content").html(data)
-        //            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
-        //                $("#freezing_company").css("height", "344px")
-        //            } else {
-        //                $("#freezing_company").css("height", "442px")
-        //            }
-        //        }
-        //    });
-        //    return false;
-        //});
-        
     });
 </script>

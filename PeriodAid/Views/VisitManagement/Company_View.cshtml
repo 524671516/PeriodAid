@@ -97,7 +97,7 @@
         <div class="text-center" style="font-size:16px"><i class="fa fa-angle-double-up" id="toggle_btn" style="display:block;width:60px;height:20px;background:#f7fbfe;position:absolute;left:50%;bottom:-20px"></i></div>
     </div>
         <div id="company_list_content" class="list_content_container"></div>
-    <div class="text-center">
+    <div class="text-center" style="background:#f7fbfe">
         <div class="paging_container">
             <div class="share_view_count">共 <span class="record_view_count">@ViewBag.Count</span>  条</div>
             <div class="share_view_page">
@@ -298,7 +298,95 @@
                         }
                     })
                 }
-
+            })
+            $(".page_san_you").hover(function () {
+                var that = $(this)
+                var _page = Math.floor($(".page_info").val())
+                if (_page < 2) {
+                    that.css({
+                    width: "0",
+                    height: "0",
+                    borderTop: "8px solid transparent",
+                    borderRight: "15px solid #ccc",
+                    borderBottom: "8px solid transparent",
+                    float:"left",
+                    marginTop: "3px",
+                    marginRight: "9px",
+                    cursor: "pointer"
+                    })
+                } else {
+                    that.css({
+                        width: "0",
+                        height: "0",
+                        borderTop: "8px solid transparent",
+                        borderRight: "15px solid #607d9a",
+                        borderBottom: "8px solid transparent",
+                        float: "left",
+                        marginTop: "3px",
+                        marginRight: "9px",
+                        cursor: "pointer"
+                    })
+                }
+            })
+            $(".page_san_zuo").hover(function () {
+                var that = $(this)
+                var _page = Math.floor($(".page_info").val())
+                if (_page < $(".page_sum_view").text()) {
+                    that.css({
+                        width: "0",
+                        height: "0",
+                        borderWidth: "8px 0 8px 15px",
+                        borderStyle: "solid",
+                        borderColor: "transparent transparent transparent #607d9a",
+                        float: "right",
+                        marginTop: "3px",
+                        marginLeft: "9px",
+                        cursor: "pointer"
+                    })
+                } else {
+                    that.css({
+                        width: "0",
+                        height: "0",
+                        borderWidth: "8px 0 8px 15px",
+                        borderStyle: "solid",
+                        borderColor: "transparent transparent transparent #ccc",
+                        float: "right",
+                        marginTop: "3px",
+                        marginLeft: "9px",
+                        cursor: "pointer"
+                    })
+                }
+            })
+            // 键盘
+            $(".page_info").keydown(function (event) {
+                var that = $(this)
+                if (event.keyCode == 13) {
+                    if (that.val() < 1) {
+                        that.val("1")
+                    } else if (that.val() > page_view) {
+                        that.val(page_view)
+                    }
+                    $.ajax({
+                        url: "/VisitManagement/Company_PartialView/",
+                        type: "post",
+                        data: {
+                            dep_id: $(".team_select.active").attr("data-val"),
+                            com_type: $(".company_type.active").text(),
+                            com_name: $("#company_id .shared_view_span").attr("data-name"),
+                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                            page_count: $(".share_select_page option:selected").val(),
+                            page: that.val()
+                        },
+                        success: function (data) {
+                            $("#company_list_content").html(data)
+                            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                            } else {
+                                $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                            }
+                        }
+                    })
+                }
             })
             // span 点击
             $(".shared_view_div").on("click", function (event) {

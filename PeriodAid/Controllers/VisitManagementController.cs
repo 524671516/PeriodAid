@@ -148,14 +148,6 @@ namespace PeriodAid.Controllers
             var item = _vmdb.VM_Company.SingleOrDefault(m => m.Id == com_id);
             return PartialView(item);
         }
-
-        public ActionResult Comment_PartialView(int rec_id)
-        {
-            var comment = from m in _vmdb.VM_Comment
-                          where m.VisitRecord_Id == rec_id && m.Comment_Type == 0
-                          select m;
-            return PartialView(comment);
-        }
         // 评论数量
         [HttpPost]
         public JsonResult Comment_Count(int rec_id)
@@ -175,6 +167,14 @@ namespace PeriodAid.Controllers
             return Json(new { result = "SUCCESS", comment = com_count.Count(), reply = replyCom_count.Count(), core = coreCom_count.Count(), support = supportCom_count.Count(), rid = rec_id });
         }
 
+        public ActionResult Comment_PartialView(int rec_id)
+        {
+            var comment = from m in _vmdb.VM_Comment
+                          where m.VisitRecord_Id == rec_id && m.Comment_Type == 0
+                          select m;
+            return PartialView(comment);
+        }
+        
         public ActionResult ReplyComment_PartialView(int rec_id)
         {
             var Replycomment = from m in _vmdb.VM_Comment
