@@ -424,6 +424,22 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string EntranceType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "门店";
+                case 1:
+                    return "系统";
+                default:
+                    return "未知";
+            }
+        }
+
+
+
+
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {
             if (username == null)
