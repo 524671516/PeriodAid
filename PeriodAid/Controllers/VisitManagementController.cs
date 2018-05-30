@@ -74,6 +74,7 @@ namespace PeriodAid.Controllers
                           select m;
             ViewBag.Company = company;
             var Record = from m in _vmdb.VM_VisitRecord
+                         where m.Visit_Time.Value < DateTime.Now
                          select m;
             ViewBag.Recore = Record.Count();
             return View();
