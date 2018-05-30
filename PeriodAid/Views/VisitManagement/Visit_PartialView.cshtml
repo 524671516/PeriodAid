@@ -60,7 +60,7 @@
             <th></th>
         </tr>
         @{ 
-            var current_count = (int)ViewBag.CurrentPage*20 -20;
+            var current_count = (int)ViewBag.CurrentPage;
         }
         @foreach (var item in Model)
         {

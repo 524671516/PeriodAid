@@ -83,7 +83,7 @@ namespace PeriodAid.Controllers
         public ActionResult Visit_PartialView(DateTime? visit_date, string dep_id, string com_type, string com_name, string vis_name, int? page, int sort,int status,int page_count)  
         {
             int _page = page ?? 1;
-            ViewBag.CurrentPage = _page;
+            ViewBag.CurrentPage = _page* page_count-page_count;
             var config = from m in _vmdb.VM_ContentConfig
                          where m.Content_Type == 5
                          select m;
@@ -313,7 +313,7 @@ namespace PeriodAid.Controllers
         public ActionResult Company_PartialView(int dep_id, string com_type, string com_name, string vis_name, int? page,int page_count)
         {
             int _page = page ?? 1;
-            ViewBag.CurrentPage = _page;
+            ViewBag.CurrentPage = _page* page_count- page_count;
             var company = (from m in _vmdb.VM_Company
                            where m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
                            && m.Company_Type == (com_type != "全部" ? com_type : m.Company_Type)
