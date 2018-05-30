@@ -85,6 +85,9 @@ namespace PeriodAid.Controllers
                          where m.Content_Type == 5
                          select m;
             ViewBag.Config = config;
+            var Record = from m in _vmdb.VM_VisitRecord
+                         select m;
+            ViewBag.Recore = Record.Count();
             IQueryable<VM_VisitRecord> record;
             if (visit_date != null)
             {
@@ -158,34 +161,41 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public JsonResult Comment_Count(int rec_id)
         {
-            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
-            var com_count = record.VM_Comment.Count() == 0 ? 0 : record.VM_Comment.Count();
-            var replyCom_count = record.VM_ReplyComment.Count() == 0 ? 0 : record.VM_ReplyComment.Count();
-            var coreCom_count = record.VM_CoreComment.Count() == 0 ? 0 : record.VM_CoreComment.Count();
-            var supportCom_count = record.VM_SupportComment.Count() == 0 ? 0 : record.VM_SupportComment.Count();
-            return Json(new { result = "SUCCESS", comment = com_count, reply = replyCom_count, core = coreCom_count, support = supportCom_count, rid = rec_id });
+            var com_count = from m in _vmdb.VM_Comment
+                            where m.VisitRecord_Id == rec_id && m.Comment_Type == 0
+                            select m;
+            var replyCom_count = from m in _vmdb.VM_Comment
+                                 where m.VisitRecord_Id == rec_id && m.Comment_Type == 3
+                                 select m;
+            var coreCom_count = from m in _vmdb.VM_Comment
+                                where m.VisitRecord_Id == rec_id && m.Comment_Type == 1
+                                select m;
+            var supportCom_count = from m in _vmdb.VM_Comment
+                                   where m.VisitRecord_Id == rec_id && m.Comment_Type == 2
+                                   select m;
+            return Json(new { result = "SUCCESS", comment = com_count.Count(), reply = replyCom_count.Count(), core = coreCom_count.Count(), support = supportCom_count.Count(), rid = rec_id });
         }
 
         public ActionResult ReplyComment_PartialView(int rec_id)
         {
-            var Replycomment = from m in _vmdb.VM_ReplyComment
-                               where m.VisitRecord_Id == rec_id
+            var Replycomment = from m in _vmdb.VM_Comment
+                               where m.VisitRecord_Id == rec_id && m.Comment_Type == 3
                                select m;
             return PartialView(Replycomment);
         }
 
         public ActionResult CoreComment_PartialView(int rec_id)
         {
-            var Corecomment = from m in _vmdb.VM_CoreComment
-                              where m.VisitRecord_Id == rec_id
+            var Corecomment = from m in _vmdb.VM_Comment
+                              where m.VisitRecord_Id == rec_id && m.Comment_Type == 1
                               select m;
             return PartialView(Corecomment);
         }
 
         public ActionResult SupportComment_PartialView(int rec_id)
         {
-            var Supportcomment = from m in _vmdb.VM_SupportComment
-                                 where m.VisitRecord_Id == rec_id
+            var Supportcomment = from m in _vmdb.VM_Comment
+                                 where m.VisitRecord_Id == rec_id && m.Comment_Type == 2
                                  select m;
             return PartialView(Supportcomment);
         }
@@ -206,6 +216,8 @@ namespace PeriodAid.Controllers
             comment.User_Name = user.UserName;
             comment.VisitRecord_Id = rec_id;
             comment.Comment_Detail = detail;
+            comment.Comment_Type = 0;
+            comment.Comment_Status = 0;
             _vmdb.VM_Comment.Add(comment);
             _vmdb.SaveChanges();
             return Json(new { result = "SUCCESS" });
@@ -215,13 +227,15 @@ namespace PeriodAid.Controllers
         public ActionResult CreateReplyComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_ReplyComment comment = new VM_ReplyComment();
-            comment.ReplyComment_Time = DateTime.Now;
+            VM_Comment comment = new VM_Comment();
+            comment.Comment_Time = DateTime.Now;
             comment.Nick_Name = user.NickName;
             comment.User_Name = user.UserName;
             comment.VisitRecord_Id = rec_id;
-            comment.ReplyComment_Detail = detail;
-            _vmdb.VM_ReplyComment.Add(comment);
+            comment.Comment_Detail = detail;
+            comment.Comment_Type = 3;
+            comment.Comment_Status = 0;
+            _vmdb.VM_Comment.Add(comment);
             _vmdb.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
@@ -230,13 +244,15 @@ namespace PeriodAid.Controllers
         public ActionResult CreateCoreComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_CoreComment comment = new VM_CoreComment();
-            comment.CoreComment_Time = DateTime.Now;
+            VM_Comment comment = new VM_Comment();
+            comment.Comment_Time = DateTime.Now;
             comment.Nick_Name = user.NickName;
             comment.User_Name = user.UserName;
             comment.VisitRecord_Id = rec_id;
-            comment.CoreComment_Detail = detail;
-            _vmdb.VM_CoreComment.Add(comment);
+            comment.Comment_Detail = detail;
+            comment.Comment_Type = 1;
+            comment.Comment_Status = 0;
+            _vmdb.VM_Comment.Add(comment);
             _vmdb.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }
@@ -245,13 +261,15 @@ namespace PeriodAid.Controllers
         public ActionResult CreateSupportComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_SupportComment comment = new VM_SupportComment();
-            comment.SupportComment_Time = DateTime.Now;
+            VM_Comment comment = new VM_Comment();
+            comment.Comment_Time = DateTime.Now;
             comment.Nick_Name = user.NickName;
             comment.User_Name = user.UserName;
             comment.VisitRecord_Id = rec_id;
-            comment.SupportComment_Detail = detail;
-            _vmdb.VM_SupportComment.Add(comment);
+            comment.Comment_Detail = detail;
+            comment.Comment_Type = 2;
+            comment.Comment_Status = 0;
+            _vmdb.VM_Comment.Add(comment);
             _vmdb.SaveChanges();
             return Json(new { result = "SUCCESS" });
         }

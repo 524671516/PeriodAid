@@ -394,4 +394,12 @@ body,html{
     overflow:scroll;
     /*height: 344px;*/
 }
+/*分页样式*/
+.paging_container div{
+    display:inline-block;
+    margin-top:15px;
+    margin-bottom:11px;
+    font-size:14px;
+}
+/*分页样式结束*/
 /*部分视图样式结束*/

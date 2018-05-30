@@ -32,9 +32,6 @@
         public virtual DbSet<VM_Comment> VM_Comment { get; set; }
         public virtual DbSet<VM_Contact> VM_Contact { get; set; }
         public virtual DbSet<VM_ContentConfig> VM_ContentConfig { get; set; }
-        public virtual DbSet<VM_ReplyComment> VM_ReplyComment { get; set; }
-        public virtual DbSet<VM_CoreComment> VM_CoreComment { get; set; }
-        public virtual DbSet<VM_SupportComment> VM_SupportComment { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -45,9 +42,8 @@
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_Contact).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Employee>().HasMany(m => m.AttendVisit).WithMany(e => e.AttendEmployee).Map(m => { m.MapLeftKey("EmployeeId"); m.MapRightKey("VisitRecordId"); m.ToTable("AttendEmployee_VisitRecord"); });
-            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_ReplyComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_CoreComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
-            modelBuilder.Entity<VM_VisitRecord>().HasMany(e => e.VM_SupportComment).WithRequired(e => e.VM_VisitRecord).HasForeignKey(e => e.VisitRecord_Id).WillCascadeOnDelete(true);
+           
+           
         }
     }
 
@@ -267,10 +263,12 @@
 
         public string NextVisit_Detail { get; set; }//下次拜访事项
 
-        public int status { get; set; }//审核状态
-        [StringLength(64)]
-        public string Veto_Detail { get; set; }
+        public int status { get; set; }//拜访状态（0默认,1通过，-1驳回）
+
         [StringLength(256)]
+        public string Veto_Detail { get; set; }
+
+        [StringLength(128)]
         public string Veto_Cause { get; set; }
 
         public int Employee_Id { get; set; }//填表人
@@ -289,14 +287,7 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VM_Employee> AttendEmployee { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_ReplyComment> VM_ReplyComment { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_CoreComment> VM_CoreComment { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<VM_SupportComment> VM_SupportComment { get; set; }
     }
 
     //拜访评论表
@@ -318,74 +309,13 @@
 
         public DateTime? Comment_Time { get; set; }
 
-        public virtual VM_VisitRecord VM_VisitRecord { get; set; }
-    }
+        public int Comment_Type { get; set; }//0总评，1核心评论，2支持评论,3我方回复
 
-    //我方回复评论表
-    [Table("VM_ReplyComment")]
-    public partial class VM_ReplyComment
-    {
-        public int Id { get; set; }
-
-        [StringLength(256)]
-        public string ReplyComment_Detail { get; set; }
-
-        [StringLength(32)]
-        public string Nick_Name { get; set; }
-
-        [StringLength(64)]
-        public string User_Name { get; set; }
-
-        public int VisitRecord_Id { get; set; }
-
-        public DateTime? ReplyComment_Time { get; set; }
+        public int Comment_Status { get; set; }//0未读，1已读
 
         public virtual VM_VisitRecord VM_VisitRecord { get; set; }
     }
 
-    //核心问题评论表
-    [Table("VM_CoreComment")]
-    public partial class VM_CoreComment
-    {
-        public int Id { get; set; }
-
-        [StringLength(256)]
-        public string CoreComment_Detail { get; set; }
-
-        [StringLength(32)]
-        public string Nick_Name { get; set; }
-
-        [StringLength(64)]
-        public string User_Name { get; set; }
-
-        public int VisitRecord_Id { get; set; }
-
-        public DateTime? CoreComment_Time { get; set; }
-
-        public virtual VM_VisitRecord VM_VisitRecord { get; set; }
-    }
-
-    //需要支持评论表
-    [Table("VM_SupportComment")]
-    public partial class VM_SupportComment
-    {
-        public int Id { get; set; }
-
-        [StringLength(1024)]
-        public string SupportComment_Detail { get; set; }
-
-        [StringLength(32)]
-        public string Nick_Name { get; set; }
-
-        [StringLength(64)]
-        public string User_Name { get; set; }
-
-        public int VisitRecord_Id { get; set; }
-
-        public DateTime? SupportComment_Time { get; set; }
-
-        public virtual VM_VisitRecord VM_VisitRecord { get; set; }
-    }
 
     //选项配置表
     [Table("VM_ContentConfig")]
