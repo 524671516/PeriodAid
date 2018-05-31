@@ -437,7 +437,18 @@ namespace System.Web.Mvc
             }
         }
 
-
+        public static string NextVisitType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "是";
+                case -1:
+                    return "否";
+                default:
+                    return "未知";
+            }
+        }
 
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)

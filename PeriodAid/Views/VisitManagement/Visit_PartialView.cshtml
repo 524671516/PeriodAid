@@ -201,7 +201,7 @@
                 <td></td>
                 <td></td>
             }
-            <td>@Html.VisitType(item.NextVisit)</td>
+            <td style="text-indent:35px">@Html.NextVisitType(item.NextVisit)</td>
             @if (item.NextVisit == 0)
             {
                 <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
