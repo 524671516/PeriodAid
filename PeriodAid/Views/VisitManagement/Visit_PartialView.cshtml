@@ -47,6 +47,8 @@
             <th>业务员</th>
             <th>交表时间</th>
             <th>拜访日期</th>
+            <th>交表考核</th>
+            <th>内容考核</th>
             <th>拜访方式</th>
             <th>拜访次数</th>
             <th>渠道名称</th>
@@ -73,8 +75,6 @@
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
-            <th>交表考核</th>
-            <th>内容考核</th>
             <th>驳回详情</th>
             <th></th>
         </tr>
@@ -94,6 +94,34 @@
             <td>@item.VM_Employee.Employee_Name</td>
             <td>@item.Create_Time</td>
             <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+
+            @if (item.Create_Time == null)
+            {
+                <td style="text-indent:10px" class="color-red">超时</td>
+            }
+            else
+            {
+                if (Convert.ToDateTime(item.Create_Time) > DateTime.Parse(item.Create_Time.Value.ToShortDateString() + " 23:30:00"))
+                {
+                    <td style="text-indent:10px" class="color-red">超时</td>
+                }
+                else
+                {
+                    <td style="text-indent:10px" class="color-green">正常</td>
+                }
+            }
+            @if (item.status == 0)
+            {
+                <td style="text-indent:5px" class="color-blue">待审核</td>
+            }
+            else if (item.status == -1)
+            {
+                <td style="text-indent:5px" class="color-red">驳回</td>
+            }
+            else if (item.status == 1)
+            {
+                <td style="text-indent:5px" class="color-green">通过</td>
+            }
             <td style="text-indent:8px">@Html.VisitType(item.Visit_Type)</td>
             <td style="text-indent:8px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
             <td>
@@ -219,33 +247,6 @@
                 <td></td>
             }
 
-            @if (item.Create_Time == null)
-            {
-                <td style="text-indent:10px" class="color-red">超时</td>
-            }
-            else
-            {
-                if (Convert.ToDateTime(item.Create_Time) > DateTime.Parse(item.Create_Time.Value.ToShortDateString() + " 23:30:00"))
-                {
-                    <td style="text-indent:10px" class="color-red">超时</td>
-                }
-                else
-                {
-                    <td style="text-indent:10px" class="color-green">正常</td>
-                }
-            }
-            @if (item.status == 0)
-            {
-                <td style="text-indent:5px" class="color-blue">待审核</td>
-            }
-            else if (item.status == -1)
-            {
-                <td style="text-indent:5px" class="color-red">驳回</td>
-            }
-            else if (item.status == 1)
-            {
-                <td style="text-indent:5px" class="color-green">通过</td>
-            }
             @if (item.status == -1)
             {
                 <td>
@@ -334,31 +335,6 @@
         }
         $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
     })
-    //$(".pagination > li > a").click(function () {
-    //    var l = $(this).attr("href");
-    //    $.ajax({
-    //        url: l,
-    //        data: {
-    //            visit_date: $("#select_date").val(),
-    //            dep_id: $(".team_select.active").attr("data-val"),
-    //            com_type: $(".company_type.active").text(),
-    //            com_name: $("#company_id .shared_view_span").attr("data-name"),
-    //            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-    //            sort: $(".sort_type.active").attr("data-val"),
-    //            status: $(".status_type.active").attr("data-val"),
-    //            page_count: $(".share_select_page option:selected").val(),
-    //        },
-    //        success: function (data) {
-    //            $("#visit_list_content").html(data)
-    //            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
-    //                $("#freezing_record").css("height", "268px")
-    //            } else {
-    //                $("#freezing_record").css("height", "442px")
-    //            }
-    //        }
-    //    });
-    //    return false;
-    //});
     // 公司详情
     $('.company_select_a').click(function () {
         $.ajax({
