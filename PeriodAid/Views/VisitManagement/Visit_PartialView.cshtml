@@ -10,6 +10,18 @@
         position: relative;
         z-index: 31;
     }
+    tr > :nth-child(3) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(4) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(5) {
+        position: relative;
+        z-index: 31;
+    }
 
     .btn-xs {
         padding: 0 5px;
@@ -30,9 +42,9 @@
     <div class="hidden" id="hidden_count">@ViewBag.Recore</div>
     <table class="table table-hover">
         <tr>
-            <th id="first_th">公司名称</th>
-            <th id="second_th">业务员</th>
             <th>序号</th>
+            <th>公司名称</th>
+            <th>业务员</th>
             <th>交表时间</th>
             <th>拜访日期</th>
             <th>拜访方式</th>
@@ -72,13 +84,13 @@
         {
             current_count++;
         <tr>
+            <td style="text-indent:5px">@current_count</td>
             <td>
                 <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
                     @item.VM_Company.Company_Name
                 </a>
             </td>
             <td>@item.VM_Employee.Employee_Name</td>
-            <td style="text-indent:5px">@current_count</td>
             <td>@item.Create_Time</td>
             <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
             <td style="text-indent:8px">@Html.VisitType(item.Visit_Type)</td>
@@ -542,10 +554,17 @@
             }
         });
     })
-    // 固定第一、二列
     function freezing() {
         $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());
-        $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(2)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(3)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(4)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(5)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(1)").css("background", "#eef1f5");
+        $("tr>:nth-child(2)").css("background", "#eef1f5");
+        $("tr>:nth-child(3)").css("background", "#eef1f5");
+        $("tr>:nth-child(4)").css("background", "#eef1f5");
+        $("tr>:nth-child(5)").css("background", "#eef1f5");
     }
 
 </script>

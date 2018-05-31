@@ -1,22 +1,27 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.VM_Company>
 @using PagedList.Mvc;
 <style>
-    tr>:nth-child(1){  
-    position : relative;  
-    z-index:31
-}
-    tr>:nth-child(2){  
-    position : relative;  
-    z-index:31
-}
+    tr > :nth-child(1) {
+        position: relative;
+        z-index: 31;
+    }
+
+    tr > :nth-child(2) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(3) {
+        position: relative;
+        z-index: 31;
+    }
 </style>
 <div id="freezing_company" class="freezing" onscroll="javascript:freezing()">
     <div class="hidden" id="hidden_count">@ViewBag.Count</div>
     <table class="table table-hover">
         <tr>
-            <th id="first_th">公司名称</th>
-            <th id="second_th">业务员</th>
             <th>序号</th>
+            <th>公司名称</th>
+            <th>业务员</th>
             <th>公司类型</th>
             <th>公司来源</th>
             <th>公司渠道</th>
@@ -34,13 +39,13 @@
         {
             current_count++;
             <tr>
+                <td style="text-indent:5px">@current_count</td>
                 <td>
                     <a href="#" data-id="@item.Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
                         @item.Company_Name
                     </a>
                 </td>
                 <td>@item.VM_Employee.Employee_Name</td>
-                <td style="text-indent:5px">@current_count</td>
                 <td>@item.Company_Type</td>
                 <td>@item.Company_Source</td>
                 <td>
@@ -69,12 +74,13 @@
     </div>
 </div>
 <script>
-    // 固定第一、二列
     function freezing() {
-        $("tr>:nth-child(2)").css("left", $("#freezing").scrollLeft());
-        $("tr>:nth-child(1)").css("left", $("#freezing").scrollLeft());
-        $("tr>:nth-child(2)").css("background", "#eef1f5");
+        $("tr>:nth-child(1)").css("left", $("#freezing_company").scrollLeft());
+        $("tr>:nth-child(2)").css("left", $("#freezing_company").scrollLeft());
+        $("tr>:nth-child(3)").css("left", $("#freezing_company").scrollLeft());
         $("tr>:nth-child(1)").css("background", "#eef1f5");
+        $("tr>:nth-child(2)").css("background", "#eef1f5");
+        $("tr>:nth-child(3)").css("background", "#eef1f5");
     }
     $('.company_select_a').click(function () {
         $.ajax({
