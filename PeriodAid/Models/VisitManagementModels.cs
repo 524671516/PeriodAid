@@ -223,7 +223,7 @@
 
         public decimal Intentional_Funds { get; set; }//操作资金
 
-        public int Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
+        public int? Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
 
         public string Company_Name { get; set; }//公司名称
 

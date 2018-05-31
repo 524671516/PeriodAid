@@ -98,8 +98,8 @@
                 <td></td>
                 <td>@item.Intentional_Products</td>
                 <td>@item.Intentional_Funds 万元</td>
-                <td>@Html.CooperationType(item.Cooperation_Type)</td>
-                if (item.Cooperation_Type == 1)
+                <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
+                if (item.Cooperation_Type.Value == 1)
                 {
                     <td>@item.Company_Name</td>
                     <td>@item.Contact_Mobile</td>
