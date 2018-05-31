@@ -14,6 +14,10 @@
         position: relative;
         z-index: 31;
     }
+    tr > :nth-child(4) {
+        position: relative;
+        z-index: 31;
+    }
 </style>
 <div id="freezing_company" class="freezing" onscroll="javascript:freezing()">
     <div class="hidden" id="hidden_count">@ViewBag.Count</div>
@@ -116,9 +120,11 @@
         $("tr>:nth-child(1)").css("left", $("#freezing_company").scrollLeft());
         $("tr>:nth-child(2)").css("left", $("#freezing_company").scrollLeft());
         $("tr>:nth-child(3)").css("left", $("#freezing_company").scrollLeft());
+        $("tr>:nth-child(4)").css("left", $("#freezing_company").scrollLeft());
         $("tr>:nth-child(1)").css("background", "#eef1f5");
         $("tr>:nth-child(2)").css("background", "#eef1f5");
         $("tr>:nth-child(3)").css("background", "#eef1f5");
+        $("tr>:nth-child(4)").css("background", "#eef1f5");
     }
     $(".record_view_count").text($("#hidden_count").text())
     var page_view = Math.ceil($(".record_view_count").text() / $(".share_select_page option:selected").val())
