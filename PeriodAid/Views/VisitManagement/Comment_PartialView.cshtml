@@ -54,6 +54,8 @@
                                 vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
                                 sort: $(".sort_type.active").attr("data-val"),
                                 status: $(".status_type.active").attr("data-val"),
+                                page_count: $(".share_select_page option:selected").val(),
+                                page: $(".page_info").val(),
                             },
                             success: function (data) {
                                 $("#visit_list_content").html(data)
