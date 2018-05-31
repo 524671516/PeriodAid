@@ -69,6 +69,7 @@
             <th>是否等待对方回复</th>
             <th>对方回复时间</th>
             <th>对方回复详情</th>
+            <th>是否需要下次拜访</th>
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
@@ -114,19 +115,30 @@
                 <td></td>
                 <td>@item.Intentional_Products</td>
                 <td>@item.Intentional_Funds 万元</td>
-                //<td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
-                @*if (item.Cooperation_Type.Value == 1)
+                if (@item.Cooperation_Type != null)
                 {
-                    <td>@item.Company_Name</td>
-                    <td>@item.Contact_Mobile</td>
-                    <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
+                    <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
+                    if (item.Cooperation_Type.Value == 1)
+                    {
+                        <td>@item.Company_Name</td>
+                        <td>@item.Contact_Mobile</td>
+                        <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
                 }
                 else
                 {
                     <td></td>
                     <td></td>
                     <td></td>
-                }*@
+                    <td></td>
+                }
+
             }
             else
             {
@@ -189,13 +201,24 @@
                 <td></td>
                 <td></td>
             }
-            <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
-            <td style="text-indent:15px">@Html.VisitType(item.NextVisit_Type)</td>
-            <td>
-                <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
-                    @item.NextVisit_Detail
-                </div>
-            </td>
+            <td>@Html.VisitType(item.NextVisit)</td>
+            @if (item.NextVisit == 0)
+            {
+                <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+                <td style="text-indent:15px">@Html.VisitType(item.NextVisit_Type.Value)</td>
+                <td>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
+                        @item.NextVisit_Detail
+                    </div>
+                </td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+                <td></td>
+            }
+
             @if (item.Create_Time == null)
             {
                 <td style="text-indent:10px" class="color-red">超时</td>

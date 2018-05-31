@@ -257,7 +257,9 @@
         [StringLength(256)]
         public string CustomerReply_Detail { get; set; }//对方回复的详情
 
-        public int NextVisit_Type { get; set; }//下次拜访方式（0实地，1电话）
+        public int NextVisit { get; set; }//是否需要下次拜访（0是，-1否）
+
+        public int? NextVisit_Type { get; set; }//下次拜访方式（0实地，1电话）
 
         public DateTime? NextVisit_Time { get; set; }//下次拜访时间
 
