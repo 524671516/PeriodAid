@@ -1,25 +1,29 @@
 ﻿@model PagedList.IPagedList<PeriodAid.Models.VM_VisitRecord>
 @using PagedList.Mvc;
 <style>
-        tr>:nth-child(1){  
-    position : relative;  
-    z-index:31
-}  
-    tr>:nth-child(2){  
-    position : relative;  
-    z-index:31
-}  
-    .btn-xs{
-        padding:0 5px
+    tr > :nth-child(1) {
+        position: relative;
+        z-index: 31;
     }
-    .pagination-container{
-        display:inline-block!important
+
+    tr > :nth-child(2) {
+        position: relative;
+        z-index: 31;
     }
-    .textarea_detail{
-        width:100%;
-        margin:10px 0 10px -80px;
+
+    .btn-xs {
+        padding: 0 5px;
+    }
+
+    .pagination-container {
+        display: inline-block !important;
+    }
+
+    .textarea_detail {
+        width: 100%;
+        margin: 10px 0 10px -80px;
         height: 70px;
-        padding-top:6px
+        padding-top: 6px;
     }
 </style>
 <div id="freezing_record" class="freezing" onscroll="javascript:freezing()">
@@ -98,8 +102,8 @@
                 <td></td>
                 <td>@item.Intentional_Products</td>
                 <td>@item.Intentional_Funds 万元</td>
-                <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
-                if (item.Cooperation_Type.Value == 1)
+                //<td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
+                @*if (item.Cooperation_Type.Value == 1)
                 {
                     <td>@item.Company_Name</td>
                     <td>@item.Contact_Mobile</td>
@@ -110,7 +114,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                }
+                }*@
             }
             else
             {
@@ -540,6 +544,7 @@
     })
     // 固定第一、二列
     function freezing() {
+        $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());
         $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());
     }
 
