@@ -182,7 +182,7 @@
                 <td></td>
                 <td></td>
             }
-            <td style="text-indent:10px">@Html.SmoothlyStatus(item.Smoothly)</td>
+            <td style="text-indent:14px">@Html.SmoothlyStatus(item.Smoothly)</td>
             @if (item.Smoothly == 0)
             {
                 <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
@@ -232,8 +232,8 @@
             <td style="text-indent:35px">@Html.NextVisitType(item.NextVisit)</td>
             @if (item.NextVisit == 0)
             {
-                <td>@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
-                <td style="text-indent:15px">@Html.VisitType(item.NextVisit_Type.Value)</td>
+                <td style="text-indent:10px">@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+                <td style="text-indent:22px">@Html.VisitType(item.NextVisit_Type.Value)</td>
                 <td>
                     <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
                         @item.NextVisit_Detail
@@ -246,7 +246,6 @@
                 <td></td>
                 <td></td>
             }
-
             @if (item.status == -1)
             {
                 <td>
