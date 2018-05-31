@@ -73,10 +73,6 @@ namespace PeriodAid.Controllers
             var company = from m in _vmdb.VM_Company
                           select m;
             ViewBag.Company = company;
-            var Record = from m in _vmdb.VM_VisitRecord
-                         where m.Visit_Time.Value < DateTime.Now
-                         select m;
-            ViewBag.Recore = Record.Count();
             return View();
         }
 
@@ -100,6 +96,15 @@ namespace PeriodAid.Controllers
                          && m.VM_Employee.VM_Department.Department_Name == (dep_id != "" ? dep_id : m.VM_Employee.VM_Department.Department_Name)
                          && m.status == (status != 2 ? status :m.status)
                          select m;
+                var Record = from m in _vmdb.VM_VisitRecord
+                             where m.Visit_Time.Value.Year + "-" + m.Visit_Time.Value.Month + "-" + m.Visit_Time.Value.Day == _DateTime
+                             && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
+                             && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
+                             && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
+                             && m.VM_Employee.VM_Department.Department_Name == (dep_id != "" ? dep_id : m.VM_Employee.VM_Department.Department_Name)
+                             && m.status == (status != 2 ? status : m.status)
+                             select m;
+                ViewBag.Recore = Record.Count();
             }
             else
             {
@@ -111,6 +116,15 @@ namespace PeriodAid.Controllers
                          && m.VM_Employee.VM_Department.Department_Name == (dep_id != "" ? dep_id : m.VM_Employee.VM_Department.Department_Name)
                          && m.status == (status != 2 ? status : m.status)
                          select m;
+                var Record = from m in _vmdb.VM_VisitRecord
+                             where m.Visit_Time.Value < DateTime.Now
+                             && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
+                             && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
+                             && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
+                             && m.VM_Employee.VM_Department.Department_Name == (dep_id != "" ? dep_id : m.VM_Employee.VM_Department.Department_Name)
+                             && m.status == (status != 2 ? status : m.status)
+                             select m;
+                ViewBag.Recore = Record.Count();
             }
             if (sort == 0)
             {
@@ -304,9 +318,6 @@ namespace PeriodAid.Controllers
             var company = from m in _vmdb.VM_Company
                           select m;
             ViewBag.Company = company;
-            var count = from m in _vmdb.VM_Company
-                        select m;
-            ViewBag.Count = count.Count();
             return View();
         }
 
@@ -314,6 +325,13 @@ namespace PeriodAid.Controllers
         {
             int _page = page ?? 1;
             ViewBag.CurrentPage = _page* page_count- page_count;
+            var count = from m in _vmdb.VM_Company
+                        where m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
+                        && m.Company_Type == (com_type != "全部" ? com_type : m.Company_Type)
+                        && m.Company_Name == (com_name != "" ? com_name : m.Company_Name)
+                        && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
+                        select m;
+            ViewBag.Count = count.Count();
             var company = (from m in _vmdb.VM_Company
                            where m.VM_Employee.Department_Id == (dep_id != 0 ? dep_id : m.VM_Employee.Department_Id)
                            && m.Company_Type == (com_type != "全部" ? com_type : m.Company_Type)
