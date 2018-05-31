@@ -82,6 +82,10 @@
         $("tr>:nth-child(2)").css("background", "#eef1f5");
         $("tr>:nth-child(3)").css("background", "#eef1f5");
     }
+    $(".record_view_count").text($("#hidden_count").text())
+    var page_view = Math.ceil($(".record_view_count").text() / $(".share_select_page option:selected").val())
+    $(".page_sum_view").text(page_view)
+    
     $('.company_select_a').click(function () {
         $.ajax({
             url: '/VisitManagement/CompanyInfo/',
@@ -96,8 +100,6 @@
     });
     $(function () {
         $("#freezing_company").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
-        $(".record_view_count").text($("#hidden_count").text())
-        var page_view = Math.ceil($(".record_view_count").text() / $(".share_select_page option:selected").val())
-        $(".page_sum_view").text(page_view)
+        
     });
 </script>
