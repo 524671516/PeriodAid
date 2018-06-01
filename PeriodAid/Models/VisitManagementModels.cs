@@ -42,8 +42,6 @@
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_Contact).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(true);
             modelBuilder.Entity<VM_Company>().HasMany(e => e.VM_VisitRecord).WithRequired(e => e.VM_Company).HasForeignKey(e => e.Company_Id).WillCascadeOnDelete(false);
             modelBuilder.Entity<VM_Employee>().HasMany(m => m.AttendVisit).WithMany(e => e.AttendEmployee).Map(m => { m.MapLeftKey("EmployeeId"); m.MapRightKey("VisitRecordId"); m.ToTable("AttendEmployee_VisitRecord"); });
-
-
         }
     }
 
@@ -72,7 +70,7 @@
 
         public int Employee_Count { get; set; }
 
-        public int Store_Count { get; set; }//门店数量
+        public int? Store_Count { get; set; }//门店数量
 
         [StringLength(256)]
         public string Source_Name { get; set; }//渠道名称
@@ -83,9 +81,9 @@
         [StringLength(32)]
         public string Source_Type { get; set; }//渠道类型
 
-        public int Entrance_Fee { get; set; }//进场费用（0有，-1无）
+        public int? Entrance_Fee { get; set; }//进场费用（0有，-1无）
 
-        public decimal EntranceFee_Count { get; set; }//进场费用数额
+        public decimal? EntranceFee_Count { get; set; }//进场费用数额
 
         public int? Entrance_Type { get; set; }//进场类型（0门店，1系统）
 
@@ -221,9 +219,11 @@
         [StringLength(256)]
         public string Intentional_Products { get; set; }//兴趣品相
 
-        public decimal Intentional_Funds { get; set; }//操作资金
+        public decimal? Intentional_Funds { get; set; }//操作资金
 
         public int? Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
+
+        public int? Cooperation_Status { get; set; }//合作待定状态（0是，1否/待定）
 
         public string Company_Name { get; set; }//公司名称
 
@@ -232,6 +232,8 @@
         public DateTime? Reply_Time { get; set; }//回复日期
 
         public string NoIntention_Reason { get; set; }//无意向原因
+
+        public string NoIntention_Detail { get; set; }//无意向其他原因
 
         public int Smoothly { get; set; }//综合结果（0达到目的，-1未达到目的）
 

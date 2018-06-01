@@ -46,7 +46,7 @@
             <th>公司名称</th>
             <th>业务员</th>
             <th>交表时间</th>
-            <th>拜访日期</th>
+            <th>拜访时间</th>
             <th>交表考核</th>
             <th>内容考核</th>
             <th>拜访方式</th>
@@ -55,22 +55,22 @@
             <th>参与同事</th>
             <th>合作意向</th>
             <th>无意向原因</th>
-            <th>意向产品</th>
+            <th>感兴趣品项</th>
             <th>操作资金</th>
             <th>合作方式</th>
-            <th>公司名称</th>
+            <th>经销商名称</th>
             <th>联系人电话</th>
             <th>回复日期</th>
             <th>顺利与否</th>
             <th>预计拿货时间</th>
             <th>预计拿货金额</th>
-            <th>核心问题</th>
+            <th>遇到核心问题</th>
             <th>需要支持</th>
             <th>是否需要我方回复</th>
-            <th>回复详情</th>
+            <th>需回复问题</th>
             <th>是否等待对方回复</th>
-            <th>对方回复时间</th>
-            <th>对方回复详情</th>
+            <th>预计回复时间</th>
+            <th>等待回复的信息</th>
             <th>是否需要下次拜访</th>
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
@@ -142,7 +142,14 @@
             {
                 <td></td>
                 <td>@item.Intentional_Products</td>
-                <td>@item.Intentional_Funds 万元</td>
+                if (item.Intentional_Funds != null)
+                {
+                    <td>@item.Intentional_Funds 万元</td>
+                }
+                else
+                {
+                    <td></td>
+                }
                 if (@item.Cooperation_Type != null)
                 {
                     <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
@@ -201,7 +208,7 @@
                     <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论<span class="badge"></span></a>
                 </td>
                 <td style="position:relative">
-                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:25px" title="@item.Support">
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:40px;" title="@item.Support">
                         @item.Support
                     </div>
                     <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span class="badge"></span></a>
@@ -209,7 +216,7 @@
             }
             <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
             <td style="position:relative">
-                <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 25px;" title="@item.Reply_Detail">
+                <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 40px;" title="@item.Reply_Detail">
                     @item.Reply_Detail
                 </div>
                 <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论<span class="badge"></span></a>

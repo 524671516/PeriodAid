@@ -26,18 +26,18 @@
             <th>序号</th>
             <th>公司名称</th>
             <th>业务员</th>
-            <th>客户类别</th>
+            <th>客户情况</th>
             <th>公司类型</th>
             <th>公司来源</th>
             <th>公司渠道</th>
             <th>渠道类型</th>
-            <th>门店数量</th>
+            <th>门店总量</th>
             <th>代理过知名品牌</th>
             <th>所属区域</th>
             <th>年销售额</th>
             <th>进场费用</th>
+            <th>费用单位</th>
             <th>进场费用数额</th>
-            <th>进场类型</th>
             <th>特殊渠道</th>
             <th>特殊渠道详情</th>
             <th>特殊渠道其他详情</th>
@@ -67,7 +67,14 @@
                     </div>
                 </td>
                 <td>@item.Source_Type</td>
-                <td style="text-indent:15px">@item.Store_Count</td>
+                @if (item.Store_Count != null)
+                {
+                    <td style="text-indent:15px">@item.Store_Count.Value</td>
+                }
+                else
+                {
+                    <td></td>
+                }
                 <td>
                     <div style="width:170px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.Agent_FamousBrand">
                         @item.Agent_FamousBrand
@@ -75,21 +82,28 @@
                 </td>
                 <td>@item.Region</td>
                 <td>@item.Sales_Amount 万元</td>
-                <td style="text-indent:10px">@Html.SpecialSource(item.Entrance_Fee)</td>
-                @if (item.Entrance_Fee ==0)
+                @if (item.Entrance_Fee != null)
                 {
-                    <td>@item.EntranceFee_Count 万元</td>
-                }
-                else
+                    <td style="text-indent:20px">@Html.SpecialSource(item.Entrance_Fee.Value)</td>
+                    if (item.Entrance_Type !=null)
+                    {
+                        <td>@Html.EntranceType(item.Entrance_Type.Value)</td>
+                    }else
+                    {
+                        <td></td>
+                    }
+                    if (item.Entrance_Fee == 0)
+                    {
+                        <td>@item.EntranceFee_Count 元/SKU</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                }else
                 {
                     <td></td>
-                }
-                @if (item.Entrance_Type != null)
-                {
-                    <td style="text-indent:10px">@Html.EntranceType(item.Entrance_Type.Value)</td>
-                }
-                else
-                {
+                    <td></td>
                     <td></td>
                 }
                 <td style="text-indent:15px">@Html.SpecialSource(item.Special_Source)</td>
