@@ -450,6 +450,19 @@ namespace System.Web.Mvc
             }
         }
 
+        public static string CooperationStatus(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "否";
+                case 1:
+                    return "待定";
+                default:
+                    return "未知";
+            }
+        }
+
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {

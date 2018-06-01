@@ -223,7 +223,7 @@
 
         public int? Cooperation_Type { get; set; }//合作方式（0直营，1通过经销商）
 
-        public int? Cooperation_Status { get; set; }//合作待定状态（0是，1否/待定）
+        public int? Cooperation_Status { get; set; }//合作是否待定（0否，1待定）
 
         public string Company_Name { get; set; }//公司名称
 

@@ -55,12 +55,14 @@
             <th>参与同事</th>
             <th>合作意向</th>
             <th>无意向原因</th>
+            <th>无意向其他原因</th>
             <th>感兴趣品项</th>
             <th>操作资金</th>
+            <th>合作是否待定</th>
+            <th>待定回复日期</th>
             <th>合作方式</th>
             <th>经销商名称</th>
             <th>联系人电话</th>
-            <th>回复日期</th>
             <th>顺利与否</th>
             <th>预计拿货时间</th>
             <th>预计拿货金额</th>
@@ -141,6 +143,7 @@
             @if (item.Cooperation_Intention == 0)
             {
                 <td></td>
+                <td></td>
                 <td>@item.Intentional_Products</td>
                 if (item.Intentional_Funds != null)
                 {
@@ -150,20 +153,46 @@
                 {
                     <td></td>
                 }
-                if (@item.Cooperation_Type != null)
+                if (@item.Cooperation_Status != null)
                 {
-                    <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
-                    if (item.Cooperation_Type.Value == 1)
+                    <td style="text-indent:17px">@Html.CooperationStatus(item.Cooperation_Status.Value)</td>
+                    if (item.Cooperation_Status.Value == 1)
                     {
-                        <td>@item.Company_Name</td>
-                        <td>@item.Contact_Mobile</td>
-                        <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
+                        if (@item.Reply_Time != null)
+                        {
+                            <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td></td>
+                        <td></td>
+                        <td></td>
                     }
                     else
                     {
                         <td></td>
-                        <td></td>
-                        <td></td>
+                        if (@item.Cooperation_Type != null)
+                        {
+                            <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
+                            if (item.Cooperation_Type.Value == 1)
+                            {
+                                <td>@item.Company_Name</td>
+                                <td>@item.Contact_Mobile</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
                     }
                 }
                 else
@@ -172,16 +201,16 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                 }
-
             }
             else
             {
                 <td>
-                    <div>
-                        @item.NoIntention_Reason
-                    </div>
+                    @item.NoIntention_Reason
                 </td>
+                <td>@item.NoIntention_Detail</td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
