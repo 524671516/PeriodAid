@@ -139,22 +139,33 @@
             }
         </div>
         <div class="form-group">
-            <label class="col-md-2 control-label " style="font-size:15px">专用仓库:</label>
-            <div class="col-md-2" style="font-size:14px;line-height: 36px;">
-                @Html.SpecialSource(Model.Dedicated_Warehouse)
-            </div>
+            
             @if (Model.Dedicated_Warehouse == 0)
             {
+                <label class="col-md-2 control-label " style="font-size:15px">专用仓库:</label>
+                <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                    @Html.SpecialSource(Model.Dedicated_Warehouse)
+                </div>
                 <label class="col-md-2 control-label" style="font-size:15px">仓库面积:</label>
                 <div class="col-md-2" style="line-height: 36px;font-size: 14px">
                     @Model.Warehouse_Area 平方米
                 </div>
-                <label class="col-md-1 control-label" style="font-size:15px">年销售额:</label>
+                <label class="col-md-1 control-label" style="font-size:15px">销售人员:</label>
                 <div class="col-md-3" style="font-size:14px;line-height: 36px;">
-                    @Model.Sales_Amount 万元
+                    @Model.Employee_Count 人
                 </div>
             }
-            
+            else
+            {
+                <label class="col-md-2 control-label " style="font-size:15px">专用仓库:</label>
+                <div class="col-md-5" style="font-size:14px;line-height: 36px;">
+                    @Html.SpecialSource(Model.Dedicated_Warehouse)
+                </div>
+                <label class="col-md-1 control-label" style="font-size:15px;padding-left:5px">销售人员:</label>
+                <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                    @Model.Employee_Count 人
+                </div>
+            }
         </div>
         <div class="form-group">
             @if (Model.Special_Source != -1)

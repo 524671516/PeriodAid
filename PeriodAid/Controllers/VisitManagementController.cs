@@ -128,15 +128,15 @@ namespace PeriodAid.Controllers
             }
             if (sort == 0)
             {
-                return PartialView(record.OrderByDescending(m => m.Visit_Time).OrderByDescending(m => m.Id).ToPagedList(_page, page_count));
+                return PartialView(record.OrderByDescending(m => m.Visit_Time).ToPagedList(_page, page_count));
             }
             else if (sort == 1)
             {
-                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).OrderByDescending(m => m.Id).ToPagedList(_page, page_count));
+                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).ToPagedList(_page, page_count));
             }
             else
             {
-                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).OrderByDescending(m => m.Id).ToPagedList(_page, page_count));
+                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).ToPagedList(_page, page_count));
             }
         }
 
