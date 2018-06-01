@@ -1211,6 +1211,7 @@
     <Content Include="Views\VisitManagement\Company_View.cshtml" />
     <Content Include="Views\VisitManagement\Company_PartialView.cshtml" />
     <Content Include="Views\VisitManagement\SupportComment_PartialView.cshtml" />
+    <Content Include="Views\VisitManagement\VisitRecord_View.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

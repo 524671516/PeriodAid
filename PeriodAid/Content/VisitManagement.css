@@ -472,5 +472,55 @@ body,html{
 /*分页样式结束*/
 /*评论*/
 /*评论结束*/
-
 /*部分视图样式结束*/
+/*还原共享表样式*/
+.information_share_view{
+    border:2px solid black
+}
+.information_share_view tr{
+    line-height: 34px;
+    text-align: center;
+}
+.information_share_view tr td{
+    border:1px solid #ccc
+}
+.record_share_view{
+    border:2px solid black
+}
+.record_share_view tr{
+    line-height: 34px;
+    text-align: center;
+}
+.record_share_view tr td{
+    border:1px solid #ccc
+}
+.record_sharp_span{
+    display:inline-block;
+    margin:0 20px
+}
+tr > :nth-child(1) {
+    width: 73px;
+}
+
+tr > :nth-child(2) {
+    width: 199px;
+}
+.left_share_div{
+    display:inline-block;
+    padding: 0 10px;
+    border-right:1px solid #ccc;
+    height:94px;
+    float:left;
+    line-height:94px
+}
+.result_share_view{
+    border:2px solid black
+}
+.result_share_view tr{
+    line-height: 34px;
+    text-align: center;
+}
+.result_share_view tr td{
+    border:1px solid #ccc
+}
+/*还原共享表样式结束*/

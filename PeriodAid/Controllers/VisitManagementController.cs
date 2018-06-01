@@ -342,5 +342,10 @@ namespace PeriodAid.Controllers
             return PartialView(company);
         }
 
+        public ActionResult VisitRecord_View(int rec_id)
+        {
+            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
+            return PartialView(record);
+        }
     }
 }

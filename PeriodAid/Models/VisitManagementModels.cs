@@ -57,7 +57,7 @@
         [StringLength(32)]
         public string Company_Type { get; set; }//客户类型（现代渠道，流通，餐饮，电商和APP）
 
-        public int Company_Category { get; set; }//客户类别（0经销商，1渠道终端）
+        public int Company_Category { get; set; }//客户情况（0经销商，1渠道终端）
 
         [StringLength(32)]
         public string Company_Source { get; set; }//客户来源
@@ -68,7 +68,7 @@
         [StringLength(256)]
         public string Company_Address { get; set; }
 
-        public int Employee_Count { get; set; }
+        public int Employee_Count { get; set; } // 销售人员
 
         public int? Store_Count { get; set; }//门店数量
 

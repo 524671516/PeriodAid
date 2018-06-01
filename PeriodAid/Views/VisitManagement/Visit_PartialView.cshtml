@@ -87,7 +87,9 @@
         {
             current_count++;
         <tr>
-            <td style="text-indent:5px">@current_count</td>
+            <td style="text-indent:5px">
+                <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-id="@item.Id">@current_count</a>
+            </td>
             <td>
                 <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
                     @item.VM_Company.Company_Name
@@ -95,7 +97,14 @@
             </td>
             <td>@item.VM_Employee.Employee_Name</td>
             <td>@item.Create_Time</td>
-            <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+            @if (@item.Visit_Time != null)
+            {
+                <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
+            }
+            else
+            {
+                <td></td>
+            }
 
             @if (item.Create_Time == null)
             {
@@ -221,7 +230,14 @@
             <td style="text-indent:14px">@Html.SmoothlyStatus(item.Smoothly)</td>
             @if (item.Smoothly == 0)
             {
-                <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
+                if (@item.ExpectedDelivery_Time != null)
+                {
+                    <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
+                }
+                else
+                {
+                    <td></td>
+                }
                 <td>@item.ExpectedDelivery_Funds 万元</td>
                 <td></td>
                 <td></td>
@@ -253,7 +269,14 @@
             <td style="text-indent:35px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
             @if (item.CustomerReply_Status == 0)
             {
-                <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
+                if (@item.CustomerReply_Time != null)
+                {
+                    <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
+                }
+                else
+                {
+                    <td></td>
+                }
                 <td>
                     <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
                         @item.CustomerReply_Detail
@@ -268,8 +291,23 @@
             <td style="text-indent:35px">@Html.NextVisitType(item.NextVisit)</td>
             @if (item.NextVisit == 0)
             {
-                <td style="text-indent:10px">@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
-                <td style="text-indent:22px">@Html.VisitType(item.NextVisit_Type.Value)</td>
+                if (@item.NextVisit_Time != null)
+                {
+                    <td style="text-indent:10px">@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                if (@item.NextVisit_Type != null)
+                {
+                    <td style="text-indent:22px">@Html.VisitType(item.NextVisit_Type.Value)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
                 <td>
                     <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
                         @item.NextVisit_Detail
@@ -587,6 +625,19 @@
                 },
             }
         });
+    })
+    // 表格
+    $(".form_view").on("click", function () {
+        $.ajax({
+            url: '/VisitManagement/VisitRecord_View/',
+            data: {
+                rec_id: $(this).attr('data-id')
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
     })
     function freezing() {
         $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());

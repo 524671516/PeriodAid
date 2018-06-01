@@ -1,0 +1,390 @@
+﻿@model PeriodAid.Models.VM_VisitRecord
+    <style>
+        .modal-header{
+            padding-bottom:5px!important
+        }
+        .form-group{
+            margin-bottom:0 !important
+        }
+    </style>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="text-center">新客户拜访信息共享表</h4>
+</div>
+<div class="modal-body" id="modal-body" style="padding-top:10px">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">销售人员:</label>
+            <div class="col-md-4" style="white-space: normal;line-height: 34px;">
+                <span>
+                    @foreach (var item in Model.AttendEmployee)
+                    {
+                        @item.Employee_Name
+                    }
+                </span>
+             </div>
+            <label class="col-md-2 control-label" style="font-weight:600">填表人员:</label>
+            <div class="col-md-4" style="line-height: 34px;">
+                @Model.VM_Employee.Employee_Name
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">销售团队:</label>
+            <div class="col-md-4" style="line-height: 34px;">
+                @Model.VM_Employee.VM_Department.Department_Name
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">客户类型:</label>
+            <div class="col-md-5" style="line-height: 34px;">
+                @Model.VM_Company.Company_Type
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">拜访日期:</label>
+            <div class="col-md-5" style="line-height: 34px;">
+                @if (Model.Visit_Time != null)
+                {
+                    @Model.Visit_Time.Value.ToString("yyyy-MM-dd")
+                }
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">客户情况:</label>
+            <div class="col-md-5" style="line-height: 34px;">
+                @Html.CategoryType(Model.VM_Company.Company_Category)
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">*I.基本情况:</label>
+        </div>
+        <div class="form-group" style="margin-bottom:15px">
+            <div class="col-md-2 control-label"></div>
+            <table class="col-md-9 information_share_view">
+                <tr>
+                    <td>1.1</td>
+                    <td>拜访序次</td>
+                    <td>第 @Model.VM_Company.VM_VisitRecord.Count()  次</td>
+                </tr>
+                <tr>
+                    <td>1.2</td>
+                    <td>拜访方式</td>
+                    <td>@Html.VisitType(Model.Visit_Type)</td>
+                </tr>
+                <tr>
+                    <td>1.3</td>
+                    <td>客户来源</td>
+                    <td>@Model.VM_Company.Company_Source</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">*II.拜访记录:</label>
+        </div>
+        <div class="form-group" style="margin-bottom:15px">
+            <div class="col-md-2 control-label"></div>
+            <table class="col-md-9 record_share_view">
+                <tr>
+                    <td>2.1</td>
+                    <td>渠道名称</td>
+                    <td>@Model.VM_Company.Source_Name</td>
+                </tr>
+                <tr>
+                    <td>2.2</td>
+                    <td>所属区域</td>
+                    <td>@Model.VM_Company.Region</td>
+                </tr>
+                <tr>
+                    <td>2.3</td>
+                    <td>渠道类型</td>
+                    <td>@Model.VM_Company.Source_Type</td>
+                </tr>
+                <tr>
+                    <td>2.4</td>
+                    <td>进场费用</td>
+                    <td>
+                        @if (Model.VM_Company.Entrance_Fee !=null)
+                        {
+                            <span>@Html.SpecialSource(Model.VM_Company.Entrance_Fee.Value)</span>
+                           
+                            if(Model.VM_Company.Entrance_Type != null)
+                            {
+                                <span class="record_sharp_span">@Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                            }
+                            if (Model.VM_Company.EntranceFee_Count != null)
+                            {
+                                <span>@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                            }
+                        }
+                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>2.5</td>
+                    <td>有无专用仓库</td>
+                    <td>
+                        <span>@Html.SpecialSource(Model.VM_Company.Dedicated_Warehouse)</span>
+                        @if (Model.VM_Company.Dedicated_Warehouse != -1)
+                        {
+                            <span class="record_sharp_span">@Model.VM_Company.Warehouse_Area  平方米</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>2.6</td>
+                    <td>年销售额流水</td>
+                    <td>
+                        ￥:   @Model.VM_Company.Sales_Amount  万元
+                    </td>
+                </tr>
+                <tr>
+                    <td>2.7</td>
+                    <td>销售人员</td>
+                    <td>
+                        有  @Model.VM_Company.Employee_Count     人
+                    </td>
+                </tr>
+                <tr>
+                    <td>2.8</td>
+                    <td>代理过知名品牌</td>
+                    <td>
+                        <div style="width:399px;word-wrap:break-word ">
+                            @Model.VM_Company.Agent_FamousBrand
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2.9</td>
+                    <td>有无特殊渠道</td>
+                    <td>
+                        <span>@Html.SpecialSource(Model.VM_Company.Special_Source)</span>
+                        @if (Model.VM_Company.Special_Source == 0)
+                        {
+                            <span>@Model.VM_Company.SpecialSource_Detail</span>
+                            <span>@Model.VM_Company.SpecialSource_OtherDetail</span>
+                        }
+                    </td>
+                </tr>
+                <tr style="height:94px">
+                    <td>2.10</td>
+                    <td>合作意向</td>
+                    <td class="text-left share_height">
+                       <div class="left_share_div auto_height" style="margin:auto 0">
+                           @Html.SpecialSource(Model.Cooperation_Intention)
+                       </div>
+                    @if (Model.Cooperation_Intention == 0)
+                    {
+                        <div class="left_share_div">
+                            <ul>
+                                <li>感兴趣品项</li>
+                                <li>操作资金</li>
+                                <li>合作方式</li>
+                            </ul>
+                        </div>
+                        <div class="left_share_div">
+                            <ul style="width:100px">
+                                <li style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@Model.Intentional_Products">
+                                    @Model.Intentional_Products
+                                </li>
+                                @if (Model.Intentional_Funds != null)
+                                {
+                                    <li>
+
+                                        ￥:  @Model.Intentional_Funds.Value  万元
+
+                                    </li>
+                                }
+                                <li>
+                                   @if (Model.Cooperation_Type!=null)
+                                   {
+                                       <span>@Html.CooperationType(Model.Cooperation_Type.Value)</span>
+                                   }
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="display:inline-block;padding:0 5px;">
+                            <ul>
+                                @if (Model.Cooperation_Status != null)
+                                {
+                                    if (Model.Cooperation_Status == 1)
+                                    {
+                                        if (Model.Reply_Time != null)
+                                        {
+                                            <li style="width:150px;white-space:normal">
+                                                待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li style="width:150px;white-space:normal">
+                                            经销商名称 : @Model.Company_Name
+                                        </li>
+                                        <li style="width:150px;white-space:normal">
+                                            联系人电话 : @Model.Contact_Mobile
+                                        </li>
+                                    }
+                                }
+                                
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="left_share_div auto_height" style="margin:auto 0">
+                            原因
+                        </div>
+                        <div style="padding:0 5px;display:inline-block">
+                            @Model.NoIntention_Reason  @Model.NoIntention_Detail
+                        </div>
+                    }
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-weight:600">*III.拜访结果:</label>
+        </div>
+        <div class="form-group">
+            <div class="col-md-2 control-label"></div>
+            <table class="col-md-9 result_share_view">
+                <tr>
+                    <td>3.1</td>
+                    <td>综合结果</td>
+                    <td class="text-left share_height">
+                        @if (Model.Smoothly == 0)
+                        {
+                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                                达到目的
+                            </div>
+                            <div class="left_share_div">
+                                <ul>
+                                    <li style="line-height:42px">预计初次拿货时间</li>
+                                    <li style="line-height:42px">预计初次拿货金额</li>
+                                </ul>
+                            </div>
+                            <div style="display:inline-block">
+                                <ul>
+                                    @if (@Model.ExpectedDelivery_Time !=null)
+                                    {
+                                        <li style="line-height:42px">@Model.ExpectedDelivery_Time.Value</li>
+                                    }
+                                    <li style="line-height:42px">￥ : @Model.ExpectedDelivery_Funds  万元</li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                                未达到目的
+                            </div>
+                            <div class="left_share_div">
+                                <ul>
+                                    <li style="line-height:42px">遇到的核心问题</li>
+                                    <li style="line-height:42px">需要支持</li>
+                                </ul>
+                            </div>
+                            <div style="display:inline-block">
+                                <ul>
+                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</li>
+                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="Model.Support">@Model.Support</li>
+                                </ul>
+                            </div>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td>3.2</td>
+                    <td>需要我司回复</td>
+                    <td>
+                        @if (Model.Reply_Status == 0)
+                        {
+                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                                是
+                            </div>
+                            <div style="display:inline-block">@Model.Reply_Detail</div>
+                        }
+                        else
+                        {
+                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                                否
+                            </div>
+                        }
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>3.3</td>
+                    <td>等待对方回复的信息</td>
+                    <td>
+                    @if (Model.CustomerReply_Status == 0)
+                    {
+                        <div class="left_share_div" style="margin:auto 0;width:81px">
+                            是
+                        </div>
+                        <div style="display:inline-block">
+                            <ul>
+                                <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
+                                @if (@Model.CustomerReply_Time != null)
+                                {
+                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="left_share_div" style="margin:auto 0;width:81px">
+                            否
+                        </div>
+                    }
+                    </td>
+                </tr>
+                <tr>
+                    <td>3.4</td>
+                    <td>下次拜访计划</td>
+                    <td>
+                        @if (Model.NextVisit == 0)
+                        {
+                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                                <ul>
+                                    <li>拜访方式</li>
+                                    <li>拜访时间</li>
+                                    <li>拜访事项</li>
+                                </ul>
+                            </div>
+                            <div style="display:inline-block">
+                                <ul>
+                                    @if (Model.NextVisit_Type != null)
+                                    {
+                                        <li>@Html.VisitType(Model.NextVisit_Type.Value)</li>
+                                    }
+                                    @if (Model.NextVisit_Time != null)
+                                    {
+                                        <li>@Model.NextVisit_Time.Value.ToString("yyyy-MM-dd")</li>
+                                    }
+                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>无</div>
+                        }
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+
+
+
+
+
+    </div>
+</div>
+<script>
+</script>

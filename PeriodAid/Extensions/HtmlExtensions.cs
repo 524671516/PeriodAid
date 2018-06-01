@@ -352,7 +352,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 通用 有 无
         public static string SpecialSource(this HtmlHelper helper, int status)
         {
             switch (status)
@@ -365,7 +365,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 拜访方式
         public static string VisitType(this HtmlHelper helper, int status)
         {
             switch (status)
@@ -380,7 +380,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 审核状态
         public static string VisitStatus(this HtmlHelper helper, int status)
         {
             switch (status)
@@ -395,7 +395,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 合作方式
         public static string CooperationType(this HtmlHelper helper, int type)
         {
             switch (type)
@@ -410,7 +410,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 客户情况
         public static string CategoryType(this HtmlHelper helper, int type)
         {
             switch (type)
@@ -423,7 +423,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 进场单位
         public static string EntranceType(this HtmlHelper helper, int type)
         {
             switch (type)
@@ -436,7 +436,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 下次拜访
         public static string NextVisitType(this HtmlHelper helper, int type)
         {
             switch (type)
@@ -449,7 +449,7 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-
+        // 待定状态
         public static string CooperationStatus(this HtmlHelper helper, int type)
         {
             switch (type)
