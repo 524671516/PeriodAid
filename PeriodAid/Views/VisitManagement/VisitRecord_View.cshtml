@@ -167,11 +167,11 @@
                     <td>2.10</td>
                     <td>合作意向</td>
                     <td class="text-left share_height">
-                       <div class="left_share_div auto_height" style="margin:auto 0">
-                           @Html.SpecialSource(Model.Cooperation_Intention)
-                       </div>
                     @if (Model.Cooperation_Intention == 0)
                     {
+                        <div class="left_share_div" style="margin:auto 0;">
+                            @Html.SpecialSource(Model.Cooperation_Intention)
+                        </div>
                         <div class="left_share_div">
                             <ul>
                                 <li>感兴趣品项</li>
@@ -229,7 +229,10 @@
                     }
                     else
                     {
-                        <div class="left_share_div auto_height" style="margin:auto 0">
+                        <div class="left_share_div text-center" style="width: 81px;">
+                            @Html.SpecialSource(Model.Cooperation_Intention)
+                        </div>
+                        <div class="left_share_div text-center" style="width: 81px;">
                             原因
                         </div>
                         <div style="padding:0 5px;display:inline-block">
@@ -253,7 +256,7 @@
                     <td class="text-left share_height">
                         @if (Model.Smoothly == 0)
                         {
-                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                            <div class="left_share_div text-center" style="width:81px">
                                 达到目的
                             </div>
                             <div class="left_share_div">
@@ -262,11 +265,11 @@
                                     <li style="line-height:42px">预计初次拿货金额</li>
                                 </ul>
                             </div>
-                            <div style="display:inline-block">
+                            <div style="display:inline-block;text-indent:20px">
                                 <ul>
                                     @if (@Model.ExpectedDelivery_Time !=null)
                                     {
-                                        <li style="line-height:42px">@Model.ExpectedDelivery_Time.Value</li>
+                                        <li style="line-height:42px">@Model.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</li>
                                     }
                                     <li style="line-height:42px">￥ : @Model.ExpectedDelivery_Funds  万元</li>
                                 </ul>
@@ -279,14 +282,14 @@
                             </div>
                             <div class="left_share_div">
                                 <ul>
-                                    <li style="line-height:42px">遇到的核心问题</li>
-                                    <li style="line-height:42px">需要支持</li>
+                                    <li style="line-height:40px;">遇到的核心问题</li>
+                                    <li style="line-height:40px;">需要支持</li>
                                 </ul>
                             </div>
                             <div style="display:inline-block">
-                                <ul>
-                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</li>
-                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="Model.Support">@Model.Support</li>
+                                <ul class="text-center">
+                                    <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</li>
+                                    <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="Model.Support">@Model.Support</li>
                                 </ul>
                             </div>
                         }
@@ -301,11 +304,14 @@
                             <div class="left_share_div" style="margin:auto 0;width:81px">
                                 是
                             </div>
+                            <div class="left_share_div" style="margin:auto 0">
+                                需要回复的问题
+                            </div>
                             <div style="display:inline-block">@Model.Reply_Detail</div>
                         }
                         else
                         {
-                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                            <div  style="height: 94px;line-height:94px">
                                 否
                             </div>
                         }
@@ -320,19 +326,25 @@
                         <div class="left_share_div" style="margin:auto 0;width:81px">
                             是
                         </div>
+                        <div class="left_share_div" style="margin:auto 0">
+                            <ul>
+                                <li style="line-height:40px;">等待回复的信息</li>
+                                <li style="line-height:40px;">预计回复时间</li>
+                            </ul>
+                        </div>
                         <div style="display:inline-block">
                             <ul>
-                                <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
+                                <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
                                 @if (@Model.CustomerReply_Time != null)
                                 {
-                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
+                                    <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
                                 }
                             </ul>
                         </div>
                     }
                     else
                     {
-                        <div class="left_share_div" style="margin:auto 0;width:81px">
+                        <div style="height: 94px;line-height:94px">
                             否
                         </div>
                     }
@@ -344,7 +356,7 @@
                     <td>
                         @if (Model.NextVisit == 0)
                         {
-                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                            <div class="left_share_div" style="margin:auto 0;width:81px;height:auto">
                                 <ul>
                                     <li>拜访方式</li>
                                     <li>拜访时间</li>
@@ -361,7 +373,7 @@
                                     {
                                         <li>@Model.NextVisit_Time.Value.ToString("yyyy-MM-dd")</li>
                                     }
-                                    <li style="line-height:42px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
+                                    <li style="width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
                                 </ul>
                             </div>
                         }
@@ -375,10 +387,6 @@
 
 
         </div>
-
-
-
-
 
     </div>
 </div>
