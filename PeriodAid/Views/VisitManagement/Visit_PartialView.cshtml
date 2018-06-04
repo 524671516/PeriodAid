@@ -101,14 +101,7 @@
             </td>
             <td>@item.VM_Employee.Employee_Name</td>
             <td>@item.Create_Time</td>
-            @if (@item.Visit_Time != null)
-            {
-                <td>@item.Visit_Time.Value.ToString("yyyy-MM-dd")</td>
-            }
-            else
-            {
-                <td></td>
-            }
+            <td>@item.Visit_Time.ToString("yyyy-MM-dd")</td>
             <td style="text-indent:10px">
                 <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-id="@item.Id">查看</a>
             </td>
@@ -118,7 +111,7 @@
             }
             else
             {
-                if (Convert.ToDateTime(item.Create_Time) > DateTime.Parse(item.Create_Time.Value.ToShortDateString() + " 23:30:00"))
+                if (Convert.ToDateTime(item.Create_Time) > DateTime.Parse(item.Create_Time.ToShortDateString() + " 23:30:00"))
                 {
                     <td style="text-indent:10px" class="color-red">超时</td>
                 }

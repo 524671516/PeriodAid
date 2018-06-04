@@ -210,7 +210,7 @@
     {
         public int Id { get; set; }
 
-        public DateTime? Visit_Time { get; set; }//拜访时间
+        public DateTime Visit_Time { get; set; }//拜访时间
 
         public int Visit_Type { get; set; }//拜访方式（0面谈，1电话，2微信）
 
@@ -279,7 +279,7 @@
 
         public int Company_Id { get; set; }
 
-        public DateTime? Create_Time { get; set; }
+        public DateTime Create_Time { get; set; }
 
         public virtual VM_Company VM_Company { get; set; }
 

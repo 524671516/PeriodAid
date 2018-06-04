@@ -89,7 +89,7 @@ namespace PeriodAid.Controllers
             {
                 var _DateTime = visit_date.Value.Year + "-" + visit_date.Value.Month + "-" + visit_date.Value.Day;
                 record = from m in _vmdb.VM_VisitRecord
-                         where m.Visit_Time.Value.Year + "-" + m.Visit_Time.Value.Month + "-" + m.Visit_Time.Value.Day == _DateTime
+                         where m.Visit_Time.Year + "-" + m.Visit_Time.Month + "-" + m.Visit_Time.Day == _DateTime
                          && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
                          && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                          && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
@@ -97,7 +97,7 @@ namespace PeriodAid.Controllers
                          && m.status == (status != 2 ? status :m.status)
                          select m;
                 var Record = from m in _vmdb.VM_VisitRecord
-                             where m.Visit_Time.Value.Year + "-" + m.Visit_Time.Value.Month + "-" + m.Visit_Time.Value.Day == _DateTime
+                             where m.Visit_Time.Year + "-" + m.Visit_Time.Month + "-" + m.Visit_Time.Day == _DateTime
                              && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
                              && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                              && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
@@ -109,7 +109,7 @@ namespace PeriodAid.Controllers
             else
             {
                 record = from m in _vmdb.VM_VisitRecord
-                         where m.Visit_Time.Value < DateTime.Now
+                         where m.Visit_Time < DateTime.Now
                          && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
                          && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                          && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
@@ -117,7 +117,7 @@ namespace PeriodAid.Controllers
                          && m.status == (status != 2 ? status : m.status)
                          select m;
                 var Record = from m in _vmdb.VM_VisitRecord
-                             where m.Visit_Time.Value < DateTime.Now
+                             where m.Visit_Time < DateTime.Now
                              && m.VM_Company.Company_Name == (com_name != "" ? com_name : m.VM_Company.Company_Name)
                              && m.VM_Employee.Employee_Name == (vis_name != "" ? vis_name : m.VM_Employee.Employee_Name)
                              && m.VM_Company.Company_Type == (com_type != "全部" ? com_type : m.VM_Company.Company_Type)
