@@ -109,7 +109,7 @@
 
         public int Company_Status { get; set; }
 
-        public DateTime? Create_Time { get; set; }
+        public DateTime Create_Time { get; set; }
 
         public DateTime? Update_Time { get; set; }
 
