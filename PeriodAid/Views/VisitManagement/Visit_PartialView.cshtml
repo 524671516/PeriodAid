@@ -22,7 +22,10 @@
         position: relative;
         z-index: 31;
     }
-
+    tr > :nth-child(6) {
+        position: relative;
+        z-index: 31;
+    }
     .btn-xs {
         padding: 0 5px;
     }
@@ -47,6 +50,7 @@
             <th>业务员</th>
             <th>交表时间</th>
             <th>拜访时间</th>
+            <th>拜访详情</th>
             <th>交表考核</th>
             <th>内容考核</th>
             <th>拜访方式</th>
@@ -88,7 +92,7 @@
             current_count++;
         <tr>
             <td style="text-indent:5px">
-                <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-id="@item.Id">@current_count</a>
+                @current_count
             </td>
             <td>
                 <a href="#" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
@@ -105,7 +109,9 @@
             {
                 <td></td>
             }
-
+            <td style="text-indent:10px">
+                <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-id="@item.Id">查看</a>
+            </td>
             @if (item.Create_Time == null)
             {
                 <td style="text-indent:10px" class="color-red">超时</td>
@@ -645,10 +651,12 @@
         $("tr>:nth-child(3)").css("left", $("#freezing_record").scrollLeft());
         $("tr>:nth-child(4)").css("left", $("#freezing_record").scrollLeft());
         $("tr>:nth-child(5)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(6)").css("left", $("#freezing_record").scrollLeft());
         $("tr>:nth-child(1)").css("background", "#eef1f5");
         $("tr>:nth-child(2)").css("background", "#eef1f5");
         $("tr>:nth-child(3)").css("background", "#eef1f5");
         $("tr>:nth-child(4)").css("background", "#eef1f5");
         $("tr>:nth-child(5)").css("background", "#eef1f5");
+        $("tr>:nth-child(6)").css("background", "#eef1f5");
     }
 </script>
