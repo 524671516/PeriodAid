@@ -311,7 +311,7 @@
         [StringLength(64)]
         public string User_Name { get; set; }
 
-        public DateTime? Comment_Time { get; set; }
+        public DateTime Comment_Time { get; set; }
 
         public int Comment_Type { get; set; }//0总评，1核心评论，2支持评论,3我方回复
 
