@@ -856,7 +856,7 @@ namespace PeriodAid.Controllers
                 "(select Id, System_Code from SS_Product where System_Code in ('1273858', '1273862', '2795949', '4820153', '4020767', '6725856', '6739996', '4264874', '4521540', '3336384', '5059864', '1273867', '1505905')) as g " +
                 "where a.Product_Id = b.Product_Id and a.Product_Id = c.Product_Id and a.Product_Id = d.Product_Id and a.Product_Id = e.Product_Id and a.Product_Id = f.Product_Id and a.Product_Id = g.Id";
             var dataList = _db.Database.SqlQuery<DailyDataViewModel>(findSql);
-            // 写产品列
+            //// 写产品列
             int row_pos = 1;
             foreach (var data in dataList)
             {
