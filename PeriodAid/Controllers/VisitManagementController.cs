@@ -296,9 +296,17 @@ namespace PeriodAid.Controllers
             {
                 var user = getUser(User.Identity.Name);
                 var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
-                record.Veto_Detail = detail;
                 record.status = rec_status;
-                record.Veto_Cause = cause;
+                if (rec_status == 1)
+                {
+                    record.Veto_Detail = "";
+                    record.Veto_Cause = "";
+                }
+                else
+                {
+                    record.Veto_Detail = detail;
+                    record.Veto_Cause = cause;
+                }
                 _vmdb.Entry(record).State = System.Data.Entity.EntityState.Modified;
                 _vmdb.SaveChanges();
                 return Json(new { result = "SUCCESS" });

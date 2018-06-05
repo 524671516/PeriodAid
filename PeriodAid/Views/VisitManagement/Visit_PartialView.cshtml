@@ -81,6 +81,7 @@
             <th>下次拜访时间</th>
             <th>下次拜访方式</th>
             <th>下次拜访事宜</th>
+            <th>修改时间</th>
             <th>驳回详情</th>
             <th></th>
         </tr>
@@ -100,7 +101,7 @@
                 </a>
             </td>
             <td>@item.VM_Employee.Employee_Name</td>
-            <td>@item.Create_Time</td>
+            <td>@item.Create_Time.ToString("yyyy-MM-dd HH:MM:ss")</td>
             <td>@item.Visit_Time.ToString("yyyy-MM-dd")</td>
             <td style="text-indent:10px">
                 <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-id="@item.Id">查看</a>
@@ -317,6 +318,14 @@
             {
                 <td></td>
                 <td></td>
+                <td></td>
+            }
+            @if (item.Update_Time != null)
+            {
+                <td>@item.Update_Time.Value.ToString("yyyy-MM-dd HH:MM:ss")</td>
+            }
+            else
+            {
                 <td></td>
             }
             @if (item.status == -1)
