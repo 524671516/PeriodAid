@@ -168,25 +168,27 @@
             }
         </div>
         <div class="form-group">
-            @if (Model.Special_Source != -1)
+            @if (Model.Special_Source != null)
             {
-                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
-                <div class="col-md-4" style="line-height: 36px;font-size: 14px">
-                    @Html.SpecialSource(Model.Special_Source)
-                </div>
-                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道详情:</label>
+                if (Model.Special_Source.Value != -1)
+                {
+                    <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
+                    <div class="col-md-4" style="line-height: 36px;font-size: 14px">
+                        @Html.SpecialSource(Model.Special_Source.Value)
+                    </div>
+                    <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道详情:</label>
                     <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
                         <span style="float:left">@Model.SpecialSource_Detail</span>
                     </div>
+                }
+                else
+                {
+                    <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
+                    <div class="col-md-9" style="line-height: 36px;font-size: 14px">
+                        @Html.SpecialSource(Model.Special_Source.Value)
+                    </div>
+                }
             }
-            else
-            {
-                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
-                <div class="col-md-9" style="line-height: 36px;font-size: 14px">
-                    @Html.SpecialSource(Model.Special_Source)
-                </div>
-            }
-
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">代理知名品牌:</label>

@@ -96,7 +96,7 @@
         [StringLength(256)]
         public string Agent_FamousBrand { get; set; }//代理知名品牌
 
-        public int Special_Source { get; set; }//特殊渠道（0有，-1无）
+        public int? Special_Source { get; set; }//特殊渠道（0有，-1无）
 
         [StringLength(256)]
         public string SpecialSource_Detail { get; set; }//特殊渠道详情

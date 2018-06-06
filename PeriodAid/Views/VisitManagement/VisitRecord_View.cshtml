@@ -101,65 +101,126 @@
                     <td>2.4</td>
                     <td>进场费用</td>
                     <td>
-                        @if (Model.VM_Company.Entrance_Fee !=null)
+                        @if (Model.VM_Company.Entrance_Fee != null)
                         {
-                            <span>@Html.SpecialSource(Model.VM_Company.Entrance_Fee.Value)</span>
-                           
-                            if(Model.VM_Company.Entrance_Type != null)
+                            if (Model.VM_Company.Entrance_Fee.Value == 0)
                             {
-                                <span class="record_sharp_span">@Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                                if (Model.VM_Company.Entrance_Type != null)
+                                {
+                                    <span class="record_sharp_span">@Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                                }
+                                if (Model.VM_Company.EntranceFee_Count != null)
+                                {
+                                    <span>@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                                }
                             }
-                            if (Model.VM_Company.EntranceFee_Count != null)
+                            else
                             {
-                                <span>@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                                <span>无</span>
                             }
                         }
-                        
+                        else
+                        {
+                            <span class="color-red">(渠道终端必填字段)</span>
+                        }
+
                     </td>
                 </tr>
                 <tr>
                     <td>2.5</td>
                     <td>有无专用仓库</td>
-                    <td>
-                        <span>@Html.SpecialSource(Model.VM_Company.Dedicated_Warehouse)</span>
-                        @if (Model.VM_Company.Dedicated_Warehouse != -1)
-                        {
-                            <span class="record_sharp_span">@Model.VM_Company.Warehouse_Area  平方米</span>
-                        }
-                    </td>
+                    @if (Model.VM_Company.Company_Category == 0)
+                    {
+                        <td>
+                            @if (Model.VM_Company.Dedicated_Warehouse == 0)
+                            {
+                                <span class="record_sharp_span">@Model.VM_Company.Warehouse_Area  平方米</span>
+                            }
+                            else
+                            {
+                                <span>无</span>
+                            }
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="color-red">
+                            (经销商必填字段)
+                        </td>
+                    }
+                   
                 </tr>
                 <tr>
                     <td>2.6</td>
                     <td>年销售额流水</td>
-                    <td>
-                        ￥:   @Model.VM_Company.Sales_Amount  万元
-                    </td>
+                    @if (Model.VM_Company.Company_Category == 0)
+                    {
+                        <td>
+                            ￥:   @Model.VM_Company.Sales_Amount  万元
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="color-red">
+                           (经销商必填字段)
+                        </td>
+                    }
                 </tr>
                 <tr>
                     <td>2.7</td>
                     <td>销售人员</td>
-                    <td>
-                        有  @Model.VM_Company.Employee_Count     人
-                    </td>
+                    @if (Model.VM_Company.Company_Category == 0)
+                    {
+                        <td>
+                            有  @Model.VM_Company.Employee_Count     人
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="color-red">
+                            (经销商必填字段)
+                        </td>
+                    }
                 </tr>
                 <tr>
                     <td>2.8</td>
                     <td>代理过知名品牌</td>
-                    <td>
-                        <div style="width:399px;word-wrap:break-word ">
-                            @Model.VM_Company.Agent_FamousBrand
-                        </div>
-                    </td>
+                    @if (Model.VM_Company.Company_Category == 0)
+                    {
+                        <td>
+                            <div style="width:399px;word-wrap:break-word ">
+                                @Model.VM_Company.Agent_FamousBrand
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="color-red">
+                            (经销商必填字段)
+                        </td>
+                    }
+                    
                 </tr>
                 <tr>
                     <td>2.9</td>
                     <td>有无特殊渠道</td>
                     <td>
-                        <span>@Html.SpecialSource(Model.VM_Company.Special_Source)</span>
-                        @if (Model.VM_Company.Special_Source == 0)
+                        @if (Model.VM_Company.Special_Source != null)
                         {
-                            <span>@Model.VM_Company.SpecialSource_Detail</span>
-                            <span>@Model.VM_Company.SpecialSource_OtherDetail</span>
+                            @*<span>@Html.SpecialSource(Model.VM_Company.Special_Source.Value)</span>*@
+                            if (Model.VM_Company.Special_Source.Value == 0)
+                            {
+                                <span>@Model.VM_Company.SpecialSource_Detail</span>
+                                <span>@Model.VM_Company.SpecialSource_OtherDetail</span>
+                            }
+                            else
+                            {
+                                <span>无</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="color-red">(经销商必填字段)</span>
                         }
                     </td>
                 </tr>
@@ -169,63 +230,86 @@
                     <td class="text-left share_height">
                     @if (Model.Cooperation_Intention == 0)
                     {
-                        <div class="left_share_div" style="margin:auto 0;">
-                            @Html.SpecialSource(Model.Cooperation_Intention)
-                        </div>
-                        <div class="left_share_div">
-                            <ul>
-                                <li>感兴趣品项</li>
-                                <li>操作资金</li>
-                                <li>合作方式</li>
-                            </ul>
-                        </div>
-                        <div class="left_share_div">
-                            <ul style="width:100px">
-                                <li style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@Model.Intentional_Products">
-                                    @Model.Intentional_Products
-                                </li>
-                                @if (Model.Intentional_Funds != null)
-                                {
-                                    <li>
-
-                                        ￥:  @Model.Intentional_Funds.Value  万元
-
+                        if (Model.VM_Company.Company_Category == 1)
+                        {
+                            <div class="left_share_div">
+                                @Html.SpecialSource(Model.Cooperation_Intention)
+                            </div>
+                            <div class="left_share_div">
+                                <ul>
+                                    <li style="line-height:40px">感兴趣品项</li>
+                                    <li style="line-height:40px">合作方式</li>
+                                </ul>
+                            </div>
+                            <div class="left_share_div">
+                                <ul style="width:100px">
+                                    <li style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Intentional_Products">
+                                        @Model.Intentional_Products
                                     </li>
-                                }
-                                <li>
-                                   @if (Model.Cooperation_Type!=null)
-                                   {
-                                       <span>@Html.CooperationType(Model.Cooperation_Type.Value)</span>
-                                   }
-                                </li>
-                            </ul>
-                        </div>
-                        <div style="display:inline-block;padding:0 5px;">
-                            <ul>
-                                @if (Model.Cooperation_Status != null)
-                                {
-                                    if (Model.Cooperation_Status == 1)
-                                    {
-                                        if (Model.Reply_Time != null)
+                                    <li style="line-height:40px">
+                                        @if (Model.Cooperation_Type != null)
                                         {
-                                            <li style="width:150px;white-space:normal">
-                                                待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
+                                            <span>@Html.CooperationType(Model.Cooperation_Type.Value)</span>
+                                        }
+                                    </li>
+                                </ul>
+                            </div>
+                            <div style="display:inline-block;padding:0 5px;">
+                                <ul>
+                                    @if (Model.Cooperation_Status != null)
+                                    {
+                                        if (Model.Cooperation_Status == 1)
+                                        {
+                                            if (Model.Reply_Time != null)
+                                            {
+                                                <li style="width:150px;white-space:normal">
+                                                    待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Company_Name">
+                                                经销商名称 : @Model.Company_Name
+                                            </li>
+                                            <li style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Contact_Mobile">
+                                                联系人电话 : @Model.Contact_Mobile
                                             </li>
                                         }
                                     }
+
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="left_share_div" style="width:84px;text-align:center">
+                                @Html.SpecialSource(Model.Cooperation_Intention)
+                            </div>
+                            <div class="left_share_div">
+                                <ul>
+                                    <li style="line-height:40px">感兴趣品项<b style="opacity:0">空格</b></li>
+                                    <li style="line-height:40px">操作资金</li>
+                                </ul>
+                            </div>
+                            <div style="display:inline-block;text-indent:15px">
+                                <ul>
+                                    <li style="line-height:40px">
+                                        @Model.Intentional_Products
+                                    </li>
+                                    @if (Model.Intentional_Funds != null)
+                                    {
+                                    <li style="line-height:40px">
+                                        ￥:  @Model.Intentional_Funds.Value  万元
+                                    </li>
+                                    }
                                     else
                                     {
-                                        <li style="width:150px;white-space:normal">
-                                            经销商名称 : @Model.Company_Name
-                                        </li>
-                                        <li style="width:150px;white-space:normal">
-                                            联系人电话 : @Model.Contact_Mobile
-                                        </li>
+                                    <li>无</li>
                                     }
-                                }
-                                
-                            </ul>
-                        </div>
+                                </ul>
+                            </div>
+                        }
                     }
                     else
                     {

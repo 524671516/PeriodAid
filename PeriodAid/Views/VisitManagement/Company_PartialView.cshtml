@@ -106,17 +106,26 @@
                     <td></td>
                     <td></td>
                 }
-                <td style="text-indent:15px">@Html.SpecialSource(item.Special_Source)</td>
-                @if (item.Special_Source == 0)
+                @if (item.Special_Source != null)
                 {
-                    <td>@item.SpecialSource_Detail</td>
-                    <td>@item.SpecialSource_OtherDetail</td>
-                }
-                else
+                    <td style="text-indent:15px">@Html.SpecialSource(item.Special_Source.Value)</td>
+                    if (item.Special_Source == 0)
+                    {
+                        <td>@item.SpecialSource_Detail</td>
+                        <td>@item.SpecialSource_OtherDetail</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                    }
+                }else
                 {
                     <td></td>
                     <td></td>
+                    <td></td>
                 }
+
                 <td>@item.Company_Address</td>
                 <td>@item.Company_Phone</td>
             </tr>
