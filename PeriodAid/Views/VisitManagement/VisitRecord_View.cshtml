@@ -13,6 +13,7 @@
         tr>:nth-child(2){
             width:140px
         }
+        
     </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -549,6 +550,8 @@
                                 },
                                 success: function (data) {
                                     $("#visit_list_content").html(data)
+                                    $('.modal-backdrop.in').remove()
+                                    $('body').removeClass('modal-open')
                                     if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
                                         $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
                                     } else {
@@ -570,7 +573,7 @@
                         }
                         $.confirm({
                             title: '否决原因',
-                            content: '<div class="form-group" style="text-align: left;margin-left: 41%;">' +
+                            content: '<div class="form-group" v style="text-align: left;margin-left: 41%;">' +
                             html +
                             '</div>',
                             theme: 'modern',
