@@ -6,6 +6,13 @@
         .form-group{
             margin-bottom:0 !important
         }
+        .text-left{
+            text-indent:10px;
+            white-space:normal
+        }
+        tr>:nth-child(2){
+            width:140px
+        }
     </style>
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -61,17 +68,17 @@
                 <tr>
                     <td>1.1</td>
                     <td>拜访序次</td>
-                    <td>第 @Model.VM_Company.VM_VisitRecord.Count()  次</td>
+                    <td class="text-left">第 @Model.VM_Company.VM_VisitRecord.Count()  次</td>
                 </tr>
                 <tr>
                     <td>1.2</td>
                     <td>拜访方式</td>
-                    <td>@Html.VisitType(Model.Visit_Type)</td>
+                    <td class="text-left">@Html.VisitType(Model.Visit_Type)</td>
                 </tr>
                 <tr>
                     <td>1.3</td>
                     <td>客户来源</td>
-                    <td>@Model.VM_Company.Company_Source</td>
+                    <td class="text-left">@Model.VM_Company.Company_Source</td>
                 </tr>
             </table>
         </div>
@@ -85,17 +92,17 @@
                 <tr>
                     <td>2.1</td>
                     <td>渠道名称</td>
-                    <td>@Model.VM_Company.Source_Name</td>
+                    <td class="text-left">@Model.VM_Company.Source_Name</td>
                 </tr>
                 <tr>
                     <td>2.2</td>
                     <td>所属区域</td>
-                    <td>@Model.VM_Company.Region</td>
+                    <td class="text-left">@Model.VM_Company.Region</td>
                 </tr>
                 <tr>
                     <td>2.3</td>
                     <td>渠道类型</td>
-                    <td>@Model.VM_Company.Source_Type</td>
+                    <td class="text-left">@Model.VM_Company.Source_Type</td>
                 </tr>
                 <tr>
                     <td>2.4</td>
@@ -107,16 +114,16 @@
                             {
                                 if (Model.VM_Company.Entrance_Type != null)
                                 {
-                                    <span class="record_sharp_span">@Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                                    <span class="record_sharp_span" style="float:left;text-indent:10px">单位: @Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
                                 }
                                 if (Model.VM_Company.EntranceFee_Count != null)
                                 {
-                                    <span>@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                                    <span style="float:left">@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
                                 }
                             }
                             else
                             {
-                                <span>无</span>
+                                <span style="float:left;text-indent:10px">无</span>
                             }
                         }
                         else
@@ -131,7 +138,7 @@
                     <td>有无专用仓库</td>
                     @if (Model.VM_Company.Company_Category == 0)
                     {
-                        <td>
+                        <td class="text-left">
                             @if (Model.VM_Company.Dedicated_Warehouse == 0)
                             {
                                 <span class="record_sharp_span">@Model.VM_Company.Warehouse_Area  平方米</span>
@@ -155,7 +162,7 @@
                     <td>年销售额流水</td>
                     @if (Model.VM_Company.Company_Category == 0)
                     {
-                        <td>
+                        <td class="text-left">
                             ￥:   @Model.VM_Company.Sales_Amount  万元
                         </td>
                     }
@@ -171,7 +178,7 @@
                     <td>销售人员</td>
                     @if (Model.VM_Company.Company_Category == 0)
                     {
-                        <td>
+                        <td class="text-left">
                             有  @Model.VM_Company.Employee_Count     人
                         </td>
                     }
@@ -187,8 +194,8 @@
                     <td>代理过知名品牌</td>
                     @if (Model.VM_Company.Company_Category == 0)
                     {
-                        <td>
-                            <div style="width:399px;word-wrap:break-word ">
+                        <td class="text-left">
+                            <div style="width:399px;white-space:normal">
                                 @Model.VM_Company.Agent_FamousBrand
                             </div>
                         </td>
@@ -204,7 +211,7 @@
                 <tr>
                     <td>2.9</td>
                     <td>有无特殊渠道</td>
-                    <td>
+                    <td class="text-left">
                         @if (Model.VM_Company.Special_Source != null)
                         {
                             @*<span>@Html.SpecialSource(Model.VM_Company.Special_Source.Value)</span>*@
@@ -227,72 +234,97 @@
                 <tr style="height:94px">
                     <td>2.10</td>
                     <td>合作意向</td>
-                    <td class="text-left share_height">
+                    <td class="share_height">
                     @if (Model.Cooperation_Intention == 0)
                     {
                         if (Model.VM_Company.Company_Category == 1)
                         {
-                            <div class="left_share_div">
-                                @Html.SpecialSource(Model.Cooperation_Intention)
-                            </div>
-                            <div class="left_share_div">
-                                <ul>
-                                    <li style="line-height:40px">感兴趣品项</li>
-                                    <li style="line-height:40px">合作方式</li>
-                                </ul>
-                            </div>
-                            <div class="left_share_div">
-                                <ul style="width:100px">
-                                    <li style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Intentional_Products">
-                                        @Model.Intentional_Products
-                                    </li>
-                                    <li style="line-height:40px">
-                                        @if (Model.Cooperation_Type != null)
-                                        {
-                                            <span>@Html.CooperationType(Model.Cooperation_Type.Value)</span>
-                                        }
-                                    </li>
-                                </ul>
-                            </div>
-                            <div style="display:inline-block;padding:0 5px;">
-                                <ul>
-                                    @if (Model.Cooperation_Status != null)
-                                    {
-                                        if (Model.Cooperation_Status == 1)
-                                        {
-                                            if (Model.Reply_Time != null)
+                            if (Model.Cooperation_Type != null)
+                            {
+                                if (Model.Cooperation_Type.Value == 1)
+                                {
+                                    <div class="left_share_div" style="padding:0 10px;width:50px">
+                                        @Html.SpecialSource(Model.Cooperation_Intention)
+                                    </div>
+                                    <div class="left_share_div" style="width:90px">
+                                        <ul class="text-left">
+                                            <li style="line-height:40px">感兴趣品项</li>
+                                            <li style="line-height:40px">合作方式</li>
+                                        </ul>
+                                    </div>
+                                    <div class="left_share_div" style="width:90px">
+                                        <ul style="width:50px;text-align:left;text-indent:10px">
+                                            <li style="width:50px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Intentional_Products">
+                                                @Model.Intentional_Products
+                                            </li>
+                                            <li style="line-height:40px">
+                                                <span>通过经销商</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div style="display:inline-block;float:left">
+                                        <ul style="text-align:left;text-indent:10px">
+                                            @if (Model.Cooperation_Status != null)
                                             {
-                                                <li style="width:150px;white-space:normal">
-                                                    待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
-                                                </li>
+                                                if (Model.Cooperation_Status == 1)
+                                                {
+                                                    if (Model.Reply_Time != null)
+                                                    {
+                                                        <li style="width:228px;white-space:normal">
+                                                            待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
+                                                        </li>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <li style="width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Company_Name">
+                                                        经销商名称 : @Model.Company_Name
+                                                    </li>
+                                                    <li style="width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Contact_Mobile">
+                                                        联系人电话 : @Model.Contact_Mobile
+                                                    </li>
+                                                }
                                             }
-                                        }
-                                        else
-                                        {
-                                            <li style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Company_Name">
-                                                经销商名称 : @Model.Company_Name
+                                        </ul>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="left_share_div text-center">
+                                        @Html.SpecialSource(Model.Cooperation_Intention)
+                                    </div>
+                                    <div class="left_share_div">
+                                        <ul class="text-left">
+                                            <li style="line-height:40px">感兴趣品项</li>
+                                            <li style="line-height:40px">合作方式</li>
+                                        </ul>
+                                    </div>
+                                    <div class="left_share_div" style="border-right:none">
+                                        <ul style="width:100px;text-align:left;text-indent:10px">
+                                            <li style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Intentional_Products">
+                                                @Model.Intentional_Products
                                             </li>
-                                            <li style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Contact_Mobile">
-                                                联系人电话 : @Model.Contact_Mobile
+                                            <li style="line-height:40px">
+                                                <span>直营</span>
                                             </li>
-                                        }
-                                    }
-                                </ul>
-                            </div>
+                                        </ul>
+                                    </div>
+                                }
+                            }
                         }
                         else
                         {
-                            <div class="left_share_div" style="width:84px;text-align:center">
+                            <div class="left_share_div" style="text-align:center">
                                 @Html.SpecialSource(Model.Cooperation_Intention)
                             </div>
                             <div class="left_share_div">
-                                <ul>
+                                <ul class="text-left">
                                     <li style="line-height:40px">感兴趣品项<b style="opacity:0">空格</b></li>
                                     <li style="line-height:40px">操作资金</li>
                                 </ul>
                             </div>
-                            <div style="display:inline-block;text-indent:15px">
-                                <ul>
+                            <div style="display:inline-block;float:left">
+                                <ul style="text-indent:10px;text-align:left">
                                     <li style="line-height:40px">
                                         @Model.Intentional_Products
                                     </li>
@@ -312,13 +344,13 @@
                     }
                     else
                     {
-                        <div class="left_share_div text-center" style="width: 81px;">
+                        <div class="left_share_div text-center">
                             @Html.SpecialSource(Model.Cooperation_Intention)
                         </div>
-                        <div class="left_share_div text-center" style="width: 81px;">
+                        <div class="left_share_div text-center">
                             原因
                         </div>
-                        <div style="padding:0 5px;display:inline-block">
+                        <div style="padding:0 5px;display:inline-block;float:left;white-space:normal">
                             @Model.NoIntention_Reason  @Model.NoIntention_Detail
                         </div>
                     }
@@ -338,7 +370,7 @@
                     <td class="text-left share_height">
                         @if (Model.Smoothly == 0)
                         {
-                            <div class="left_share_div text-center" style="width:81px">
+                            <div class="left_share_div" style="text-align:center">
                                 达到目的
                             </div>
                             <div class="left_share_div">
@@ -347,8 +379,8 @@
                                     <li style="line-height:42px">预计初次拿货金额</li>
                                 </ul>
                             </div>
-                            <div style="display:inline-block;text-indent:20px">
-                                <ul>
+                            <div style="display:inline-block;float:left">
+                                <ul style="text-align:left;text-indent:10px">
                                     @if (@Model.ExpectedDelivery_Time !=null)
                                     {
                                         <li style="line-height:42px">@Model.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</li>
@@ -359,7 +391,7 @@
                         }
                         else
                         {
-                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                            <div class="left_share_div" style="text-align:center">
                                 未达到目的
                             </div>
                             <div class="left_share_div">
@@ -368,10 +400,10 @@
                                     <li style="line-height:40px;">需要支持</li>
                                 </ul>
                             </div>
-                            <div style="display:inline-block">
-                                <ul class="text-center">
-                                    <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</li>
-                                    <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="Model.Support">@Model.Support</li>
+                            <div>
+                                <ul>
+                                    <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</li>
+                                    <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="Model.Support">@Model.Support</li>
                                 </ul>
                             </div>
                         }
@@ -383,13 +415,13 @@
                     <td>
                         @if (Model.Reply_Status == 0)
                         {
-                            <div class="left_share_div" style="margin:auto 0;width:81px">
+                            <div class="left_share_div">
                                 是
                             </div>
-                            <div class="left_share_div" style="margin:auto 0">
+                            <div class="left_share_div" style="text-indent:10px">
                                 需要回复的问题
                             </div>
-                            <div style="display:inline-block">@Model.Reply_Detail</div>
+                            <div style="white-space:normal;line-height:20px;text-indent:10px;text-align:left">@Model.Reply_Detail</div>
                         }
                         else
                         {
@@ -405,21 +437,21 @@
                     <td>
                     @if (Model.CustomerReply_Status == 0)
                     {
-                        <div class="left_share_div" style="margin:auto 0;width:81px">
+                        <div class="left_share_div">
                             是
                         </div>
-                        <div class="left_share_div" style="margin:auto 0">
+                        <div class="left_share_div">
                             <ul>
-                                <li style="line-height:40px;">等待回复的信息</li>
+                                <li style="line-height:40px;text-indent:10px">等待回复的信息</li>
                                 <li style="line-height:40px;">预计回复时间</li>
                             </ul>
                         </div>
-                        <div style="display:inline-block">
-                            <ul>
-                                <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
+                        <div>
+                            <ul style="text-align:left;text-indent:10px">
+                                <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
                                 @if (@Model.CustomerReply_Time != null)
                                 {
-                                    <li style="line-height:40px;width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
+                                    <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
                                 }
                             </ul>
                         </div>
@@ -438,15 +470,15 @@
                     <td>
                         @if (Model.NextVisit == 0)
                         {
-                            <div class="left_share_div" style="margin:auto 0;width:81px;height:auto">
+                            <div class="left_share_div">
                                 <ul>
                                     <li>拜访方式</li>
                                     <li>拜访时间</li>
                                     <li>拜访事项</li>
                                 </ul>
                             </div>
-                            <div style="display:inline-block">
-                                <ul>
+                            <div style="display:inline-block;float:left">
+                                <ul style="text-align:left;text-indent:10px">
                                     @if (Model.NextVisit_Type != null)
                                     {
                                         <li>@Html.VisitType(Model.NextVisit_Type.Value)</li>
@@ -455,7 +487,7 @@
                                     {
                                         <li>@Model.NextVisit_Time.Value.ToString("yyyy-MM-dd")</li>
                                     }
-                                    <li style="width:204px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
+                                    <li style="width:340px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
                                 </ul>
                             </div>
                         }
@@ -471,5 +503,154 @@
         </div>
     </div>
 </div>
+<div class="modal-footer">
+    <div class="col-md-offset-10 col-md-2" style="text-align:center">
+        <a data-id="@Model.Id" data-status="@Model.status" class="btn btn-default supervise_btn btn btn-xs btn-default" style="font-size:16px">管理</a>
+    </div>
+</div>
 <script>
+    // 管理
+    $(".supervise_btn").on("click", function () {
+        var that = $(this)
+        $.confirm({
+            title: '审批',
+            content: '',
+            boxWidth: '500px',
+            theme: 'modern',
+            useBootstrap: false,
+            buttons: {
+                审批通过: function () {
+                    btnClass: 'btn-red',
+                    $.ajax({
+                        url: "/VisitManagement/Supervise_Status/",
+                        type: "post",
+                        data: {
+                            rec_id: that.attr("data-id"),
+                            rec_status: 1
+                        },
+                        success: function (data) {
+                            $.alert({
+                                title: '提示!',
+                                type: 'green',
+                                content: "操作成功",
+                            });
+                            $.ajax({
+                                url: "/VisitManagement/Visit_PartialView/",
+                                type: "post",
+                                data: {
+                                    visit_date: $("#select_date").val(),
+                                    dep_id: $(".team_select.active").attr("data-val"),
+                                    com_type: $(".company_type.active").text(),
+                                    com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                    sort: $(".sort_type.active").attr("data-val"),
+                                    status: $(".status_type.active").attr("data-val"),
+                                    page_count: $(".share_select_page option:selected").val(),
+                                },
+                                success: function (data) {
+                                    $("#visit_list_content").html(data)
+                                    if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                                    } else {
+                                        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                                    }
+                                }
+                            })
+                        }
+                    })
+                },
+                heyThere: {
+                    text: '审批否决',
+                    action: function () {
+                        var config_list = $(".hidden_config")
+                        var html = ""
+                        for (var i = 0; i < config_list.length; i++) {
+                            html += '<input type="radio" class="detail_select" data-val="' + $(config_list[i]).attr("data-id") + '" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>' +
+                                '<textarea class="textarea_detail hidden" style="font-size:12px;text-indent:15px;" data-val="' + $(config_list[i]).attr("data-id") + '" placeholder="具体原因"></textarea></br>'
+                        }
+                        $.confirm({
+                            title: '否决原因',
+                            content: '<div class="form-group" style="text-align: left;margin-left: 41%;">' +
+                            html +
+                            '</div>',
+                            theme: 'modern',
+                            boxWidth: '500px',
+                            useBootstrap: false,
+                            buttons: {
+                                formSubmit: {
+                                    text: '提交',
+                                    btnClass: 'btn-blue',
+                                    action: function () {
+                                        $.ajax({
+                                            url: "/VisitManagement/Supervise_Status/",
+                                            type: "post",
+                                            data: {
+                                                rec_id: that.attr("data-id"),
+                                                cause: this.$content.find('.form-group input[name="config"]:checked').val(),
+                                                detail: this.$content.find('.form-group .textarea_detail.active').val(),
+                                                rec_status: -1
+                                            },
+                                            success: function (data) {
+                                                if (data.result == "SUCCESS") {
+                                                    $.alert({
+                                                        title: '提示!',
+                                                        type: 'green',
+                                                        content: "操作成功",
+                                                    });
+                                                    $.ajax({
+                                                        url: "/VisitManagement/Visit_PartialView/",
+                                                        type: "post",
+                                                        data: {
+                                                            visit_date: $("#select_date").val(),
+                                                            dep_id: $(".team_select.active").attr("data-val"),
+                                                            com_type: $(".company_type.active").text(),
+                                                            com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                                            sort: $(".sort_type.active").attr("data-val"),
+                                                            status: $(".status_type.active").attr("data-val"),
+                                                            page_count: $(".share_select_page option:selected").val(),
+                                                        },
+                                                        success: function (data) {
+                                                            $("#visit_list_content").html(data)
+                                                            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                                                $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                                                            } else {
+                                                                $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                                                            }
+                                                        }
+                                                    })
+                                                } else {
+                                                    $.alert({
+                                                        title: '提示!',
+                                                        type: 'red',
+                                                        content: "请联系管理员开通权限",
+                                                    });
+                                                }
+                                            }
+                                        })
+                                    }
+                                },
+                                取消: function () {
+                                    //close
+                                },
+                            },
+                            onContentReady: function () {
+                                $(".detail_select").on('click', function (e) {
+                                    var that = $(this);
+                                    $(".textarea_detail").addClass("hidden").removeClass("active")
+                                    $(".textarea_detail").val("")
+                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden")
+                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden").addClass("active")
+                                });
+                            }
+
+                        })
+                    }
+                },
+                取消: function () {
+
+                },
+            }
+        });
+    })
 </script>

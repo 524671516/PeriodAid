@@ -331,7 +331,7 @@
             @if (item.status == -1)
             {
                 <td>
-                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail @item.Veto_Cause">@item.Veto_Detail @item.Veto_Cause</div>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail @item.Veto_Cause">@item.Veto_Cause @item.Veto_Detail</div>
                 </td>
             }
             else
@@ -567,8 +567,8 @@
                                             type: "post",
                                             data: {
                                                 rec_id: that.attr("data-id"),
-                                                detail: this.$content.find('.form-group input[name="config"]:checked').val(),
-                                                cause: this.$content.find('.form-group .textarea_detail.active').val(),
+                                                cause: this.$content.find('.form-group input[name="config"]:checked').val(),
+                                                detail: this.$content.find('.form-group .textarea_detail.active').val(),
                                                 rec_status: -1
                                             },
                                             success: function (data) {

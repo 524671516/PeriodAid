@@ -496,7 +496,8 @@ body,html{
 }
 .record_sharp_span{
     display:inline-block;
-    margin:0 20px
+    margin:0 20px 0 0;
+    text-indent:0
 }
 tr > :nth-child(1) {
     width: 73px;
@@ -507,11 +508,12 @@ tr > :nth-child(2) {
 }
 .left_share_div{
     display:inline-block;
-    padding: 0 10px;
     border-right:1px solid #ccc;
     height:94px;
     float:left;
-    line-height:94px
+    line-height:94px;
+    padding-right: 7px;
+    width: 114px;
 }
 .result_share_view{
     border:2px solid black
