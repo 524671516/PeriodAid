@@ -2184,6 +2184,17 @@ namespace PeriodAid.Controllers
         
         public ActionResult TrafficListPartial(string query, int plattformId, int productId, int trafficPlattformId, DateTime? single)
         {
+            var sum_data = from m in _db.SS_TrafficData
+                           where m.UpdateTime == single && m.Product_Id == productId
+                           group m by m.Product_Id into g
+                           select new TrafficData
+                           {
+                               Product_Flow = g.Sum(m => m.Product_Flow),
+                               Product_Visitor = g.Sum(m => m.Product_Visitor),
+                               Product_Customer = g.Sum(m => m.Product_Customer),
+                               Order_Count = g.Sum(m => m.Order_Count)
+                           };
+            ViewBag.SumData = sum_data;
             if (trafficPlattformId == 0)
             {
                 if (query != "")
@@ -2375,19 +2386,19 @@ namespace PeriodAid.Controllers
         }
 
         //产品数据图表
-        public ActionResult ViewTrafficStatistic(int productId,int sourceId,int trafficPlattformId)
+        public ActionResult ViewTrafficStatistic(int productId,int? sourceId,int trafficPlattformId)
         {
             if(trafficPlattformId == 0)
             {
                 var TrafficList = from m in _db.SS_TrafficData
-                                  where m.Product_Id == productId && m.TrafficSource_Id == sourceId
+                                  where m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId)
                                   select m;
                 ViewBag.TrafficList = TrafficList;
             }
             else
             {
                 var TrafficList = from m in _db.SS_TrafficData
-                                  where m.Product_Id == productId && m.TrafficSource_Id == sourceId && m.TrafficPlattform_Id == trafficPlattformId
+                                  where m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId) && m.TrafficPlattform_Id == trafficPlattformId
                                   select m;
                 ViewBag.TrafficList = TrafficList;
             }
@@ -2395,7 +2406,7 @@ namespace PeriodAid.Controllers
             return View();
         }
 
-        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end, int sourceId,int trafficPlattformId)
+        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end, int? sourceId,int trafficPlattformId)
         {
             DateTime _start = Convert.ToDateTime(start);
             DateTime _end = Convert.ToDateTime(end);
@@ -2403,7 +2414,7 @@ namespace PeriodAid.Controllers
             {
                 var info_data = from m in _db.SS_TrafficData
                                 where m.UpdateTime >= _start && m.UpdateTime <= _end
-                                && m.Product_Id == productId && m.TrafficSource_Id == sourceId
+                                && m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId)
                                 group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
@@ -2433,7 +2444,7 @@ namespace PeriodAid.Controllers
             {
                 var info_data = from m in _db.SS_TrafficData
                                 where m.UpdateTime >= _start && m.UpdateTime <= _end
-                                && m.Product_Id == productId && m.TrafficSource_Id == sourceId && m.TrafficPlattform_Id == trafficPlattformId
+                                && m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId) && m.TrafficPlattform_Id == trafficPlattformId
                                 group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };

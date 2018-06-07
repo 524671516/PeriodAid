@@ -10,6 +10,25 @@
             <th>转化率</th>
             <th></th>
         </tr>
+        <tr>
+            @foreach (var item in ViewBag.SumData)
+            {
+                <th>当日汇总</th>
+                <th>@item.Product_Flow</th>
+                <th>@item.Product_Visitor</th>
+                <th>@item.Product_Customer</th>
+                <th>@item.Order_Count</th>
+                if (item.Product_Visitor == 0)
+                {
+                    <th>0</th>
+                }
+                else
+                {
+                    <th>@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 4).ToString("p2")</th>
+                }
+                <th><a class="JD-Traffic-Order" style="cursor:pointer">渠道统计</a></th>
+            }
+        </tr>
         @foreach (var item in Model)
         {
             <tr>
@@ -27,8 +46,7 @@
                     <td class="product-ratio">@Math.Round(((decimal)item.Product_Customer / item.Product_Visitor), 4).ToString("p2")</td>
                 }
                 <td><a class="JD-Traffic-Order" style="cursor:pointer" data-source="@item.Date_Source_Id">渠道统计</a></td>
-                
-               
+
             </tr>
         }
     </table>
