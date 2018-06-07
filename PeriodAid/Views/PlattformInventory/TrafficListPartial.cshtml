@@ -10,6 +10,22 @@
             <th>转化率</th>
             <th></th>
         </tr>
+        <tr>
+            <td class="color-blue">当日渠道流量汇总</td>
+            <td>@Model.Sum(m=>m.Product_Flow)</td>
+            <td>@Model.Sum(m => m.Product_Visitor)</td>
+            <td>@Model.Sum(m => m.Product_Customer)</td>
+            <td>@Model.Sum(m => m.Order_Count)</td>
+            @if (Model.Sum(m => m.Product_Visitor) == 0)
+            {
+                <td>0</td>
+            }
+            else
+            {
+                <td class="product-ratio">@Math.Round(((decimal)Model.Sum(m => m.Product_Customer) / Model.Sum(m => m.Product_Visitor)), 4).ToString("p2")</td>
+            }
+            <td><a class="JD-Traffic-Order" style="cursor:pointer" data-source="0">渠道统计</a></td>
+        </tr>
         @foreach (var item in Model)
         {
             <tr>

@@ -133,40 +133,38 @@
                     <td>渠道类型</td>
                     <td class="text-left">@Model.VM_Company.Source_Type</td>
                 </tr>
-                <tr>
-                    <td>2.4</td>
-                    <td>进场费用</td>
-                    <td>
-                        @if (Model.VM_Company.Entrance_Fee != null)
-                        {
-                            if (Model.VM_Company.Entrance_Fee.Value == 0)
+                @if (Model.VM_Company.Company_Category == 1)
+                {
+                    <tr>
+                        <td>2.4</td>
+                        <td>进场费用</td>
+                        <td>
+                            @if (Model.VM_Company.Entrance_Fee != null)
                             {
-                                if (Model.VM_Company.Entrance_Type != null)
+                                if (Model.VM_Company.Entrance_Fee.Value == 0)
                                 {
-                                    <span class="record_sharp_span" style="float:left;text-indent:10px">单位: @Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                                    if (Model.VM_Company.Entrance_Type != null)
+                                    {
+                                        <span class="record_sharp_span" style="float:left;text-indent:10px">单位: @Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                                    }
+                                    if (Model.VM_Company.EntranceFee_Count != null)
+                                    {
+                                        <span style="float:left">@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                                    }
                                 }
-                                if (Model.VM_Company.EntranceFee_Count != null)
+                                else
                                 {
-                                    <span style="float:left">@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                                    <span style="float:left;text-indent:10px">无</span>
                                 }
                             }
-                            else
-                            {
-                                <span style="float:left;text-indent:10px">无</span>
-                            }
-                        }
-                        else
-                        {
-                            <span class="color-red">(渠道终端必填字段)</span>
-                        }
-
-                    </td>
-                </tr>
-                <tr>
-                    <td>2.5</td>
-                    <td>有无专用仓库</td>
-                    @if (Model.VM_Company.Company_Category == 0)
-                    {
+                        </td>
+                    </tr>
+                }
+                @if (Model.VM_Company.Company_Category == 0)
+                {
+                    <tr>
+                        <td>2.4</td>
+                        <td>有无专用仓库</td>
                         <td class="text-left">
                             @if (Model.VM_Company.Dedicated_Warehouse == 0)
                             {
@@ -177,100 +175,62 @@
                                 <span>无</span>
                             }
                         </td>
-                    }
-                    else
-                    {
-                        <td class="color-red">
-                            (经销商必填字段)
-                        </td>
-                    }
-                   
-                </tr>
-                <tr>
-                    <td>2.6</td>
-                    <td>年销售额流水</td>
-                    @if (Model.VM_Company.Company_Category == 0)
-                    {
+                    </tr>
+                    <tr>
+                        <td>2.5</td>
+                        <td>年销售额流水</td>
+
                         <td class="text-left">
                             ￥:   @Model.VM_Company.Sales_Amount  万元
                         </td>
-                    }
-                    else
-                    {
-                        <td class="color-red">
-                           (经销商必填字段)
-                        </td>
-                    }
-                </tr>
-                <tr>
-                    <td>2.7</td>
-                    <td>销售人员</td>
-                    @if (Model.VM_Company.Company_Category == 0)
-                    {
+                    </tr>
+                    <tr>
+                        <td>2.6</td>
+                        <td>销售人员</td>
                         <td class="text-left">
                             有  @Model.VM_Company.Employee_Count     人
                         </td>
-                    }
-                    else
-                    {
-                        <td class="color-red">
-                            (经销商必填字段)
-                        </td>
-                    }
-                </tr>
-                <tr>
-                    <td>2.8</td>
-                    <td>代理过知名品牌</td>
-                    @if (Model.VM_Company.Company_Category == 0)
-                    {
+                    </tr>
+                    <tr>
+                        <td>2.7</td>
+                        <td>代理过知名品牌</td>
                         <td class="text-left">
                             <div style="width:399px;white-space:normal">
                                 @Model.VM_Company.Agent_FamousBrand
                             </div>
                         </td>
-                    }
-                    else
-                    {
-                        <td class="color-red">
-                            (经销商必填字段)
-                        </td>
-                    }
-                    
-                </tr>
-                <tr>
-                    <td>2.9</td>
-                    <td>有无特殊渠道</td>
-                    
+                    </tr>
+                    <tr>
+                        <td>2.8</td>
+                        <td>有无特殊渠道</td>
                         @if (Model.VM_Company.Special_Source != null)
                         {
                             @*<span>@Html.SpecialSource(Model.VM_Company.Special_Source.Value)</span>*@
-                            if (Model.VM_Company.Special_Source.Value == 0)
-                            {
+                        if (Model.VM_Company.Special_Source.Value == 0)
+                        {
                             <td class="text-left">
                                 <span>@Model.VM_Company.SpecialSource_Detail</span>
                                 <span>@Model.VM_Company.SpecialSource_OtherDetail</span>
                             </td>
-                                
-                            }
-                            else
-                            {
-                            <td class="text-left">
-                                <span>无</span>
-                            </td>
-                                
-                            }
                         }
                         else
                         {
-                            <td>
-                                <span class="color-red">(经销商必填字段)</span>
+                            <td class="text-left">
+                                <span>无</span>
                             </td>
-                            
+                            }
                         }
-                    
-                </tr>
+                    </tr>
+                }
                 <tr style="height:94px">
-                    <td>2.10</td>
+                    @if (Model.VM_Company.Company_Category == 0)
+                    {
+                        <td>2.9</td>
+                    }
+                    else
+                    {
+                        <td>2.5</td>
+                    }
                     <td>合作意向</td>
                     <td class="share_height">
                     @if (Model.Cooperation_Intention == 0)

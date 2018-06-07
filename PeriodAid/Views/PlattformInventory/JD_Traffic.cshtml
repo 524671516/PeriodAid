@@ -10,7 +10,7 @@
                 <a href="javascript:;" id="upload-traffic">选择文件</a>
                 <input type="submit" class="btn btn-danger" id="traffic-form-sub" />
             </form>
-            <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
+            <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
             <form method="post" id="calc_form"></form>
         </div>
         <div style="padding:0" class="col-md-10">
@@ -131,8 +131,58 @@
     });
     // 下载
     $("#file-date").on("change", function () {
+        $.confirm({
+            title: '是否需要删除品相',
+            content: '',
+            boxWidth: '500px',
+            theme: 'modern',
+            useBootstrap: false,
+            buttons: {
+                heyThere: {
+                    text: '是',
+                    action: function () {
+                        var html = '<input style="position: relative;top: 1px;left: -9px;display:inline-block;" type="checkbox" value="1" name="product">酸梅汁<input style="margin-left:20px;position: relative;top: 1px;left: -9px;display:inline-block;" type="checkbox" value="2" name="product">2'
+                        var html2 = '<input style="position: relative;top: 1px;left: -9px;display:inline-block;" type="checkbox" value="3" name="product">3<input style="margin-left:20px;position: relative;top: 1px;left: -9px;display:inline-block;" type="checkbox" value="4" name="product">4'
+                        $.confirm({
+                            title: '选择删除品相',
+                            content: '<div class="form-group" style="text-align: left;margin-left: 36%;">' +html+'</div>'+
+                                '<div class="form-group" style="text-align: left;margin-left: 36%;">' +html2+'</div>',
+                            theme: 'modern',
+                            boxWidth: '500px',
+                            useBootstrap: false,
+                            buttons: {
+                                heyThere: {
+                                    text: '提交',
+                                    btnClass: 'btn-blue',
+                                    action: function () {
+                                    }
+                                },
+                                取消: function () {
+                                    //close
+                                },
+                            },
+                            onContentReady: function () {
+                                $(".detail_select").on('click', function (e) {
+                                    var that = $(this);
+                                    $(".textarea_detail").addClass("hidden").removeClass("active")
+                                    $(".textarea_detail").val("")
+                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden")
+                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden").addClass("active")
+                                });
+                            }
+                        })
+                    }
+                },
+                否: function () {
+
+                },
+            }
+        });
         $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "");
         $("#download_calc").removeClass("disabled")
+    })
+    $("#download_calc").on("click", function () {
+        $("#calc_form").submit()
     })
     // 初始化日历
     TmDatePicker.Init({
