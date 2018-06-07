@@ -1892,134 +1892,131 @@ namespace PeriodAid.Controllers
         }
         
         [HttpPost]
-        public ActionResult getTrafficExcel(FormCollection form, DateTime date)
+        public ActionResult getTrafficExcel(FormCollection form, DateTime date,string[] product_code)
         {
-
-
-
-
-            return Content("success");
-            //HSSFWorkbook book = getTrafficPlattform(form, date);
-            //ISheet sheet = book.CreateSheet(date.Month + "." + date.Day + "汇总");
-            //// 写标题
-            //IRow row = sheet.CreateRow(0);
-            //int cell_pos = 0;
-            //row.CreateCell(cell_pos).SetCellValue("日期");
-            //row.CreateCell(++cell_pos).SetCellValue("商品编码");
-            //row.CreateCell(++cell_pos).SetCellValue("商品名称");
-            //row.CreateCell(++cell_pos).SetCellValue("流量渠道");
-            //row.CreateCell(++cell_pos).SetCellValue("商品流量");
-            //row.CreateCell(++cell_pos).SetCellValue("商品访客");
-            //row.CreateCell(++cell_pos).SetCellValue("商品消费者");
-            //row.CreateCell(++cell_pos).SetCellValue("商品订单行");
-            //row.CreateCell(++cell_pos).SetCellValue("商品转化率");
-            //// 写产品列
-            //int row_pos = 1;
-            //var productlist = from m in _db.SS_TrafficData
-            //                  group m by m.SS_Product into g
-            //                  select g;
-            //ICellStyle Center_style = book.CreateCellStyle();//居中标题
-            //Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
-            //foreach (var product in productlist)
-            //{
-            //    var productOrder = from m in product
-            //                       where m.UpdateTime == date
-            //                       group m by m.SS_TrafficPlattform into g
-            //                       select g;
-            //    bool firstCount = true;
-            //    foreach (var productorder in productOrder)
-            //    {
-            //        IRow single_row = sheet.CreateRow(row_pos);
-            //        cell_pos = 0;
-            //        var c0 = single_row.CreateCell(cell_pos);
-            //        c0.SetCellValue(date.ToString("d"));
-            //        var c1 = single_row.CreateCell(++cell_pos);
-            //        c1.SetCellValue(product.Key.System_Code);
-            //        var c2 = single_row.CreateCell(++cell_pos);
-            //        c2.SetCellValue(product.Key.Item_Name);
-            //        var rowCount = productOrder.Count();
-            //        if (rowCount >0 && firstCount == true)
-            //        {
-            //            var row0 = row_pos;
-            //            var row1 = row_pos + rowCount;
-            //            sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
-            //            sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 1, 1));
-            //            sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 2, 2));
-            //            c0.CellStyle = Center_style;
-            //            c1.CellStyle = Center_style;
-            //            c2.CellStyle = Center_style;
-            //            firstCount = false;
-            //        }
-            //        single_row.CreateCell(++cell_pos).SetCellValue(productorder.Key.TrafficPlattform_Name);
-            //        var Ratio = (decimal)productorder.Sum(m => m.Product_Customer) / (productorder.Sum(m => m.Product_Visitor) == 0 ? 1 : productorder.Sum(m => m.Product_Visitor));
-            //        single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Flow));
-            //        single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Visitor));
-            //        single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Customer));
-            //        single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Order_Count));
-            //        single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-            //        row_pos++;
-            //    }
-            //    var product_count = from m in product
-            //                        where m.UpdateTime == date
-            //                        group m by m.UpdateTime into g
-            //                        select g;
-            //    foreach (var productCount in product_count)
-            //    {
-            //        IRow single_row1 = sheet.CreateRow(row_pos);
-            //        cell_pos = 4;
-            //        var Ratio = (decimal)productCount.Sum(m => m.Product_Customer) / (productCount.Sum(m => m.Product_Visitor) == 0 ? 1 : productCount.Sum(m => m.Product_Visitor));
-            //        single_row1.CreateCell(cell_pos).SetCellValue(productCount.Sum(m => m.Product_Flow));
-            //        single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Visitor));
-            //        single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Customer));
-            //        single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Order_Count));
-            //        single_row1.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-            //    }
-            //    row_pos++;
-            //}
-            //row_pos++;
-            //// 各平台总和
-            //var data_each = from m in _db.SS_TrafficData
-            //                where m.UpdateTime == date
-            //                group m by m.SS_TrafficPlattform into g
-            //                select g;
-            //foreach (var eachData in data_each)
-            //{
-            //    IRow single_row = sheet.CreateRow(row_pos);
-            //    cell_pos = 3;
-            //    var Ratio = (decimal)eachData.Sum(m => m.Product_Customer) / (eachData.Sum(m => m.Product_Visitor) == 0 ? 1 : eachData.Sum(m => m.Product_Visitor));
-            //    single_row.CreateCell(cell_pos).SetCellValue(eachData.Key.TrafficPlattform_Name);
-            //    single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Flow));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Visitor));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Customer));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Order_Count));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-            //    row_pos++;
-            //}
-            //// 平台总和
-            //var data_all = from m in _db.SS_TrafficData
-            //               where m.UpdateTime == date
-            //               group m by m.SS_TrafficPlattform.Plattform_Id into g
-            //               select g;
-            //foreach (var allData in data_all)
-            //{
-            //    IRow single_row = sheet.CreateRow(++row_pos);
-            //    cell_pos = 3;
-            //    var Ratio = (decimal)allData.Sum(m => m.Product_Customer) / (allData.Sum(m => m.Product_Visitor) == 0 ? 1 : allData.Sum(m => m.Product_Visitor));
-            //    single_row.CreateCell(cell_pos).SetCellValue("共计：");
-            //    single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Flow));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Visitor));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Customer));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Order_Count));
-            //    single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
-            //}
-            //MemoryStream _stream = new MemoryStream();
-            //book.Write(_stream);
-            //_stream.Flush();
-            //_stream.Seek(0, SeekOrigin.Begin);
-            //return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
+            //return Content("success");
+            
+            HSSFWorkbook book = getTrafficPlattform(form, date,product_code);
+            ISheet sheet = book.CreateSheet(date.Month + "." + date.Day + "汇总");
+            // 写标题
+            IRow row = sheet.CreateRow(0);
+            int cell_pos = 0;
+            row.CreateCell(cell_pos).SetCellValue("日期");
+            row.CreateCell(++cell_pos).SetCellValue("商品编码");
+            row.CreateCell(++cell_pos).SetCellValue("商品名称");
+            row.CreateCell(++cell_pos).SetCellValue("流量渠道");
+            row.CreateCell(++cell_pos).SetCellValue("商品流量");
+            row.CreateCell(++cell_pos).SetCellValue("商品访客");
+            row.CreateCell(++cell_pos).SetCellValue("商品消费者");
+            row.CreateCell(++cell_pos).SetCellValue("商品订单行");
+            row.CreateCell(++cell_pos).SetCellValue("商品转化率");
+            // 写产品列
+            int row_pos = 1;
+            var productlist = from m in _db.SS_TrafficData
+                              group m by m.SS_Product into g
+                              select g;
+            ICellStyle Center_style = book.CreateCellStyle();//居中标题
+            Center_style.VerticalAlignment = VerticalAlignment.Center;//垂直对齐
+            foreach (var product in productlist)
+            {
+                var productOrder = from m in product
+                                   where m.UpdateTime == date
+                                   group m by m.SS_TrafficPlattform into g
+                                   select g;
+                bool firstCount = true;
+                foreach (var productorder in productOrder)
+                {
+                    IRow single_row = sheet.CreateRow(row_pos);
+                    cell_pos = 0;
+                    var c0 = single_row.CreateCell(cell_pos);
+                    c0.SetCellValue(date.ToString("d"));
+                    var c1 = single_row.CreateCell(++cell_pos);
+                    c1.SetCellValue(product.Key.System_Code);
+                    var c2 = single_row.CreateCell(++cell_pos);
+                    c2.SetCellValue(product.Key.Item_Name);
+                    var rowCount = productOrder.Count();
+                    if (rowCount > 0 && firstCount == true)
+                    {
+                        var row0 = row_pos;
+                        var row1 = row_pos + rowCount;
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 0, 0));
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 1, 1));
+                        sheet.AddMergedRegion(new CellRangeAddress(row0, row1, 2, 2));
+                        c0.CellStyle = Center_style;
+                        c1.CellStyle = Center_style;
+                        c2.CellStyle = Center_style;
+                        firstCount = false;
+                    }
+                    single_row.CreateCell(++cell_pos).SetCellValue(productorder.Key.TrafficPlattform_Name);
+                    var Ratio = (decimal)productorder.Sum(m => m.Product_Customer) / (productorder.Sum(m => m.Product_Visitor) == 0 ? 1 : productorder.Sum(m => m.Product_Visitor));
+                    single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Flow));
+                    single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Visitor));
+                    single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Product_Customer));
+                    single_row.CreateCell(++cell_pos).SetCellValue(productorder.Sum(m => m.Order_Count));
+                    single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
+                    row_pos++;
+                }
+                var product_count = from m in product
+                                    where m.UpdateTime == date
+                                    group m by m.UpdateTime into g
+                                    select g;
+                foreach (var productCount in product_count)
+                {
+                    IRow single_row1 = sheet.CreateRow(row_pos);
+                    cell_pos = 4;
+                    var Ratio = (decimal)productCount.Sum(m => m.Product_Customer) / (productCount.Sum(m => m.Product_Visitor) == 0 ? 1 : productCount.Sum(m => m.Product_Visitor));
+                    single_row1.CreateCell(cell_pos).SetCellValue(productCount.Sum(m => m.Product_Flow));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Visitor));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Product_Customer));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(productCount.Sum(m => m.Order_Count));
+                    single_row1.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
+                }
+                row_pos++;
+            }
+            row_pos++;
+            // 各平台总和
+            var data_each = from m in _db.SS_TrafficData
+                            where m.UpdateTime == date
+                            group m by m.SS_TrafficPlattform into g
+                            select g;
+            foreach (var eachData in data_each)
+            {
+                IRow single_row = sheet.CreateRow(row_pos);
+                cell_pos = 3;
+                var Ratio = (decimal)eachData.Sum(m => m.Product_Customer) / (eachData.Sum(m => m.Product_Visitor) == 0 ? 1 : eachData.Sum(m => m.Product_Visitor));
+                single_row.CreateCell(cell_pos).SetCellValue(eachData.Key.TrafficPlattform_Name);
+                single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Flow));
+                single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Visitor));
+                single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Product_Customer));
+                single_row.CreateCell(++cell_pos).SetCellValue(eachData.Sum(m => m.Order_Count));
+                single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
+                row_pos++;
+            }
+            // 平台总和
+            var data_all = from m in _db.SS_TrafficData
+                           where m.UpdateTime == date
+                           group m by m.SS_TrafficPlattform.Plattform_Id into g
+                           select g;
+            foreach (var allData in data_all)
+            {
+                IRow single_row = sheet.CreateRow(++row_pos);
+                cell_pos = 3;
+                var Ratio = (decimal)allData.Sum(m => m.Product_Customer) / (allData.Sum(m => m.Product_Visitor) == 0 ? 1 : allData.Sum(m => m.Product_Visitor));
+                single_row.CreateCell(cell_pos).SetCellValue("共计：");
+                single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Flow));
+                single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Visitor));
+                single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Product_Customer));
+                single_row.CreateCell(++cell_pos).SetCellValue(allData.Sum(m => m.Order_Count));
+                single_row.CreateCell(++cell_pos).SetCellValue(Ratio.ToString("p2"));
+            }
+            MemoryStream _stream = new MemoryStream();
+            book.Write(_stream);
+            _stream.Flush();
+            _stream.Seek(0, SeekOrigin.Begin);
+            return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
         }
         [HttpPost]
-        public HSSFWorkbook getTrafficPlattform(FormCollection form, DateTime date)
+        public HSSFWorkbook getTrafficPlattform(FormCollection form, DateTime date, string[] product_code)
         {
             var TrafficPlattform = from m in _db.SS_TrafficPlattform
                                    select m;
@@ -2043,6 +2040,7 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("商品转化率");
                 // 写产品列
                 int row_pos = 1;
+                var product_Code = product_code[0];
                 var TrafficData = from m in _db.SS_TrafficData
                                   where m.SS_TrafficPlattform.Id == plattform.Id && m.UpdateTime == date
                                   orderby m.Product_Id

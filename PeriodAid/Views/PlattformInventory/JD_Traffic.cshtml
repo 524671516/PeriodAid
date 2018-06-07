@@ -151,24 +151,26 @@
                             boxWidth: '500px',
                             useBootstrap: false,
                             buttons: {
-                                heyThere: {
+                                formSubmit: {
                                     text: '提交',
                                     btnClass: 'btn-blue',
                                     action: function () {
-                                    }
+                                        var product_list = [];
+                                        for (var i = 0; i < $(".product_select").length; i++) {
+                                            if ($(".product_select")[i].checked) {
+                                                product_list.push(this.$content.find('.form-group input[name="product"]:checked').val())
+                                            }
+                                        }
+                                        $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "&product_code=" + product_list);
+                                        $("#calc_form").submit()
+                                        product_list=[]
+                                     }
                                 },
                                 取消: function () {
                                     //close
                                 },
                             },
                             onContentReady: function () {
-                                $(".detail_select").on('click', function (e) {
-                                    var that = $(this);
-                                    $(".textarea_detail").addClass("hidden").removeClass("active")
-                                    $(".textarea_detail").val("")
-                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden")
-                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden").addClass("active")
-                                });
                             }
                         })
                     }
@@ -178,12 +180,10 @@
                 },
             }
         });
-        $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "");
+        
         $("#download_calc").removeClass("disabled")
     })
-    $("#download_calc").on("click", function () {
-        $("#calc_form").submit()
-    })
+    
     // 初始化日历
     TmDatePicker.Init({
         container: "#tm-calendar-view-wrap",
