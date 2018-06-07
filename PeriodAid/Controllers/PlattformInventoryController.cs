@@ -613,8 +613,8 @@ namespace PeriodAid.Controllers
                 };
                 _db.SS_UploadRecord.Add(upload_record);
             }
-            GetSalesStatistic(date);
             _db.SaveChanges();
+            GetSalesStatistic(date);
             return true;
         }
 
@@ -1237,8 +1237,7 @@ namespace PeriodAid.Controllers
             //增长率&周转天数
             var growthRate = 0;
             var turnoverDays = 30;
-            var date = DateTime.Now.Date.AddDays(-1);
-            var data = _db.SS_SalesStatistic.SingleOrDefault(m => m.StatisticTime == date && m.Product_Id == productId);
+            var data = _db.SS_SalesStatistic.SingleOrDefault(m => m.Product_Id == productId);
             if (data != null)
             {
                 if (data.Last_Count != 0 && data.Recent_Count / data.Last_Count >= 2)
