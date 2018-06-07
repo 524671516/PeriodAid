@@ -525,4 +525,40 @@ tr > :nth-child(2) {
 .result_share_view tr td{
     border:1px solid #ccc
 }
+.visit_btn{
+    display:inline-block;
+    width:30px;
+    height:60px;
+    background:black;
+    opacity:0.4;
+    position:relative
+}
+.visit_btn:hover{
+    opacity:1;
+}
+.visit_btn a{
+    width:30px;
+    height:60px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -15px;
+    margin-top: -30px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 18px;
+}
+.visit_btn a i{
+    color:#fff;
+    margin-top:20px
+}
+
+.btn_container>:nth-child(1){
+    float:left;
+    border-radius:6px 0 0 0
+}
+.btn_container>:nth-child(2){
+    float:right;
+    border-radius:0 6px 0 0
+}        
 /*还原共享表样式结束*/

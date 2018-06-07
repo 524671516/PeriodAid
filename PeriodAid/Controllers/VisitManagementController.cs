@@ -136,7 +136,7 @@ namespace PeriodAid.Controllers
             }
             else
             {
-                return PartialView(record.OrderByDescending(m => m.VM_Company.VM_VisitRecord.Count()).ToPagedList(_page, page_count));
+                return PartialView(record.OrderByDescending(m => m.Visit_Count).ToPagedList(_page, page_count));
             }
         }
 
@@ -350,9 +350,9 @@ namespace PeriodAid.Controllers
             return PartialView(company);
         }
 
-        public ActionResult VisitRecord_View(int rec_id)
+        public ActionResult VisitRecord_View(int c_id,int v_count)
         {
-            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Id == rec_id);
+            var record = _vmdb.VM_VisitRecord.SingleOrDefault(m => m.Company_Id == c_id && m.Visit_Count == v_count);
             return PartialView(record);
         }
     }

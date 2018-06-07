@@ -54,7 +54,7 @@
             <th>交表考核</th>
             <th>内容考核</th>
             <th>拜访方式</th>
-            <th>拜访次数</th>
+            <th>拜访序次</th>
             <th>渠道名称</th>
             <th>参与同事</th>
             <th>合作意向</th>
@@ -101,10 +101,10 @@
                 </a>
             </td>
             <td>@item.VM_Employee.Employee_Name</td>
-            <td>@item.Create_Time.ToString("yyyy-MM-dd HH:MM:ss")</td>
-            <td>@item.Visit_Time.ToString("yyyy-MM-dd")</td>
+            <td>@item.Create_Time.ToString("yy/MM/dd HH:MM:ss")</td>
+            <td>@item.Visit_Time.ToString("yy/MM/dd")</td>
             <td style="text-indent:10px">
-                <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-id="@item.Id">查看</a>
+                <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-cid="@item.Company_Id" data-count="@item.Visit_Count">查看</a>
             </td>
             @if (item.Create_Time == null)
             {
@@ -134,7 +134,7 @@
                 <td style="text-indent:7px" class="color-green">通过</td>
             }
             <td style="text-indent:8px">@Html.VisitType(item.Visit_Type)</td>
-            <td style="text-indent:8px">@item.VM_Company.VM_VisitRecord.Count() 次</td>
+            <td style="text-indent:4px">第 @item.Visit_Count 次</td>
             <td>
                 <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
                     @item.VM_Company.Source_Name
@@ -169,7 +169,7 @@
                     {
                         if (@item.Reply_Time != null)
                         {
-                            <td>@item.Reply_Time.Value.ToString("yyyy-MM-dd")</td>
+                            <td style="text-indent:8px">@item.Reply_Time.Value.ToString("yy/MM/dd")</td>
                         }
                         else
                         {
@@ -232,7 +232,7 @@
             {
                 if (@item.ExpectedDelivery_Time != null)
                 {
-                    <td>@item.ExpectedDelivery_Time.Value.ToString("yyyy-MM-dd")</td>
+                    <td style="text-indent:8px">@item.ExpectedDelivery_Time.Value.ToString("yy/MM/dd")</td>
                 }
                 else
                 {
@@ -271,7 +271,7 @@
             {
                 if (@item.CustomerReply_Time != null)
                 {
-                    <td>@item.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</td>
+                    <td style="text-indent:18px">@item.CustomerReply_Time.Value.ToString("yy/MM/dd")</td>
                 }
                 else
                 {
@@ -293,7 +293,7 @@
             {
                 if (@item.NextVisit_Time != null)
                 {
-                    <td style="text-indent:10px">@item.NextVisit_Time.Value.ToString("yyyy-MM-dd")</td>
+                    <td style="text-indent:12px">@item.NextVisit_Time.Value.ToString("yy/MM/dd")</td>
                 }
                 else
                 {
@@ -322,7 +322,7 @@
             }
             @if (item.Update_Time != null)
             {
-                <td>@item.Update_Time.Value.ToString("yyyy-MM-dd HH:MM:ss")</td>
+                <td>@item.Update_Time.Value.ToString("yy/MM/dd HH:MM:ss")</td>
             }
             else
             {
@@ -331,7 +331,7 @@
             @if (item.status == -1)
             {
                 <td>
-                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Detail @item.Veto_Cause">@item.Veto_Cause @item.Veto_Detail</div>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Cause @item.Veto_Detail">@item.Veto_Cause @item.Veto_Detail</div>
                 </td>
             }
             else
@@ -340,7 +340,7 @@
             }
             <td>
                 <a data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论<span class="badge"></span></a>
-                <a data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>
+                @*<a data-id="@item.Id" data-status="@item.status" class="supervise_btn btn btn-xs btn-default" style="font-size:12px">管理</a>*@
             </td>
         </tr>
         }
@@ -387,7 +387,7 @@
 <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-        $('.supervise_btn[data-status="1"]').addClass("disabled")
+        //$('.supervise_btn[data-status="1"]').addClass("disabled")
         $(".visitors_name").hover(function () {
             var that = $(this)
             var Visitor_name = that.children("span").text();
@@ -491,155 +491,154 @@
         })
     })
     // 管理
-    $(".supervise_btn").on("click", function () {
-        var that = $(this)
-        $.confirm({
-            title: '审批',
-            content: '',
-            boxWidth: '500px',
-            theme: 'modern',
-            useBootstrap: false,
-            buttons: {
-                审批通过: function () {
-                    btnClass: 'btn-red',
-                    $.ajax({
-                        url: "/VisitManagement/Supervise_Status/",
-                        type: "post",
-                        data: {
-                            rec_id: that.attr("data-id"),
-                            rec_status:1
-                        },
-                        success: function (data) {
-                            $.alert({
-                                title: '提示!',
-                                type: 'green',
-                                content: "操作成功",
-                            });
-                            $.ajax({
-                                url: "/VisitManagement/Visit_PartialView/",
-                                type: "post",
-                                data: {
-                                    visit_date: $("#select_date").val(),
-                                    dep_id: $(".team_select.active").attr("data-val"),
-                                    com_type: $(".company_type.active").text(),
-                                    com_name: $("#company_id .shared_view_span").attr("data-name"),
-                                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                                    sort: $(".sort_type.active").attr("data-val"),
-                                    status: $(".status_type.active").attr("data-val"),
-                                    page_count: $(".share_select_page option:selected").val(),
-                                },
-                                success: function (data) {
-                                    $("#visit_list_content").html(data)
-                                    if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
-                                        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
-                                    } else {
-                                        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
-                                    }
-                                }
-                            })
-                        }
-                    })
-                },
-                heyThere: {
-                    text: '审批否决',
-                    action: function () {
-                        var config_list = $(".hidden_config")
-                        var html = ""
-                        for (var i = 0; i < config_list.length; i++) {
-                            html += '<input type="radio" class="detail_select" data-val="' + $(config_list[i]).attr("data-id") + '" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>' +
-                                '<textarea class="textarea_detail hidden" style="font-size:12px;text-indent:15px;" data-val="'+ $(config_list[i]).attr("data-id") +'" placeholder="具体原因"></textarea></br>'
-                        }
-                        $.confirm({
-                            title: '否决原因',
-                            content: '<div class="form-group" style="text-align: left;margin-left: 41%;">' +
-                            html +
-                            '</div>',
-                            theme: 'modern',
-                            boxWidth: '500px',
-                            useBootstrap: false,
-                            buttons: {
-                                formSubmit: {
-                                    text: '提交',
-                                    btnClass: 'btn-blue',
-                                    action: function () {
-                                        $.ajax({
-                                            url: "/VisitManagement/Supervise_Status/",
-                                            type: "post",
-                                            data: {
-                                                rec_id: that.attr("data-id"),
-                                                cause: this.$content.find('.form-group input[name="config"]:checked').val(),
-                                                detail: this.$content.find('.form-group .textarea_detail.active').val(),
-                                                rec_status: -1
-                                            },
-                                            success: function (data) {
-                                                if (data.result == "SUCCESS") {
-                                                    $.alert({
-                                                        title: '提示!',
-                                                        type: 'green',
-                                                        content: "操作成功",
-                                                    });
-                                                    $.ajax({
-                                                        url: "/VisitManagement/Visit_PartialView/",
-                                                        type: "post",
-                                                        data: {
-                                                            visit_date: $("#select_date").val(),
-                                                            dep_id: $(".team_select.active").attr("data-val"),
-                                                            com_type: $(".company_type.active").text(),
-                                                            com_name: $("#company_id .shared_view_span").attr("data-name"),
-                                                            vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                                                            sort: $(".sort_type.active").attr("data-val"),
-                                                            status: $(".status_type.active").attr("data-val"),
-                                                            page_count: $(".share_select_page option:selected").val(),
-                                                        },
-                                                        success: function (data) {
-                                                            $("#visit_list_content").html(data)
-                                                            if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
-                                                                $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
-                                                            } else {
-                                                                $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 +20 + "px")
-                                                            }
-                                                        }
-                                                    })
-                                                } else {
-                                                    $.alert({
-                                                        title: '提示!',
-                                                        type: 'red',
-                                                        content: "请联系管理员开通权限",
-                                                    });
-                                                }
-                                            }
-                                        })
-                                    }
-                                },
-                                取消: function () {
-                                    //close
-                                },
-                            },
-                            onContentReady: function () {
-                                $(".detail_select").on('click', function (e) {
-                                    var that = $(this);
-                                    $(".textarea_detail").addClass("hidden").removeClass("active")
-                                    $(".textarea_detail").val("")
-                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden")
-                                    that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden").addClass("active")
-                                });
-                            }
-
-                        })
-                    }
-                },
-                取消: function () {
-                   
-                },
-            }
-        });
-    })
+    //$(".supervise_btn").on("click", function () {
+    //    var that = $(this)
+    //    $.confirm({
+    //        title: '审批',
+    //        content: '',
+    //        boxWidth: '500px',
+    //        theme: 'modern',
+    //        useBootstrap: false,
+    //        buttons: {
+    //            审批通过: function () {
+    //                btnClass: 'btn-red',
+    //                $.ajax({
+    //                    url: "/VisitManagement/Supervise_Status/",
+    //                    type: "post",
+    //                    data: {
+    //                        rec_id: that.attr("data-id"),
+    //                        rec_status:1
+    //                    },
+    //                    success: function (data) {
+    //                        $.alert({
+    //                            title: '提示!',
+    //                            type: 'green',
+    //                            content: "操作成功",
+    //                        });
+    //                        $.ajax({
+    //                            url: "/VisitManagement/Visit_PartialView/",
+    //                            type: "post",
+    //                            data: {
+    //                                visit_date: $("#select_date").val(),
+    //                                dep_id: $(".team_select.active").attr("data-val"),
+    //                                com_type: $(".company_type.active").text(),
+    //                                com_name: $("#company_id .shared_view_span").attr("data-name"),
+    //                                vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+    //                                sort: $(".sort_type.active").attr("data-val"),
+    //                                status: $(".status_type.active").attr("data-val"),
+    //                                page_count: $(".share_select_page option:selected").val(),
+    //                            },
+    //                            success: function (data) {
+    //                                $("#visit_list_content").html(data)
+    //                                if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+    //                                    $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+    //                                } else {
+    //                                    $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+    //                                }
+    //                            }
+    //                        })
+    //                    }
+    //                })
+    //            },
+    //            heyThere: {
+    //                text: '审批否决',
+    //                action: function () {
+    //                    var config_list = $(".hidden_config")
+    //                    var html = ""
+    //                    for (var i = 0; i < config_list.length; i++) {
+    //                        html += '<input type="radio" class="detail_select" data-val="' + $(config_list[i]).attr("data-id") + '" name="config" style="position: relative;top: 1px;left: -9px;display:inline-block;" value="' + $(config_list[i]).attr("data-detail") + '" />' + $(config_list[i]).attr("data-detail") + '</br>' +
+    //                            '<textarea class="textarea_detail hidden" style="font-size:12px;text-indent:15px;" data-val="'+ $(config_list[i]).attr("data-id") +'" placeholder="具体原因"></textarea></br>'
+    //                    }
+    //                    $.confirm({
+    //                        title: '否决原因',
+    //                        content: '<div class="form-group" style="text-align: left;margin-left: 41%;">' +
+    //                        html +
+    //                        '</div>',
+    //                        theme: 'modern',
+    //                        boxWidth: '500px',
+    //                        useBootstrap: false,
+    //                        buttons: {
+    //                            formSubmit: {
+    //                                text: '提交',
+    //                                btnClass: 'btn-blue',
+    //                                action: function () {
+    //                                    $.ajax({
+    //                                        url: "/VisitManagement/Supervise_Status/",
+    //                                        type: "post",
+    //                                        data: {
+    //                                            rec_id: that.attr("data-id"),
+    //                                            cause: this.$content.find('.form-group input[name="config"]:checked').val(),
+    //                                            detail: this.$content.find('.form-group .textarea_detail.active').val(),
+    //                                            rec_status: -1
+    //                                        },
+    //                                        success: function (data) {
+    //                                            if (data.result == "SUCCESS") {
+    //                                                $.alert({
+    //                                                    title: '提示!',
+    //                                                    type: 'green',
+    //                                                    content: "操作成功",
+    //                                                });
+    //                                                $.ajax({
+    //                                                    url: "/VisitManagement/Visit_PartialView/",
+    //                                                    type: "post",
+    //                                                    data: {
+    //                                                        visit_date: $("#select_date").val(),
+    //                                                        dep_id: $(".team_select.active").attr("data-val"),
+    //                                                        com_type: $(".company_type.active").text(),
+    //                                                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+    //                                                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+    //                                                        sort: $(".sort_type.active").attr("data-val"),
+    //                                                        status: $(".status_type.active").attr("data-val"),
+    //                                                        page_count: $(".share_select_page option:selected").val(),
+    //                                                    },
+    //                                                    success: function (data) {
+    //                                                        $("#visit_list_content").html(data)
+    //                                                        if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+    //                                                            $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+    //                                                        } else {
+    //                                                            $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 +20 + "px")
+    //                                                        }
+    //                                                    }
+    //                                                })
+    //                                            } else {
+    //                                                $.alert({
+    //                                                    title: '提示!',
+    //                                                    type: 'red',
+    //                                                    content: "请联系管理员开通权限",
+    //                                                });
+    //                                            }
+    //                                        }
+    //                                    })
+    //                                }
+    //                            },
+    //                            取消: function () {
+    //                                //close
+    //                            },
+    //                        },
+    //                        onContentReady: function () {
+    //                            $(".detail_select").on('click', function (e) {
+    //                                var that = $(this);
+    //                                $(".textarea_detail").addClass("hidden").removeClass("active")
+    //                                $(".textarea_detail").val("")
+    //                                that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden")
+    //                                that.siblings(".textarea_detail[data-val='" + that.attr("data-val") + "']").removeClass("hidden").addClass("active")
+    //                            });
+    //                        }
+    //                    })
+    //                }
+    //            },
+    //            取消: function () {
+    //            },
+    //        }
+    //    });
+    //})
     // 表格
     $(".form_view").on("click", function () {
         $.ajax({
             url: '/VisitManagement/VisitRecord_View/',
             data: {
-                rec_id: $(this).attr('data-id')
+                c_id: $(this).attr('data-cid'),
+                v_count:$(this).attr("data-count")
             },
             success: function (data) {
                 $('#modal-content').html(data)
@@ -647,6 +646,7 @@
             }
         })
     })
+    
     function freezing() {
         $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());
         $("tr>:nth-child(2)").css("left", $("#freezing_record").scrollLeft());

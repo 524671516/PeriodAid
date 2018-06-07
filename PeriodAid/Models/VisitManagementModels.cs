@@ -269,6 +269,8 @@
 
         public int status { get; set; }//拜访状态（0默认,1通过，-1驳回）
 
+        public int Visit_Count { get; set; }// 拜访次数
+
         [StringLength(256)]
         public string Veto_Detail { get; set; }
 
