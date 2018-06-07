@@ -65,9 +65,16 @@
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label" style="font-weight:600">客户类型:</label>
-            <div class="col-md-5" style="line-height: 34px;">
+            <div class="col-md-4" style="line-height: 34px;">
                 @Model.VM_Company.Company_Type
             </div>
+            @if (Model.status == -1)
+            {
+                <label class="col-md-2 control-label" style="font-weight:600">驳回原因:</label>
+                <div class="col-md-4" style="line-height: 34px;">
+                    @Model.Veto_Cause @Model.Veto_Detail
+                </div>
+            }
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label" style="font-weight:600">拜访日期:</label>
