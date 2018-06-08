@@ -1894,7 +1894,6 @@ namespace PeriodAid.Controllers
         [HttpPost]
         public ActionResult getTrafficExcel(FormCollection form, DateTime date,string product_code)
         {
-            List<string> product_Code = new List<string>(product_code.Split(','));
             HSSFWorkbook book = getTrafficPlattform(form, date, product_code);
             ISheet sheet = book.CreateSheet(date.Month + "." + date.Day + "汇总");
             // 写标题
@@ -1911,6 +1910,7 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("商品转化率");
             // 写产品列
             int row_pos = 1;
+            List<string> product_Code = new List<string>(product_code.Split(','));
             var productlist = from m in _db.SS_TrafficData
                               where !product_Code.Contains(m.SS_Product.System_Code)
                               group m by m.SS_Product into g
@@ -2021,7 +2021,6 @@ namespace PeriodAid.Controllers
             var TrafficPlattform = from m in _db.SS_TrafficPlattform
                                    select m;
             List<string> product_Code = new List<string>(product_code.Split(','));
-            
             HSSFWorkbook book = new HSSFWorkbook();
             foreach (var plattform in TrafficPlattform)
             {

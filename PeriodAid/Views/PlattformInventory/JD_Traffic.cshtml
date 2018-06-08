@@ -8,9 +8,9 @@
                 <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px;padding-left:5px" />
                 <input type="file" id="traffic-name" name="file-name" class="hidden" />
                 <a href="javascript:;" id="upload-traffic">选择文件</a>
-                <input type="submit" class="btn btn-danger" id="traffic-form-sub" />
+                <input type="submit" class="btn btn-danger disabled" id="traffic-form-sub" />
             </form>
-            @*<a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>*@
+            <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
             <form method="post" id="calc_form"></form>
         </div>
         <div style="padding:0" class="col-md-10">
@@ -72,6 +72,7 @@
     })
     // 上传
     $("#traffic-form-sub").click(function () {
+        $(this).addClass("disabled")
         var dataVal = $('#file-date').val()
         var fileVal = $("#traffic-name").val()
         if (dataVal && fileVal != '') {
@@ -131,6 +132,11 @@
     });
     // 下载
     $("#file-date").on("change", function () {
+        $("#download_calc").removeClass("disabled")
+        $("#traffic-form-sub").removeClass("disabled")
+    })
+    $("#download_calc").on("click", function () {
+        $(this).addClass("disabled")
         $.confirm({
             title: '是否需要删除品相',
             content: '',
@@ -145,8 +151,8 @@
                         var html2 = '<input class="product_select" style="position: relative;top: 1px;left: -9px;display:inline-block;" type="checkbox" value="5873123" name="product">kuos水<input class="product_select" style="margin-left:50px;position: relative;top: 1px;left: -9px;display:inline-block;" type="checkbox" value="5268081" name="product">谷物粉450g'
                         $.confirm({
                             title: '选择删除品相',
-                            content: '<div class="form-group" style="text-align: left;margin-left: 26%;">' +html+'</div>'+
-                                '<div class="form-group" style="text-align: left;margin-left: 26%;">' +html2+'</div>',
+                            content: '<div class="form-group" style="text-align: left;margin-left: 26%;">' + html + '</div>' +
+                                '<div class="form-group" style="text-align: left;margin-left: 26%;">' + html2 + '</div>',
                             theme: 'modern',
                             boxWidth: '500px',
                             useBootstrap: false,
@@ -162,7 +168,7 @@
                                         $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "&product_code=" + product_list);
                                         $("#calc_form").submit()
                                         product_list = [];
-                                     }
+                                    }
                                 },
                                 取消: function () {
                                     //close
@@ -178,12 +184,13 @@
                     $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "&product_code=" + product_list);
                     $("#calc_form").submit()
                 },
+                关闭: function () {
+                    //close
+                },
             }
         });
-        
-        //$("#download_calc").removeClass("disabled")
+
     })
-    
     // 初始化日历
     TmDatePicker.Init({
         container: "#tm-calendar-view-wrap",
