@@ -10,7 +10,7 @@
                 <a href="javascript:;" id="upload-traffic">选择文件</a>
                 <input type="submit" class="btn btn-danger" id="traffic-form-sub" />
             </form>
-            <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
+            @*<a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>*@
             <form method="post" id="calc_form"></form>
         </div>
         <div style="padding:0" class="col-md-10">
@@ -156,14 +156,12 @@
                                     btnClass: 'btn-blue',
                                     action: function () {
                                         var product_list = [];
-                                        for (var i = 0; i < $(".product_select").length; i++) {
-                                            if ($(".product_select")[i].checked) {
-                                                product_list.push(this.$content.find('.form-group input[name="product"]:checked').val())
-                                            }
-                                        }
+                                        $("[name='product']:checked").each(function (index, element) {
+                                            product_list.push($(this).val())
+                                        });
                                         $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "&product_code=" + product_list);
                                         $("#calc_form").submit()
-                                        product_list=[]
+                                        product_list = [];
                                      }
                                 },
                                 取消: function () {
@@ -176,12 +174,14 @@
                     }
                 },
                 否: function () {
-
+                    var product_list = [];
+                    $("#calc_form").attr("action", "/PlattformInventory/getTrafficExcel?date=" + $('#file-date').val() + "&product_code=" + product_list);
+                    $("#calc_form").submit()
                 },
             }
         });
         
-        $("#download_calc").removeClass("disabled")
+        //$("#download_calc").removeClass("disabled")
     })
     
     // 初始化日历

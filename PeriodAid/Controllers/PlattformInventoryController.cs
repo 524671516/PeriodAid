@@ -1892,11 +1892,10 @@ namespace PeriodAid.Controllers
         }
         
         [HttpPost]
-        public ActionResult getTrafficExcel(FormCollection form, DateTime date,string[] product_code)
+        public ActionResult getTrafficExcel(FormCollection form, DateTime date,string product_code)
         {
-            //return Content("success");
-            
-            HSSFWorkbook book = getTrafficPlattform(form, date,product_code);
+            List<string> product_Code = new List<string>(product_code.Split(','));
+            HSSFWorkbook book = getTrafficPlattform(form, date, product_code);
             ISheet sheet = book.CreateSheet(date.Month + "." + date.Day + "汇总");
             // 写标题
             IRow row = sheet.CreateRow(0);
@@ -1913,6 +1912,7 @@ namespace PeriodAid.Controllers
             // 写产品列
             int row_pos = 1;
             var productlist = from m in _db.SS_TrafficData
+                              where !product_Code.Contains(m.SS_Product.System_Code)
                               group m by m.SS_Product into g
                               select g;
             ICellStyle Center_style = book.CreateCellStyle();//居中标题
@@ -1976,7 +1976,7 @@ namespace PeriodAid.Controllers
             row_pos++;
             // 各平台总和
             var data_each = from m in _db.SS_TrafficData
-                            where m.UpdateTime == date
+                            where m.UpdateTime == date && !product_Code.Contains(m.SS_Product.System_Code)
                             group m by m.SS_TrafficPlattform into g
                             select g;
             foreach (var eachData in data_each)
@@ -1994,7 +1994,7 @@ namespace PeriodAid.Controllers
             }
             // 平台总和
             var data_all = from m in _db.SS_TrafficData
-                           where m.UpdateTime == date
+                           where m.UpdateTime == date && !product_Code.Contains(m.SS_Product.System_Code)
                            group m by m.SS_TrafficPlattform.Plattform_Id into g
                            select g;
             foreach (var allData in data_all)
@@ -2016,10 +2016,12 @@ namespace PeriodAid.Controllers
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "统计表.xls");
         }
         [HttpPost]
-        public HSSFWorkbook getTrafficPlattform(FormCollection form, DateTime date, string[] product_code)
+        public HSSFWorkbook getTrafficPlattform(FormCollection form, DateTime date, string product_code)
         {
             var TrafficPlattform = from m in _db.SS_TrafficPlattform
                                    select m;
+            List<string> product_Code = new List<string>(product_code.Split(','));
+            
             HSSFWorkbook book = new HSSFWorkbook();
             foreach (var plattform in TrafficPlattform)
             {
@@ -2040,9 +2042,9 @@ namespace PeriodAid.Controllers
                 row.CreateCell(++cell_pos).SetCellValue("商品转化率");
                 // 写产品列
                 int row_pos = 1;
-                var product_Code = product_code[0];
                 var TrafficData = from m in _db.SS_TrafficData
                                   where m.SS_TrafficPlattform.Id == plattform.Id && m.UpdateTime == date
+                                  && !product_Code.Contains(m.SS_Product.System_Code)
                                   orderby m.Product_Id
                                   select m;
                 foreach (var trafficdata in TrafficData)
