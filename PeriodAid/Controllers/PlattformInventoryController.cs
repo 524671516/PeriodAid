@@ -487,10 +487,10 @@ namespace PeriodAid.Controllers
                 DateTime end = upload_record.SalesRecord_Date;
                 DateTime start_7 = end.AddDays(0 - 7);
                 DateTime start_15 = end.AddDays(0 - 15);
-                var find_sql = "select t1.Product_Id,t1.Sales_Count as Sales_Count_7,t2.Sales_Count as Sales_Count_15,t1.Storage_Count from " +
-                    "(select a.Product_Id,a.Sales_Count,b.Storage_Count from (SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord where " +
+                var find_sql = "select t1.Product_Id,t1.Sales_Count as Sales_Count_7,t2.Sales_Count as Sales_Count_15,t1.Storage_Count,t1.New_Storage_Count from " +
+                    "(select a.Product_Id,a.Sales_Count,b.Storage_Count,b.New_Storage_Count from (SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord where " +
                     "SalesRecord_Date >  \'" + start_7 + "\'  and SalesRecord_Date <= \'" + end + "\'  and Storage_Id >=5 and Storage_Id<=13 group by Product_Id) as a," +
-                    "(select Product_Id, sum(Storage_Count) as Storage_Count from SS_SalesRecord where SalesRecord_Date in " +
+                    "(select Product_Id, sum(Storage_Count) as Storage_Count,sum(New_Storage_Count) as New_Storage_Count from SS_SalesRecord where SalesRecord_Date in " +
                     "(select top(1) SalesRecord_Date from SS_SalesRecord order by SalesRecord_Date desc) group by Product_Id) as b " +
                     "where a.Product_Id = b.Product_Id) as t1," +
                     "(SELECT Product_Id, sum(Sales_Count) as Sales_Count FROM SS_SalesRecord " +
@@ -504,7 +504,9 @@ namespace PeriodAid.Controllers
                     var product = _db.SS_Product.SingleOrDefault(m => m.Id == data.Product_id);
                     content.Product = product;
                     content.Storage_Count = data.Storage_Count;
+                    content.New_Storage_Count = data.New_Storage_Count;
                     content.Sales_Avg = (data.Sales_Count_7 / 7.00 + data.Sales_Count_15 / 15.00) / 2;
+                    content.Sales_Count_7 = data.Sales_Count_7 / 7;
                     content_list.Add(content);
                     if (data.Sales_Avg > 30)
                     {
@@ -537,6 +539,7 @@ namespace PeriodAid.Controllers
                                select m;
             int sales_field = 0;
             int inventory_field = 0;
+            int new_inventory_field = 0;
             while (csv_reader.Read())
             {
                 try
@@ -569,7 +572,8 @@ namespace PeriodAid.Controllers
                         if (exist_item != null)
                         {
                             exist_item.Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0;
-                            exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;
+                            exist_item.Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0;//总体可订购
+                            exist_item.New_Storage_Count = csv_reader.TryGetField<int>(inventory.New_Inventory_Header, out new_inventory_field) ? new_inventory_field : 0;//总体库存
                             _db.Entry(exist_item).State = System.Data.Entity.EntityState.Modified;
                         }
                         else
@@ -580,7 +584,8 @@ namespace PeriodAid.Controllers
                                 SalesRecord_Date = date,
                                 Storage_Id = inventory.Id,
                                 Sales_Count = csv_reader.TryGetField<int>(inventory.Sales_Header, out sales_field) ? sales_field : 0,
-                                Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0,
+                                Storage_Count = csv_reader.TryGetField<int>(inventory.Inventory_Header, out inventory_field) ? inventory_field : 0,//总体可订购
+                                New_Storage_Count = csv_reader.TryGetField<int>(inventory.New_Inventory_Header, out new_inventory_field) ? new_inventory_field : 0,
                             };
                             _db.SS_SalesRecord.Add(record);
                         }
@@ -904,7 +909,9 @@ namespace PeriodAid.Controllers
             {
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "日均销量");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "周转数");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "可订购");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "库存");
+                row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "库存周转");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "预期补货");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "实际补货");
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "补货箱数");
@@ -924,8 +931,13 @@ namespace PeriodAid.Controllers
                 double total_count = 0;
                 //日均销量
                 var avg_data = form["p_avg_" + product.Id];
+                var avg_data_7 = form["p_avg_7_" + product.Id];
                 if (avg_data == null) {
                     avg_data = 0.ToString();
+                }
+                if (avg_data_7 == null)
+                {
+                    avg_data_7 = 0.ToString();
                 }
                 var avg_count = Convert.ToDouble(avg_data).ToString("0.00");
                 // 最近库存
@@ -938,14 +950,16 @@ namespace PeriodAid.Controllers
                     {
                         // 最新库存
                         var last_inventory = _db.SS_SalesRecord.SingleOrDefault(m => m.Product_Id == product.Id && m.Storage_Id == inventory.Id && m.SalesRecord_Date == upload_record.SalesRecord_Date);
-                        int storage_count;
+                        int storage_count, new_storage_count;
                         if (last_inventory != null)
                         {
                             storage_count = last_inventory.Storage_Count;
+                            new_storage_count = last_inventory.New_Storage_Count;
                         }
                         else
                         {
                             storage_count = 0;
+                            new_storage_count = 0;
                         }
                         double recommand_storage = double.Parse(avg_count) * _rate - storage_count >= 0 ? double.Parse(avg_count) * _rate - storage_count : 0;
                         int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
@@ -974,6 +988,14 @@ namespace PeriodAid.Controllers
                         single_row.CreateCell(++cell_pos).SetCellValue(avg_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count);
+                        if (int.Parse(avg_data_7) == 0)
+                        {
+                            single_row.CreateCell(++cell_pos).SetCellValue(0);
+                        }
+                        else {
+                            single_row.CreateCell(++cell_pos).SetCellValue(int.Parse(avg_data_7));
+                        }
                         single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(carton_count);

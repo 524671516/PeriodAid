@@ -30,6 +30,8 @@ namespace PeriodAid.Models
 
         public int Storage_Count { get; set; }
 
+        public int New_Storage_Count { get; set; }
+
         public double Sales_Avg { get; set; }
     }
 

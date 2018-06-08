@@ -169,7 +169,10 @@
         public string Sales_Header { get; set; }
 
         [StringLength(16)]
-        public string Inventory_Header { get; set; }
+        public string Inventory_Header { get; set; }//总体可订购
+
+        [StringLength(16)]
+        public string New_Inventory_Header { get; set; }//总体库存
 
         // 仓库顺序
         public int Index { get; set; }
@@ -189,7 +192,9 @@
 
         public int Sales_Count { get; set; }
 
-        public int Storage_Count { get; set; }
+        public int Storage_Count { get; set; }//总体可订购
+
+        public int New_Storage_Count { get; set; }//总体库存
 
         public int Product_Id { get; set; }
 
