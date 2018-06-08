@@ -132,7 +132,7 @@ namespace PeriodAid.Controllers
             }
             else if (sort == 1)
             {
-                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).ToPagedList(_page, page_count));
+                return PartialView(record.OrderByDescending(m => m.Cooperation_Intention).ThenByDescending(m => m.Visit_Count).ToPagedList(_page, page_count));
             }
             else
             {

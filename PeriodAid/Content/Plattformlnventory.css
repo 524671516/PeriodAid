@@ -1688,13 +1688,13 @@ a.btn_subtask_detail{
 #traffic-form-sub{
     margin-left: 14px;
     width: 54px;
-    height: 27px;
+    height: 29px;
     line-height: 9px;
 }
 #download_calc{
-    position: relative;
-    top: -10px;
-    z-index:999;
+    height:29px;
+    line-height: 15px;
+    margin-left: 12px;
 }
 #hot-download{
     line-height:15px;

@@ -4,13 +4,13 @@
 <div id="form-view-content">
     <div id="traffic-view">
         <div style="margin-bottom:10px">
-            <form action="/PlattformInventory/UploadTrafficFile" method="post" enctype="multipart/form-data" id="up-traffic-form">
+            <form action="/PlattformInventory/UploadTrafficFile" method="post" enctype="multipart/form-data" id="up-traffic-form" style="display:inline-block">
                 <input type="text" id="file-date" readonly="readonly" autocomplete="off" name="file-date" style="height:26px;padding-left:5px" />
                 <input type="file" id="traffic-name" name="file-name" class="hidden" />
                 <a href="javascript:;" id="upload-traffic">选择文件</a>
                 <input type="submit" class="btn btn-danger disabled" id="traffic-form-sub" />
             </form>
-            <a class="btn btn-primary traffic-submit float-right disabled" href="javascript:;" id="download_calc" style="line-height:15px;top:-27px;z-index:10;margin-right:20px">下载</a>
+            <a class="btn btn-primary traffic-submit disabled" href="javascript:;" id="download_calc">下载</a>
             <form method="post" id="calc_form"></form>
         </div>
         <div style="padding:0" class="col-md-10">
