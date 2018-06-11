@@ -1,9 +1,7 @@
 ﻿@model IEnumerable<PeriodAid.Models.CalcStorageViewModel>
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active">
-
-        <a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载完整预估表</a>
-
+        <a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();" style="position:relative;top:-10px;">下载完整预估表</a>
         <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
             <table class="table table-bordered table-hover">
                 <thead>

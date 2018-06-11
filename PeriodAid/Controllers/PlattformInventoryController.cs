@@ -926,9 +926,6 @@ namespace PeriodAid.Controllers
             foreach (var product in product_list)
             {
                 var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
-                DateTime end = upload_record.SalesRecord_Date;
-                DateTime start_7 = end.AddDays(0 - 7);
-                DateTime start_15 = end.AddDays(0 - 15);
                 IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue(product.System_Code);
