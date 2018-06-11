@@ -933,14 +933,11 @@ namespace PeriodAid.Controllers
                 single_row.CreateCell(++cell_pos).SetCellValue(product.Item_Code);
                 single_row.CreateCell(++cell_pos).SetCellValue(product.Carton_Spec);
                 double total_count = 0;
-                //日均销量
-                var avg_data = form["p_avg_" + product.Id];
-                var avg_count = Convert.ToDouble(avg_data).ToString("0.00");
                 // 最近库存
                 if (form["p_rate_" + product.Id] != null)
                 {
                     var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
-                    var findSql = "select a.Storage_Id,(a.avg_7/7+b.avg_15/15)/2 as avg_new,a.avg_7/7 as avg_7 from " +
+                    var findSql = "select a.Storage_Id,(a.avg_7/7+b.avg_15/15)/2 as avg_new from " +
                                                 "(select Storage_Id, sum(Sales_Count) as avg_7 from SS_SalesRecord where SalesRecord_Date > '2018/6/1 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as a," +
                                                 "(select Storage_Id, sum(Sales_Count) as avg_15 from SS_SalesRecord where SalesRecord_Date > '2018/5/24 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as b " +
                                                 "where a.Storage_Id = b.Storage_Id";
@@ -961,7 +958,7 @@ namespace PeriodAid.Controllers
                             storage_count = 0;
                             new_storage_count = 0;
                         }
-                        double recommand_storage = double.Parse(avg_count) * _rate - storage_count >= 0 ? double.Parse(avg_count) * _rate - storage_count : 0;
+                        double recommand_storage = double.Parse(data.avg_new.ToString()) * _rate - storage_count >= 0 ? double.Parse(data.avg_new.ToString()) * _rate - storage_count : 0;
                         int cartonspec = product.Carton_Spec == 0 ? 1 : product.Carton_Spec;
                         double carton_count = 0;
                         if (product.Product_Type == 1)
@@ -991,17 +988,17 @@ namespace PeriodAid.Controllers
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count);
-                        if (int.Parse(data.avg_7.ToString()) == 0)
+                        if (int.Parse(data.avg_new.ToString()) == 0)
                         {
                             single_row.CreateCell(++cell_pos).SetCellValue(0);
                         }
                         else
                         {
-                            single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count / int.Parse(data.avg_7.ToString()));
+                            single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count / int.Parse(data.avg_new.ToString()));
                         }
-                        single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
-                        single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
-                        single_row.CreateCell(++cell_pos).SetCellValue(carton_count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);//预期补货
+                        single_row.CreateCell(++cell_pos).SetCellValue(final_storage);//实际补货
+                        single_row.CreateCell(++cell_pos).SetCellValue(carton_count);//补货箱数
                         total_count += final_storage;
                     }
                     single_row.CreateCell(++cell_pos).SetCellValue(total_count);

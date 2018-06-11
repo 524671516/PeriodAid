@@ -23,8 +23,6 @@ namespace PeriodAid.Models
         public int Storage_Id { get; set; }
 
         public int avg_new { get; set; }
-
-        public int avg_7 { get; set; }
     }
 
     public class CalcStorageViewModel
