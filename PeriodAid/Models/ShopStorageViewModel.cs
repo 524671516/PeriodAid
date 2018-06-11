@@ -15,7 +15,14 @@ namespace PeriodAid.Models
     {
         public string system_code { get; set; }
 
-        public decimal params_rate { get; set; }
+        public decimal avg_new { get; set; }
+    }
+
+    public class getInventoryExcelViewModel
+    {
+        public int Storage_Id { get; set; }
+
+        public int avg_new { get; set; }
     }
 
     public class CalcStorageViewModel

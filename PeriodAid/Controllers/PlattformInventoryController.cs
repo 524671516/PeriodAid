@@ -896,6 +896,9 @@ namespace PeriodAid.Controllers
             List<CalcStorageParmsViewModel> jr = s.Deserialize<List<CalcStorageParmsViewModel>>(pstr); //只要你的JSON串没问题就可以转*/
             HSSFWorkbook book = new HSSFWorkbook();
             ISheet sheet = book.CreateSheet("Total");
+            string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
+            SqlConnection mycon = new SqlConnection(constr);
+            mycon.Open();
             var inventory_list = _db.SS_Storage.Where(m => m.Plattform_Id == 1).OrderBy(m => m.Id);
             var product_list = _db.SS_Product.Where(m => m.Plattform_Id == 1 && m.Product_Type >= 0);
             // 写标题
@@ -922,6 +925,10 @@ namespace PeriodAid.Controllers
             int row_pos = 1;
             foreach (var product in product_list)
             {
+                var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
+                DateTime end = upload_record.SalesRecord_Date;
+                DateTime start_7 = end.AddDays(0 - 7);
+                DateTime start_15 = end.AddDays(0 - 15);
                 IRow single_row = sheet.CreateRow(row_pos);
                 cell_pos = 0;
                 single_row.CreateCell(cell_pos).SetCellValue(product.System_Code);
@@ -932,7 +939,8 @@ namespace PeriodAid.Controllers
                 //日均销量
                 var avg_data = form["p_avg_" + product.Id];
                 var avg_data_7 = form["p_avg_7_" + product.Id];
-                if (avg_data == null) {
+                if (avg_data == null)
+                {
                     avg_data = 0.ToString();
                 }
                 if (avg_data_7 == null)
@@ -941,15 +949,19 @@ namespace PeriodAid.Controllers
                 }
                 var avg_count = Convert.ToDouble(avg_data).ToString("0.00");
                 // 最近库存
-                var upload_record = _db.SS_UploadRecord.Where(m => m.Plattform_Id == 1).OrderByDescending(m => m.SalesRecord_Date).FirstOrDefault();
                 if (form["p_rate_" + product.Id] != null)
                 {
                     var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
-
-                    foreach (var inventory in inventory_list)
+                    var findSql = "select a.Storage_Id,(a.avg_7/7+b.avg_15/15)/2 as avg_new from " +
+                                                "(select Storage_Id, sum(Sales_Count) as avg_7 from SS_SalesRecord where SalesRecord_Date > '2018/6/1 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as a," +
+                                                "(select Storage_Id, sum(Sales_Count) as avg_15 from SS_SalesRecord where SalesRecord_Date > '2018/5/24 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as b " +
+                                                "where a.Storage_Id = b.Storage_Id";
+                    var data_list = _db.Database.SqlQuery<getInventoryExcelViewModel>(findSql);
+                    foreach (var data in data_list)
                     {
                         // 最新库存
-                        var last_inventory = _db.SS_SalesRecord.SingleOrDefault(m => m.Product_Id == product.Id && m.Storage_Id == inventory.Id && m.SalesRecord_Date == upload_record.SalesRecord_Date);
+                        var storageId = data.Storage_Id;
+                        var last_inventory = _db.SS_SalesRecord.SingleOrDefault(m => m.Product_Id == product.Id && m.Storage_Id == storageId && m.SalesRecord_Date == upload_record.SalesRecord_Date);
                         int storage_count, new_storage_count;
                         if (last_inventory != null)
                         {
@@ -968,13 +980,15 @@ namespace PeriodAid.Controllers
                         {
                             if (recommand_storage / cartonspec < 1)
                             {
-                                carton_count =Convert.ToInt32(recommand_storage) / cartonspec >= 0.3 ? 1 : 0;
+                                carton_count = Convert.ToInt32(recommand_storage) / cartonspec >= 0.3 ? 1 : 0;
                             }
-                            else {
+                            else
+                            {
                                 carton_count = Convert.ToInt32(recommand_storage) / cartonspec + (recommand_storage % cartonspec / cartonspec >= 0.3 ? 1 : 0);
                             }
                         }
-                        else {
+                        else
+                        {
                             if (recommand_storage / cartonspec < 1)
                             {
                                 carton_count = Convert.ToInt32(recommand_storage) / cartonspec >= 0.5 ? 1 : 0;
@@ -985,7 +999,7 @@ namespace PeriodAid.Controllers
                             }
                         }
                         double final_storage = carton_count * cartonspec;
-                        single_row.CreateCell(++cell_pos).SetCellValue(avg_count);
+                        single_row.CreateCell(++cell_pos).SetCellValue(double.Parse(data.avg_new.ToString()));
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count);
@@ -993,8 +1007,9 @@ namespace PeriodAid.Controllers
                         {
                             single_row.CreateCell(++cell_pos).SetCellValue(0);
                         }
-                        else {
-                            single_row.CreateCell(++cell_pos).SetCellValue(int.Parse(avg_data_7));
+                        else
+                        {
+                            single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count / int.Parse(avg_data_7));
                         }
                         single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
@@ -1006,13 +1021,14 @@ namespace PeriodAid.Controllers
                     row_pos++;
                 }
             }
+            mycon.Close();
             MemoryStream _stream = new MemoryStream();
             book.Write(_stream);
             _stream.Flush();
             _stream.Seek(0, SeekOrigin.Begin);
             return File(_stream, "application/vnd.ms-excel", DateTime.Now.ToString("yyyyMMddHHmmss") + "库存表.xls");
         }
-        
+
         /*public ActionResult LeadingIn() {
             return View();
         }*/
@@ -2206,7 +2222,7 @@ namespace PeriodAid.Controllers
         public ActionResult TrafficListPartial(string query, int plattformId, int productId, int trafficPlattformId, DateTime? single)
         {
             var sum_data = from m in _db.SS_TrafficData
-                           where m.UpdateTime == single && m.Product_Id == productId
+                           where m.UpdateTime == single && m.Product_Id == productId && m.TrafficPlattform_Id == (trafficPlattformId == 0 ? m.TrafficPlattform_Id : trafficPlattformId)
                            group m by m.Product_Id into g
                            select new TrafficData
                            {
