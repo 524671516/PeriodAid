@@ -38,12 +38,18 @@
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
                                 <td>@Html.Encode(item.New_Storage_Count)</td>
-                                @if (@Html.Encode(item.Sales_Count_7) == "0")
+                                @if (@Html.Encode(item.Sales_Avg) == "0")
                                 {
-                                    <td>0</td>
+                                    <td style="background-color:red;">0</td>
                                 }
                                 else {
-                                    <td>@Html.Encode(item.New_Storage_Count / item.Sales_Count_7)</td>
+                                    if (item.New_Storage_Count / item.Sales_Avg < 16)
+                                    {
+                                    <td style="background-color:red;">@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
+                                    else {
+                                    <td>@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
                                 }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
@@ -52,6 +58,9 @@
                                     <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
                                 </td>
                                 <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg.ToString("F0"), new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_storage_" + item.Product.Id, item.Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_newstorage_" + item.Product.Id, item.New_Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
                             </tr>
                         }
                         else
@@ -66,12 +75,18 @@
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
                                 <td>@Html.Encode(item.New_Storage_Count)</td>
-                                @if (@Html.Encode(item.Sales_Count_7) == "0")
+                                @if (@Html.Encode(item.Sales_Avg) == "0")
                                 {
-                                    <td>0</td>
+                                    <td style="background-color:red;">0</td>
                                 }
                                 else {
-                                    <td>@Html.Encode(item.New_Storage_Count / item.Sales_Count_7)</td>
+                                    if (item.New_Storage_Count / item.Sales_Avg < 16)
+                                    {
+                                    <td style="background-color:red;">@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
+                                    else {
+                                    <td>@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
                                 }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="30" type="text" style="text-align:center" />
@@ -81,6 +96,9 @@
                                     <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
                                 </td>
                                 <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg.ToString("F0"), new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_storage_" + item.Product.Id, item.Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_newstorage_" + item.Product.Id, item.New_Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
                             </tr>
                         }
                     }

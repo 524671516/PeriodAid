@@ -899,6 +899,9 @@ namespace PeriodAid.Controllers
             string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
             SqlConnection mycon = new SqlConnection(constr);
             mycon.Open();
+            ICellStyle red_style = book.CreateCellStyle();
+            red_style.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Red.Index;
+            red_style.FillPattern = FillPattern.SolidForeground;
             var inventory_list = _db.SS_Storage.Where(m => m.Plattform_Id == 1).OrderBy(m => m.Id);
             var product_list = _db.SS_Product.Where(m => m.Plattform_Id == 1 && m.Product_Type >= 0);
             // 写标题
@@ -908,6 +911,11 @@ namespace PeriodAid.Controllers
             row.CreateCell(++cell_pos).SetCellValue("产品名称");
             row.CreateCell(++cell_pos).SetCellValue("商品编码");
             row.CreateCell(++cell_pos).SetCellValue("箱规");
+            row.CreateCell(++cell_pos).SetCellValue("全国日均销量");
+            row.CreateCell(++cell_pos).SetCellValue("全国可订购数据");
+            row.CreateCell(++cell_pos).SetCellValue("全国总体库存");
+            row.CreateCell(++cell_pos).SetCellValue("全国库存周转数");
+
             foreach (var inventory in inventory_list)
             {
                 row.CreateCell(++cell_pos).SetCellValue(inventory.Storage_Name + "日均销量");
@@ -942,6 +950,27 @@ namespace PeriodAid.Controllers
                                                 "(select Storage_Id, sum(Sales_Count) as avg_15 from SS_SalesRecord where SalesRecord_Date > '2018/5/24 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as b " +
                                                 "where a.Storage_Id = b.Storage_Id";
                     var data_list = _db.Database.SqlQuery<getInventoryExcelViewModel>(findSql);
+                    //全国
+                    single_row.CreateCell(++cell_pos).SetCellValue(form["p_avg_" + product.Id + ""]);
+                    single_row.CreateCell(++cell_pos).SetCellValue(form["p_storage_" + product.Id + ""]);
+                    single_row.CreateCell(++cell_pos).SetCellValue(form["p_newstorage_" + product.Id + ""]);
+                    if (form["p_avg_" + product.Id + ""] == "0")
+                    {
+                        var red_cell = single_row.CreateCell(++cell_pos);
+                        red_cell.CellStyle = red_style;
+                        red_cell.SetCellValue(0);
+                    }
+                    else
+                    {
+                        var red_cell = single_row.CreateCell(++cell_pos);
+                        var ss = form["p_avg_" + product.Id + ""];
+                        var cell_data = int.Parse(form["p_newstorage_" + product.Id + ""]) / int.Parse(form["p_avg_" + product.Id + ""]);
+                        if (cell_data < 16)
+                        {
+                            red_cell.CellStyle = red_style; ;
+                        }
+                        red_cell.SetCellValue(cell_data);
+                    }
                     foreach (var data in data_list)
                     {
                         // 最新库存
@@ -984,18 +1013,27 @@ namespace PeriodAid.Controllers
                             }
                         }
                         double final_storage = carton_count * cartonspec;
-                        single_row.CreateCell(++cell_pos).SetCellValue(double.Parse(data.avg_new.ToString()));
+                        single_row.CreateCell(++cell_pos).SetCellValue(double.Parse(data.avg_new.ToString()));//日均销量
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count);
-                        if (int.Parse(data.avg_new.ToString()) == 0)
+                        if (data.avg_new == 0)
                         {
-                            single_row.CreateCell(++cell_pos).SetCellValue(0);
+                            var red_cell = single_row.CreateCell(++cell_pos);
+                            red_cell.CellStyle = red_style;
+                            red_cell.SetCellValue(0);
+                            
                         }
                         else
                         {
-                            single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count / int.Parse(data.avg_new.ToString()));
+                            var red_cell = single_row.CreateCell(++cell_pos);
+                            var cell_data = new_storage_count / int.Parse(data.avg_new.ToString());
+                            if (cell_data < 16) {
+                                red_cell.CellStyle = red_style; ;
+                            }
+                            red_cell.SetCellValue(cell_data);//库存周转
                         }
+                        //单仓
                         single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);//预期补货
                         single_row.CreateCell(++cell_pos).SetCellValue(final_storage);//实际补货
                         single_row.CreateCell(++cell_pos).SetCellValue(carton_count);//补货箱数
