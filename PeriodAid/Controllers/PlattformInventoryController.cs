@@ -2142,7 +2142,7 @@ namespace PeriodAid.Controllers
                     if (product.Id.ToString() == data.Product_Id)
                     {
                         IRow rowData = sheet.CreateRow(cell_data);
-                        rowData.CreateCell(1).SetCellValue(data.UpdateTime.ToString("MM.dd"));
+                        rowData.CreateCell(1).SetCellValue(data.UpdateTime.ToString("yy.MM.dd"));
                         rowData.CreateCell(2).SetCellValue(data.Product_Visitor);
                         rowData.CreateCell(3).SetCellValue(data.Order_Count);
                         rowData.CreateCell(4).SetCellValue(data.Sales_Count);
