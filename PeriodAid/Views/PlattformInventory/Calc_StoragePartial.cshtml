@@ -12,7 +12,9 @@
                         <th>商品编号</th>
                         <th>商品名称</th>
                         <th>日均销量</th>
-                        <th>仓库库存</th>
+                        <th>可订购数据</th>
+                        <th>总体库存</th>
+                        <th>库存周转数</th>
                         <th style="width:15%">
                             <i style="position:relative;top:5px;font-style:normal">周转数</i><input type="text" id="top-control" value="30" class="form-control calc_rate" readonly="readonly" style="font-weight:500;width:65%;position:relative;top:4px;margin-left:5px;display:inline-block;height:30px;padding-left: 27px;" />
                         </th>
@@ -37,6 +39,16 @@
                                 <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                <td>@Html.Encode(item.New_Storage_Count)</td>
+                                @if (@Html.Encode(item.Sales_Count_7) == "0")
+                                {
+                                <td>0</td>
+                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, 0, new { @class = "form-control input-sm", type = "text" })</td>
+                                }
+                                else {
+                                    <td>@Html.Encode(item.New_Storage_Count / item.Sales_Count_7)</td>
+                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, item.New_Storage_Count / item.Sales_Count_7, new { @class = "form-control input-sm", type = "text" })</td>
+                                }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
                                 </td>
@@ -58,6 +70,16 @@
                                 <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                <td>@Html.Encode(item.New_Storage_Count)</td>
+                                @if (@Html.Encode(item.Sales_Count_7) == "0")
+                                {
+                                <td>0</td>
+                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, 0, new { @class = "form-control input-sm", type = "text" })</td>
+                                }
+                                else {
+                                    <td>@Html.Encode(item.New_Storage_Count / item.Sales_Count_7)</td>
+                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, item.New_Storage_Count / item.Sales_Count_7, new { @class = "form-control input-sm", type = "text" })</td>
+                                }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="30" type="text" style="text-align:center" />
 
