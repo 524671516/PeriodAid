@@ -938,21 +938,12 @@ namespace PeriodAid.Controllers
                 double total_count = 0;
                 //日均销量
                 var avg_data = form["p_avg_" + product.Id];
-                var avg_data_7 = form["p_avg_7_" + product.Id];
-                if (avg_data == null)
-                {
-                    avg_data = 0.ToString();
-                }
-                if (avg_data_7 == null)
-                {
-                    avg_data_7 = 0.ToString();
-                }
                 var avg_count = Convert.ToDouble(avg_data).ToString("0.00");
                 // 最近库存
                 if (form["p_rate_" + product.Id] != null)
                 {
                     var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
-                    var findSql = "select a.Storage_Id,(a.avg_7/7+b.avg_15/15)/2 as avg_new from " +
+                    var findSql = "select a.Storage_Id,(a.avg_7/7+b.avg_15/15)/2 as avg_new,a.avg_7/7 as avg_7 from " +
                                                 "(select Storage_Id, sum(Sales_Count) as avg_7 from SS_SalesRecord where SalesRecord_Date > '2018/6/1 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as a," +
                                                 "(select Storage_Id, sum(Sales_Count) as avg_15 from SS_SalesRecord where SalesRecord_Date > '2018/5/24 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as b " +
                                                 "where a.Storage_Id = b.Storage_Id";
@@ -1003,13 +994,13 @@ namespace PeriodAid.Controllers
                         single_row.CreateCell(++cell_pos).SetCellValue(_rate);
                         single_row.CreateCell(++cell_pos).SetCellValue(storage_count);
                         single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count);
-                        if (int.Parse(avg_data_7) == 0)
+                        if (int.Parse(data.avg_7.ToString()) == 0)
                         {
                             single_row.CreateCell(++cell_pos).SetCellValue(0);
                         }
                         else
                         {
-                            single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count / int.Parse(avg_data_7));
+                            single_row.CreateCell(++cell_pos).SetCellValue(new_storage_count / int.Parse(data.avg_7.ToString()));
                         }
                         single_row.CreateCell(++cell_pos).SetCellValue(recommand_storage);
                         single_row.CreateCell(++cell_pos).SetCellValue(final_storage);
@@ -2427,36 +2418,35 @@ namespace PeriodAid.Controllers
         }
 
         //产品数据图表
-        public ActionResult ViewTrafficStatistic(int productId,int sourceId,int trafficPlattformId)
+        public ActionResult ViewTrafficStatistic(int productId, int? sourceId, int trafficPlattformId)
         {
-            if(trafficPlattformId == 0)
+            if (trafficPlattformId == 0)
             {
                 var TrafficList = from m in _db.SS_TrafficData
-                                  where m.Product_Id == productId && m.TrafficSource_Id == (sourceId != 0 ? sourceId :m.TrafficSource_Id)
+                                  where m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId)
                                   select m;
                 ViewBag.TrafficList = TrafficList;
             }
             else
             {
                 var TrafficList = from m in _db.SS_TrafficData
-                                  where m.Product_Id == productId && m.TrafficSource_Id == (sourceId != 0 ? sourceId : m.TrafficSource_Id)
-                                  && m.TrafficPlattform_Id == trafficPlattformId
+                                  where m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId) && m.TrafficPlattform_Id == trafficPlattformId
                                   select m;
                 ViewBag.TrafficList = TrafficList;
             }
-            
+
             return View();
         }
 
-        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end, int sourceId,int trafficPlattformId)
+        public JsonResult ViewTrafficStatisticPartial(int productId, string start, string end, int? sourceId, int trafficPlattformId)
         {
             DateTime _start = Convert.ToDateTime(start);
             DateTime _end = Convert.ToDateTime(end);
-            if(trafficPlattformId == 0)
+            if (trafficPlattformId == 0)
             {
                 var info_data = from m in _db.SS_TrafficData
                                 where m.UpdateTime >= _start && m.UpdateTime <= _end
-                                && m.Product_Id == productId && m.TrafficSource_Id == (sourceId != 0 ? sourceId : m.TrafficSource_Id)
+                                && m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId)
                                 group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
@@ -2486,8 +2476,7 @@ namespace PeriodAid.Controllers
             {
                 var info_data = from m in _db.SS_TrafficData
                                 where m.UpdateTime >= _start && m.UpdateTime <= _end
-                                && m.Product_Id == productId && m.TrafficSource_Id == (sourceId != 0 ? sourceId : m.TrafficSource_Id)
-                                && m.TrafficPlattform_Id == trafficPlattformId
+                                && m.Product_Id == productId && m.TrafficSource_Id == (sourceId == null ? m.TrafficSource_Id : sourceId) && m.TrafficPlattform_Id == trafficPlattformId
                                 group m by m.UpdateTime into g
                                 orderby g.Key
                                 select new TrafficStatisticViewModel { salesdate = g.Key, productvisitor = g.Sum(m => m.Product_Visitor), productcustomer = g.Sum(m => m.Product_Customer) };
@@ -2514,6 +2503,7 @@ namespace PeriodAid.Controllers
                 return Json(new { result = "SUCCESS", data = data });
             }
         }
+
         // 统计上传日期
         [HttpPost]
         public ActionResult TrafficUploadFilePartial(int plattformId, string month)

@@ -42,12 +42,10 @@
                                 <td>@Html.Encode(item.New_Storage_Count)</td>
                                 @if (@Html.Encode(item.Sales_Count_7) == "0")
                                 {
-                                <td>0</td>
-                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, 0, new { @class = "form-control input-sm", type = "text" })</td>
+                                    <td>0</td>
                                 }
                                 else {
                                     <td>@Html.Encode(item.New_Storage_Count / item.Sales_Count_7)</td>
-                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, item.New_Storage_Count / item.Sales_Count_7, new { @class = "form-control input-sm", type = "text" })</td>
                                 }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
@@ -73,12 +71,10 @@
                                 <td>@Html.Encode(item.New_Storage_Count)</td>
                                 @if (@Html.Encode(item.Sales_Count_7) == "0")
                                 {
-                                <td>0</td>
-                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, 0, new { @class = "form-control input-sm", type = "text" })</td>
+                                    <td>0</td>
                                 }
                                 else {
                                     <td>@Html.Encode(item.New_Storage_Count / item.Sales_Count_7)</td>
-                                <td hidden>@Html.TextBox("p_avg_7_" + item.Product.Id, item.New_Storage_Count / item.Sales_Count_7, new { @class = "form-control input-sm", type = "text" })</td>
                                 }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="30" type="text" style="text-align:center" />
