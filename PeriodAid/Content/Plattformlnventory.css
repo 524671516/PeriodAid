@@ -1692,6 +1692,11 @@ a.btn_subtask_detail{
     line-height: 9px;
 }
 #download_calc {
+    height: 29px;
+    line-height: 15px;
+    margin-left: 12px;
+}
+#download_calc_storage {
     position: relative;
     top: -10px;
     z-index: 999;
