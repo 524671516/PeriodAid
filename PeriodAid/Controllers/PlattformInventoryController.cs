@@ -899,9 +899,12 @@ namespace PeriodAid.Controllers
             string constr = "server=115.29.197.27;database=SHOPSTORAGE;uid=sa;pwd=mail#wwwx";
             SqlConnection mycon = new SqlConnection(constr);
             mycon.Open();
-            ICellStyle red_style = book.CreateCellStyle();
+            ICellStyle red_style = book.CreateCellStyle();//红色背景
             red_style.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Red.Index;
             red_style.FillPattern = FillPattern.SolidForeground;
+            ICellStyle green_style = book.CreateCellStyle();//蓝色背景
+            green_style.FillForegroundColor = NPOI.HSSF.Util.HSSFColor.Green.Index;
+            green_style.FillPattern = FillPattern.SolidForeground;
             var inventory_list = _db.SS_Storage.Where(m => m.Plattform_Id == 1).OrderBy(m => m.Id);
             var product_list = _db.SS_Product.Where(m => m.Plattform_Id == 1 && m.Product_Type >= 0);
             // 写标题
@@ -946,9 +949,9 @@ namespace PeriodAid.Controllers
                 {
                     var _rate = Convert.ToInt32(form["p_rate_" + product.Id].ToString());
                     var findSql = "select a.Storage_Id,(a.avg_7/7+b.avg_15/15)/2 as avg_new from " +
-                                                "(select Storage_Id, sum(Sales_Count) as avg_7 from SS_SalesRecord where SalesRecord_Date > '2018/6/1 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as a," +
-                                                "(select Storage_Id, sum(Sales_Count) as avg_15 from SS_SalesRecord where SalesRecord_Date > '2018/5/24 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as b " +
-                                                "where a.Storage_Id = b.Storage_Id";
+                                  "(select Storage_Id, sum(Sales_Count) as avg_7 from SS_SalesRecord where SalesRecord_Date > '2018/6/1 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as a," +
+                                  "(select Storage_Id, sum(Sales_Count) as avg_15 from SS_SalesRecord where SalesRecord_Date > '2018/5/24 0:00:00'  and SalesRecord_Date <= '2018/6/8 0:00:00'  and Storage_Id  in (5,6,7,8,9,10,11,12,13,14,15,16) and Product_Id = "+product.Id+" group by Storage_Id) as b " +
+                                  "where a.Storage_Id = b.Storage_Id";
                     var data_list = _db.Database.SqlQuery<getInventoryExcelViewModel>(findSql);
                     //全国
                     single_row.CreateCell(++cell_pos).SetCellValue(form["p_avg_" + product.Id + ""]);
@@ -1020,8 +1023,8 @@ namespace PeriodAid.Controllers
                         if (data.avg_new == 0)
                         {
                             var red_cell = single_row.CreateCell(++cell_pos);
-                            red_cell.CellStyle = red_style;
-                            red_cell.SetCellValue(0);
+                            red_cell.CellStyle = green_style;
+                            red_cell.SetCellValue("N/A");
                             
                         }
                         else
