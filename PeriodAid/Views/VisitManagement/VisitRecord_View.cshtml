@@ -1,27 +1,25 @@
 ﻿@model PeriodAid.Models.VM_VisitRecord
     <style>
-        .modal-header{
-            padding-bottom:5px!important
-        }
-        .form-group{
-            margin-bottom:0 !important
-        }
-        .text-left{
-            text-indent:10px;
-            white-space:normal
-        }
-        tr>:nth-child(2){
-            width:140px
-        }
-        .btn_container{
-            position:absolute!important;
-            top:0;
-            padding: 0;
-            left: 0;
-        }
-    </style>
+    .modal-header {
+        padding-bottom: 5px !important;
+    }
+
+    .form-group {
+        margin-bottom: 0 !important;
+    }
+
+    .text-left {
+        text-indent: 10px;
+        white-space: normal;
+    }
+    .btn_container {
+        position: absolute !important;
+        top: 0;
+        padding: 0;
+        left: 0;
+    }
+</style>
 <div class="modal-header">
-    @*<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>*@
     <h4 class="text-center col-md-12">新客户拜访信息共享表</h4>
     <div class="btn_container col-md-12">
         <div class="visit_btn"><a style="cursor:pointer" data-cid="@Model.Company_Id" data-count="@Model.Visit_Count" class="last_visit"><i class="fa fa-arrow-left"></i></a></div>

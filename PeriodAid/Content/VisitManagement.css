@@ -499,13 +499,24 @@ body,html{
     margin:0 20px 0 0;
     text-indent:0
 }
-tr > :nth-child(1) {
-    width: 73px;
-}
-
-tr > :nth-child(2) {
-    width: 199px;
-}
+.information_share_view tr > :nth-child(1) {
+        width: 73px;
+    }
+.information_share_view tr > :nth-child(2) {
+        width: 199px;
+    }
+.record_share_view tr > :nth-child(1) {
+        width: 73px;
+    }
+    .record_share_view tr > :nth-child(2) {
+        width: 199px;
+    }
+    .result_share_view tr > :nth-child(1) {
+        width: 73px;
+    }
+    .result_share_view tr > :nth-child(2) {
+        width: 199px;
+    }    
 .left_share_div{
     display:inline-block;
     border-right:1px solid #ccc;

@@ -21,8 +21,8 @@
 </style>
 <div id="freezing_company" class="freezing" onscroll="javascript:freezing()">
     <div class="hidden" id="hidden_count">@ViewBag.Count</div>
-    <table class="table table-hover">
-        <tr>
+    <table class="table table-hover" style="position:relative">
+        <tr id="freezing_tr">
             <th>序号</th>
             <th>公司名称</th>
             <th>业务员</th>
@@ -50,7 +50,7 @@
         @foreach (var item in Model)
         {
             current_count++;
-            <tr>
+            <tr class="share_tr_width">
                 <td style="text-indent:5px">@current_count</td>
                 <td>
                     <a href="#" data-id="@item.Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
@@ -144,6 +144,23 @@
 
     });
     function freezing() {
+        if ($("#freezing_company").scrollTop() == 0) {
+            $("#freezing_tr").css({
+                position: "relative",
+            })
+        }
+        else {
+            $("#freezing_tr").css({
+                position: "absolute",
+                "z-index": "33",
+                top: $("#freezing_company").scrollTop(),
+                background: "#eef1f5",
+            })
+            for (var i = 1; i < $("#freezing_tr th").length; i++) {
+                $("#freezing_tr>:nth-child(" + i + ")").css("min-width", $(".share_tr_width>:nth-child(" + i + ")").outerWidth() + "px")
+                $(".share_tr_width>:nth-child(" + i + ")").css("min-width", $("#freezing_tr>:nth-child(" + i + ")").outerWidth() + "px")
+            }
+        }
         $("tr>:nth-child(1)").css("left", $("#freezing_company").scrollLeft());
         $("tr>:nth-child(2)").css("left", $("#freezing_company").scrollLeft());
         $("tr>:nth-child(3)").css("left", $("#freezing_company").scrollLeft());
