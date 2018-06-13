@@ -98,7 +98,7 @@
             <h5 style="font-size:12px;text-align:center;"><b><i>（客户名片粘贴处，如无名片，请填写以下内容）</i></b></h5>
             <h5 style="margin-left:5px;font-size:12px;"><b><i>公司名称：</i></b>@Model.VM_Company.Company_Name</h5>
             <h5 style="margin-left:5px;font-size:12px;"><b><i>客户姓名/职务：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Name / @Model.VM_Company.VM_Contact.First().Contact_Type</h5>
-            <h5 style="margin-left:5px;font-size:12px;"><b><i>公司地址：</i></b>@Model.VM_Company.Company_Address</h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>公司地址：</i></b><span title="@Model.VM_Company.Company_Address" style="position:absolute;width:245px;overflow:hidden;text-overflow:ellipsis;">@Model.VM_Company.Company_Address</span></h5>
             <h5 style="margin-left:5px;font-size:12px;"><b><i>电话：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Mobile</h5>
             <h5 style="margin-left:5px;font-size:12px;"><b><i>E-Mail：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Email</h5>
             <h5 style="margin-left:5px;font-size:12px;"><b><i>微信号：</i></b>@Model.VM_Company.VM_Contact.First().Contact_WeChat</h5>
