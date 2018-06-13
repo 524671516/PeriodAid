@@ -44,27 +44,23 @@
                 success: function (data) {
                     if (data.result == "SUCCESS") {
                         $('#mySupportCommentModal').modal('hide')
-                        //$.ajax({
-                        //    url: "/VisitManagement/Visit_PartialView/",
-                        //    type: "post",
-                        //    data: {
-                        //        visit_date: $("#select_date").val(),
-                        //        dep_id: $(".team_select.active").attr("data-val"),
-                        //        com_type: $(".company_type.active").text(),
-                        //        com_name: $("#company_id .shared_view_span").attr("data-name"),
-                        //        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                        //        sort: $(".sort_type.active").attr("data-val"),
-                        //        status: $(".status_type.active").attr("data-val"),
-                        //        page_count: $(".share_select_page option:selected").val(),
-                        //        page: $(".page_info").val(),
-                        //    },
-                        //    success: function (data) {
-                        //        $("#visit_list_content").html(data)
-                               
-                        //        $('.modal-backdrop.in').remove()
-                        //        $('body').removeClass('modal-open')
-                        //    }
-                        //})
+                        var comment_list = $(".comment_select_a")
+                        for (i = 0 ; i < comment_list.length; i++) {
+                            var that = $(comment_list[i])
+                            $.ajax({
+                                url: "/VisitManagement/Comment_Count",
+                                type: "post",
+                                data: {
+                                    rec_id: that.attr("data-id"),
+                                },
+                                success: function (data) {
+                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Corecomment_select_a span").text(data.core)
+                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Supportcomment_select_a span").text(data.support)
+                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Replycomment_select_a span").text(data.reply)
+                                    $(".comment_select_a[data-id=" + data.rid + "]").children("span").text(data.comment)
+                                }
+                            })
+                        }
                     } else {
                         $.alert({
                             title: '提示!',

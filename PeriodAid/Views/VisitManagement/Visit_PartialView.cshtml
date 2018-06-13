@@ -32,7 +32,6 @@
     .pagination-container {
         display: inline-block !important;
     }
-
     .textarea_detail {
         width: 100%;
         margin: 10px 0 10px -80px;
@@ -344,7 +343,6 @@
         }
     </table>
 </div>
-
 @foreach (var item in ViewBag.Config)
 {
     <div class="hidden hidden_config" data-id="@item.Id" data-detail="@item.Content_Detail"></div>
@@ -499,7 +497,6 @@
             }
         })
     })
-   
     function freezing() {
         if ($("#freezing_record").scrollTop() == 0) {
             $("#freezing_tr").css({
