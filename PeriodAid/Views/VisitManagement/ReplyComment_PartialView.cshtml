@@ -43,24 +43,17 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $('#myReplyCommentModal').modal('hide')
-                        var comment_list = $(".comment_select_a")
-                        for (i = 0 ; i < comment_list.length; i++) {
-                            var that = $(comment_list[i])
-                            $.ajax({
-                                url: "/VisitManagement/Comment_Count",
-                                type: "post",
-                                data: {
-                                    rec_id: that.attr("data-id"),
-                                },
-                                success: function (data) {
-                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Corecomment_select_a span").text(data.core)
-                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Supportcomment_select_a span").text(data.support)
-                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Replycomment_select_a span").text(data.reply)
-                                    $(".comment_select_a[data-id=" + data.rid + "]").children("span").text(data.comment)
-                                }
-                            })
-                        }
+                        $('#myCommentModal').modal('hide')
+                        $.ajax({
+                            url: "/VisitManagement/Comment_Count",
+                            type: "post",
+                            data: {
+                                rec_id: $("#modal-body").attr("data-id"),
+                            },
+                            success: function (data) {
+                                $(".Replycomment_select_a[data-id=" + data.rid + "] span").text(data.reply)
+                            }
+                        })
                     } else {
                         $.alert({
                             title: '提示!',

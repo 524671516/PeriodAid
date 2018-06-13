@@ -8,7 +8,6 @@
     tr > :nth-child(2) {
         position: relative;
         z-index: 31;
-        min-width:184px
     }
     tr > :nth-child(3) {
         position: relative;
@@ -248,13 +247,13 @@
                     <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 40px;" title="@item.Core_Problem">
                         @item.Core_Problem
                     </div>
-                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCoreCommentModal">评论<span class="badge"></span></a>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCommentModal">评论<span class="badge"></span></a>
                 </td>
                 <td style="position:relative">
                     <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:40px;" title="@item.Support">
                         @item.Support
                     </div>
-                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span class="badge"></span></a>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#myCommentModal">评论<span class="badge"></span></a>
                 </td>
             }
             <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
@@ -262,7 +261,7 @@
                 <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 40px;" title="@item.Reply_Detail">
                     @item.Reply_Detail
                 </div>
-                <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论<span class="badge"></span></a>
+                <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myCommentModal">评论<span class="badge"></span></a>
             </td>
             <td style="text-indent:35px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
             @if (item.CustomerReply_Status == 0)
@@ -360,24 +359,6 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="myReplyCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" id="modal-Replycomment-content">
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="myCoreCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" id="modal-Corecomment-content">
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="mySupportCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" id="modal-Supportcomment-content">
-            </div>
-        </div>
-    </div>
 </div>
 <script>
     $(function () {
@@ -448,8 +429,8 @@
                 rec_id: that.attr("data-id"),
             },
             success: function (data) {
-                $('#modal-Replycomment-content').html(data)
-                $("#myReplyCommentModal").modal('show')
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
                 $("#modal-body").attr("data-id", that.attr("data-id"))
             }
         })
@@ -463,8 +444,8 @@
                 rec_id: that.attr("data-id"),
             },
             success: function (data) {
-                $('#modal-Corecomment-content').html(data)
-                $("#myCoreCommentModal").modal('show')
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
                 $("#modal-body").attr("data-id", that.attr("data-id"))
             }
         })
@@ -478,8 +459,8 @@
                 rec_id: that.attr("data-id"),
             },
             success: function (data) {
-                $('#modal-Supportcomment-content').html(data)
-                $("#mySupportCommentModal").modal('show')
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
                 $("#modal-body").attr("data-id", that.attr("data-id"))
             }
         })

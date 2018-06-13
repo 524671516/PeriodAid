@@ -43,21 +43,17 @@
                 },
                 success: function (data) {
                     if (data.result == "SUCCESS") {
-                        $('#myCoreCommentModal').modal('hide')
-                        var comment_list = $(".comment_select_a")
-                        for (i = 0 ; i < comment_list.length; i++) {
-                            var that = $(comment_list[i])
-                            $.ajax({
-                                url: "/VisitManagement/Comment_Count",
-                                type: "post",
-                                data: {
-                                    rec_id: that.attr("data-id"),
-                                },
-                                success: function (data) {
-                                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Corecomment_select_a span").text(data.core)
-                                }
-                            })
-                        }
+                        $('#myCommentModal').modal('hide')
+                        $.ajax({
+                            url: "/VisitManagement/Comment_Count",
+                            type: "post",
+                            data: {
+                                rec_id: $("#modal-body").attr("data-id"),
+                            },
+                            success: function (data) {
+                                $(".Corecomment_select_a[data-id=" + data.rid + "] span").text(data.core)
+                            }
+                        })
                     } else {
                         $.alert({
                             title: '提示!',

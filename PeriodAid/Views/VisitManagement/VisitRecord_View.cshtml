@@ -18,9 +18,12 @@
         padding: 0;
         left: 0;
     }
+    .share_table tr td:nth-child(2){
+        width:139px
+    }
 </style>
 <div class="modal-header">
-    <h4 class="text-center col-md-12">新客户拜访信息共享表</h4>
+    <h4 class="text-center col-md-12" id="record_id" data-id="@Model.Id">新客户拜访信息共享表</h4>
     <div class="btn_container col-md-12">
         <div class="visit_btn"><a style="cursor:pointer" data-cid="@Model.Company_Id" data-count="@Model.Visit_Count" class="last_visit"><i class="fa fa-arrow-left"></i></a></div>
         <div class="visit_btn"><a style="cursor:pointer;float:right" data-cid="@Model.Company_Id" data-count="@Model.Visit_Count" data-vcount="@Model.VM_Company.VM_VisitRecord.Count()" class="next_visit"><i class="fa fa-arrow-right"></i></a></div>
@@ -91,7 +94,7 @@
         </div>
         <div class="form-group" style="margin-bottom:15px">
             <div class="col-md-2 control-label"></div>
-            <table class="col-md-9 information_share_view">
+            <table class="col-md-9 information_share_view share_table">
                 <tr>
                     <td>1.1</td>
                     <td>拜访序次</td>
@@ -115,7 +118,7 @@
         </div>
         <div class="form-group" style="margin-bottom:15px">
             <div class="col-md-2 control-label"></div>
-            <table class="col-md-9 record_share_view">
+            <table class="col-md-9 record_share_view share_table">
                 <tr>
                     <td>2.1</td>
                     <td>渠道名称</td>
@@ -346,7 +349,7 @@
                         <div class="left_share_div text-center">
                             原因
                         </div>
-                        <div style="padding:0 5px;display:inline-block;float:left;white-space:normal">
+                        <div style="white-space:normal;text-indent:10px;text-align: justify;width:229px;display:inline-block">
                             @Model.NoIntention_Reason  @Model.NoIntention_Detail
                         </div>
                     }
@@ -359,7 +362,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-2 control-label"></div>
-            <table class="col-md-9 result_share_view">
+            <table class="col-md-9 result_share_view share_table">
                 <tr>
                     <td>3.1</td>
                     <td>综合结果</td>
@@ -398,8 +401,15 @@
                             </div>
                             <div>
                                 <ul>
-                                    <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</li>
-                                    <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Support">@Model.Support</li>
+                                    <li style="position:relative;line-height:37px">
+                                        <span style="text-indent:0;display:inline-block;width:158px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</span>
+                                        <a style="cursor:pointer;display:inline-block;position:absolute;right:10px" data-id="@Model.Id" class="Corecomment_select_a" data-target="#myCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
+                                    </li>
+                                    <li style="position:relative;line-height:20px;">
+                                        <span style="text-indent:0;display:inline-block;width:158px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Support">@Model.Support</span>
+                                        <a style="cursor:pointer;display:inline-block;position: absolute;right:10px" data-id="@Model.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
+                                    </li>
+                                    
                                 </ul>
                             </div>
                         }
@@ -417,7 +427,11 @@
                             <div class="left_share_div" style="text-indent:10px">
                                 需要回复的问题
                             </div>
-                            <div style="white-space:normal;line-height:20px;text-indent:10px;text-align:left">@Model.Reply_Detail</div>
+                            <div style="display:inline-block;float:left;position:relative;width:229px;text-align:left">
+                                <span style="width:167px;white-space:normal;line-height:20px;text-indent:10px;text-align:left;display:inline-block">@Model.Reply_Detail</span>
+                                <a style="cursor:pointer;display:inline-block;position: absolute;right:10px" data-id="@Model.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论<span class="badge"></span></a>
+                            </div>
+                            
                         }
                         else
                         {
@@ -502,8 +516,23 @@
         </div>
     </div>
 </div>
+
 <script>
     $('.supervise_btn[data-status="1"]').addClass("disabled")
+    $(function () {
+        $.ajax({
+            url: "/VisitManagement/Comment_Count",
+            type: "post",
+            data: {
+                rec_id: $("#record_id").attr("data-id"),
+            },
+            success: function (data) {
+                $(".Corecomment_select_a[data-id=" + data.rid + "] span").text(data.core)
+                $(".Supportcomment_select_a[data-id=" + data.rid + "] span").text(data.support)
+                $(".Replycomment_select_a[data-id=" + data.rid + "] span").text(data.reply)
+            }
+        })
+    })
     // 审批
     $(".supervise_btn").on("click", function () {
         var that = $(this)
@@ -690,6 +719,52 @@
             },
             success: function (data) {
                 $('#modal-content').html(data)
+            }
+        })
+    })
+    // 核心问题评论
+    $(".Corecomment_select_a").on("click", function () {
+        $("#myModal").modal('hide')
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/CoreComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 需要支持评论
+    $(".Supportcomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/SupportComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 我方回复评论
+    $(".Replycomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/ReplyComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
             }
         })
     })
