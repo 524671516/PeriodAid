@@ -1,0 +1,512 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.VM_VisitRecord>
+@using PagedList.Mvc;
+<style>
+    tr > :nth-child(1) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(2) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(3) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(4) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(5) {
+        position: relative;
+        z-index: 31;
+    }
+    tr > :nth-child(6) {
+        position: relative;
+        z-index: 31;
+    }
+    .btn-xs {
+        padding: 0 5px;
+    }
+    .pagination-container {
+        display: inline-block !important;
+    }
+    .textarea_detail {
+        width: 100%;
+        margin: 10px 0 10px -80px;
+        height: 70px;
+        padding-top: 6px;
+    }
+</style>
+<div id="freezing_record" class="freezing" onscroll="javascript:freezing()">
+    <div class="hidden" id="hidden_count">@ViewBag.Recore</div>
+    <table class="table table-hover" style="position:relative" id="visit_table">
+        <tr id="freezing_tr">
+            <th>序号</th>
+            <th style="width:184px">公司名称</th>
+            <th>业务员</th>
+            <th>交表时间</th>
+            <th>拜访时间</th>
+            <th>拜访详情</th>
+            <th>交表考核</th>
+            <th>内容考核</th>
+            <th>拜访方式</th>
+            <th>拜访序次</th>
+            <th>渠道名称</th>
+            <th>参与同事</th>
+            <th>合作意向</th>
+            <th>无意向原因</th>
+            <th>无意向其他原因</th>
+            <th>感兴趣品项</th>
+            <th>操作资金</th>
+            <th>合作是否待定</th>
+            <th>待定回复日期</th>
+            <th>合作方式</th>
+            <th>经销商名称</th>
+            <th>联系人电话</th>
+            <th>顺利与否</th>
+            <th>预计拿货时间</th>
+            <th>预计拿货金额</th>
+            <th>遇到核心问题</th>
+            <th>需要支持</th>
+            <th>是否需要我方回复</th>
+            <th>需回复问题</th>
+            <th>是否等待对方回复</th>
+            <th>预计回复时间</th>
+            <th>等待回复的信息</th>
+            <th>是否需要下次拜访</th>
+            <th>下次拜访时间</th>
+            <th>下次拜访方式</th>
+            <th>下次拜访事宜</th>
+            <th>修改时间</th>
+            <th>驳回详情</th>
+            <th style="min-width:72px"></th>
+        </tr>
+        @{ 
+            var current_count = (int)ViewBag.CurrentPage;
+        }
+        @foreach (var item in Model)
+        {
+            current_count++;
+        <tr class="share_tr_width">
+            <td style="text-indent:5px;min-width:40px">
+                @current_count
+            </td>
+            <td>
+                <a href="#" style="width:168px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Company_Name" data-id="@item.Company_Id" data-rid="@item.Id" class="company_select_a" data-toggle="modal" data-target=".bs-example-modal-lg">
+                    @item.VM_Company.Company_Name
+                </a>
+            </td>
+            <td>@item.VM_Employee.Employee_Name</td>
+            <td>@item.Create_Time.ToString("yy/MM/dd HH:MM:ss")</td>
+            <td>@item.Visit_Time.ToString("yy/MM/dd")</td>
+            <td style="text-indent:10px">
+                <a style="cursor:pointer" data-toggle="modal" data-target=".bs-example-modal-lg" class="form_view" data-cid="@item.Company_Id" data-count="@item.Visit_Count">查看</a>
+            </td>
+            @if (item.Create_Time == null)
+            {
+                <td style="text-indent:10px" class="color-red">超时</td>
+            }
+            else
+            {
+                if (Convert.ToDateTime(item.Create_Time) > DateTime.Parse(item.Create_Time.ToShortDateString() + " 23:30:00"))
+                {
+                    <td style="text-indent:10px" class="color-red">超时</td>
+                }
+                else
+                {
+                    <td style="text-indent:10px" class="color-green">正常</td>
+                }
+            }
+            @if (item.status == 0)
+            {
+                <td style="text-indent:3px" class="color-orange">待审核</td>
+            }
+            else if (item.status == -1)
+            {
+                <td style="text-indent:3px" class="color-red">已驳回</td>
+            }
+            else if (item.status == 1)
+            {
+                <td style="text-indent:3px" class="color-green">已通过</td>
+            }
+            <td style="text-indent:8px">@Html.VisitType(item.Visit_Type)</td>
+            <td style="text-indent:4px">第 @item.Visit_Count 次</td>
+            <td>
+                <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.VM_Company.Source_Name">
+                    @item.VM_Company.Source_Name
+                </div>
+            </td>
+            <td>
+                <div style="width:100px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" class="visitors_name">
+                    @foreach (var name in item.AttendEmployee)
+                    {
+                        <span>@name.Employee_Name&nbsp;</span>
+                    }
+                </div>
+            </td>
+            <td style="text-indent:14px">@Html.SmoothlyStatus(item.Cooperation_Intention)</td>
+            @if (item.Cooperation_Intention == 0)
+            {
+                <td></td>
+                <td></td>
+                <td>@item.Intentional_Products</td>
+                if (item.Intentional_Funds != null)
+                {
+                    <td>@item.Intentional_Funds 万元</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                if (@item.Cooperation_Status != null)
+                {
+                    <td style="text-indent:17px">@Html.CooperationStatus(item.Cooperation_Status.Value)</td>
+                    if (item.Cooperation_Status.Value == 1)
+                    {
+                        if (@item.Reply_Time != null)
+                        {
+                            <td style="text-indent:8px">@item.Reply_Time.Value.ToString("yy/MM/dd")</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        if (@item.Cooperation_Type != null)
+                        {
+                            <td>@Html.CooperationType(item.Cooperation_Type.Value)</td>
+                            if (item.Cooperation_Type.Value == 1)
+                            {
+                                <td>@item.Company_Name</td>
+                                <td>@item.Contact_Mobile</td>
+                            }
+                            else
+                            {
+                                <td></td>
+                                <td></td>
+                            }
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                    }
+                }
+                else
+                {
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                }
+            }
+            else
+            {
+                <td>
+                    @item.NoIntention_Reason
+                </td>
+                <td>@item.NoIntention_Detail</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            }
+            <td style="text-indent:14px">@Html.SmoothlyStatus(item.Smoothly)</td>
+            @if (item.Smoothly == 0)
+            {
+                if (@item.ExpectedDelivery_Time != null)
+                {
+                    <td style="text-indent:8px">@item.ExpectedDelivery_Time.Value.ToString("yy/MM/dd")</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>@item.ExpectedDelivery_Funds 万元</td>
+                <td></td>
+                <td></td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+                <td style="position:relative">
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 40px;" title="@item.Core_Problem">
+                        @item.Core_Problem
+                    </div>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Corecomment_select_a" data-target="#myCommentModal">评论<span class="badge"></span></a>
+                </td>
+                <td style="position:relative">
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right:40px;" title="@item.Support">
+                        @item.Support
+                    </div>
+                    <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Supportcomment_select_a" data-target="#myCommentModal">评论<span class="badge"></span></a>
+                </td>
+            }
+            <td style="text-indent:30px">@Html.ReplyStatus(item.Reply_Status)</td>
+            <td style="position:relative">
+                <div style="width:200px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;display:inline-block;margin-right: 40px;" title="@item.Reply_Detail">
+                    @item.Reply_Detail
+                </div>
+                <a style="cursor:pointer;display:inline-block;position: absolute;right:0" data-id="@item.Id" class="Replycomment_select_a" data-target="#myCommentModal">评论<span class="badge"></span></a>
+            </td>
+            <td style="text-indent:35px">@Html.CustomerReplyStatus(item.CustomerReply_Status)</td>
+            @if (item.CustomerReply_Status == 0)
+            {
+                if (@item.CustomerReply_Time != null)
+                {
+                    <td style="text-indent:18px">@item.CustomerReply_Time.Value.ToString("yy/MM/dd")</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>
+                    <div style="width:150px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden" title="@item.CustomerReply_Detail">
+                        @item.CustomerReply_Detail
+                    </div>
+                </td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+            }
+            <td style="text-indent:35px">@Html.NextVisitType(item.NextVisit)</td>
+            @if (item.NextVisit == 0)
+            {
+                if (@item.NextVisit_Time != null)
+                {
+                    <td style="text-indent:12px">@item.NextVisit_Time.Value.ToString("yy/MM/dd")</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+
+                if (@item.NextVisit_Type != null)
+                {
+                    <td style="text-indent:22px">@Html.VisitType(item.NextVisit_Type.Value)</td>
+                }
+                else
+                {
+                    <td></td>
+                }
+                <td>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;" title="@item.NextVisit_Detail">
+                        @item.NextVisit_Detail
+                    </div>
+                </td>
+            }
+            else
+            {
+                <td></td>
+                <td></td>
+                <td></td>
+            }
+            @if (item.Update_Time != null)
+            {
+                <td>@item.Update_Time.Value.ToString("yy/MM/dd HH:MM:ss")</td>
+            }
+            else
+            {
+                <td></td>
+            }
+            @if (item.status == -1)
+            {
+                <td>
+                    <div style="width:80px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap" title="@item.Veto_Cause @item.Veto_Detail">@item.Veto_Cause @item.Veto_Detail</div>
+                </td>
+            }
+            else
+            {
+                <td></td>
+            }
+            <td>
+                <a data-id="@item.Id" class="comment_select_a btn btn-xs btn-info" data-toggle="modal" data-target="#myCommentModal">评论<span class="badge"></span></a>
+            </td>
+        </tr>
+        }
+    </table>
+</div>
+@foreach (var item in ViewBag.Config)
+{
+    <div class="hidden hidden_config" data-id="@item.Id" data-detail="@item.Content_Detail"></div>
+}
+<div>
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" id="modal-content">
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myCommentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" id="modal-comment-content">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+        $(".visitors_name").hover(function () {
+            var that = $(this)
+            var Visitor_name = that.children("span").text();
+            that.attr("title", Visitor_name)
+        })
+        // 评论数量
+        var comment_list = $(".comment_select_a")
+        for (i = 0 ; i < comment_list.length; i++) {
+            var that = $(comment_list[i])
+            $.ajax({
+                url: "/VisitManagement/Comment_Count",
+                type: "post",
+                data: {
+                    rec_id: that.attr("data-id"),
+                },
+                success: function (data) {
+                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Corecomment_select_a span").text(data.core)
+                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Supportcomment_select_a span").text(data.support)
+                    $(".comment_select_a[data-id=" + data.rid + "]").parent().siblings("td").find(".Replycomment_select_a span").text(data.reply)
+                    $(".comment_select_a[data-id=" + data.rid + "]").children("span").text(data.comment)
+                }
+            })
+        }
+        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+    })
+    $(".record_view_count").text($("#hidden_count").text())
+    var page_view = Math.ceil($(".record_view_count").text() / $(".share_select_page option:selected").val())
+    $(".page_sum_view").text(page_view)
+    // 公司详情
+    $('.company_select_a').click(function () {
+        $.ajax({
+            url: '/VisitManagement/CompanyInfo/',
+            data: {
+                com_id: $(this).attr('data-id'),
+                rec_id: $(this).attr('data-rid')
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
+    })
+    // 评论
+    $(".comment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/Comment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 我方回复评论
+    $(".Replycomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/ReplyComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 核心问题评论
+    $(".Corecomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/CoreComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    // 需要支持评论
+    $(".Supportcomment_select_a").on("click", function () {
+        var that = $(this)
+        $.ajax({
+            url: '/VisitManagement/SupportComment_PartialView',
+            data: {
+                rec_id: that.attr("data-id"),
+            },
+            success: function (data) {
+                $('#modal-comment-content').html(data)
+                $("#myCommentModal").modal('show')
+                $("#modal-body").attr("data-id", that.attr("data-id"))
+            }
+        })
+    })
+    $(".form_view").on("click", function () {
+        $.ajax({
+            url: '/VisitManagement/VisitRecord_View/',
+            data: {
+                c_id: $(this).attr('data-cid'),
+                v_count:$(this).attr("data-count")
+            },
+            success: function (data) {
+                $('#modal-content').html(data)
+                $("#myModal").modal('show')
+            }
+        })
+    })
+    function freezing() {
+        if ($("#freezing_record").scrollTop() == 0) {
+            $("#freezing_tr").css({
+                position: "relative",
+            })
+        }
+        else {
+            $("#freezing_tr").css({
+                position: "absolute",
+                "z-index": "33",
+                top: $("#freezing_record").scrollTop(),
+                background: "#eef1f5",
+            })
+            for (var i = 1; i < $("#freezing_tr th").length; i++) {
+                $("#freezing_tr>:nth-child(" + i + ")").css("min-width", $(".share_tr_width>:nth-child(" + i + ")").outerWidth() + "px")
+                $(".share_tr_width>:nth-child(" + i + ")").css("min-width", $("#freezing_tr>:nth-child(" + i + ")").outerWidth() + "px")
+            }
+        }
+        $("tr>:nth-child(1)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(2)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(3)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(4)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(5)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(6)").css("left", $("#freezing_record").scrollLeft());
+        $("tr>:nth-child(1)").css("background", "#eef1f5");
+        $("tr>:nth-child(2)").css("background", "#eef1f5");
+        $("tr>:nth-child(3)").css("background", "#eef1f5");
+        $("tr>:nth-child(4)").css("background", "#eef1f5");
+        $("tr>:nth-child(5)").css("background", "#eef1f5");
+        $("tr>:nth-child(6)").css("background", "#eef1f5");
+    }
+</script>

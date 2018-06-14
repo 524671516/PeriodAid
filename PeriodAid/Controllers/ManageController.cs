@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace PeriodAid.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Staff")]
     public class ManageController : Controller
     {
         private ApplicationSignInManager _signInManager;

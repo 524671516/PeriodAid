@@ -7,31 +7,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>线上销售系统</title>
     @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+        @Scripts.Render("~/bundles/modernizr")
+        <link href="~/Content/share.css" rel="stylesheet" />
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
     <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
     @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/bootstrap")
     <link href="~/Content/bootstrap-switch.min.css" rel="stylesheet" />
     @RenderSection("header", required: false)
     <style>
-        .nav-left {
-            list-style: none;
-            padding: 0;
-        }
-
-            .nav-left > li {
-                padding-top: 5px;
-            }
-
-        .box * {
-            font-size: 12px;
-        }
-
-        .box a {
-            text-decoration: none;
-        }
         .res {
         -webkit-transform: rotate(-90deg);
         -moz-transform: rotate(-90deg);
@@ -53,39 +38,90 @@
                 @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            管理系统　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
-                            <li><a href="SalesProcess/ProductList">销售管理系统</a></li>
+                <ul class="nav navbar-nav nav_relative_ul">
+                    <li>
+                        @Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
                         </ul>
                     </li>
-                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
-                    <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            工具　<span class="caret"></span>
-                        </a>
+                    <li>
+                        @Html.ActionLink("线下销售", "StoreIndex", "OffStore")
+                    <ul class="nav_absolute_ul hidden">
+                        <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                        <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                    </ul>
+                </li>
+                <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
+                <li>@Html.ActionLink("系统权限", "RightsList", "AccountRights")</li>
+                <li role="presentation" class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                        工具　<span class="caret"></span>
+                    </a>
 
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
-                            <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
-                            <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
-                        </ul>
-                    </li>
-                </ul>
-                @Html.Partial("_LoginPartial")
-            </div>
+                    <ul class="dropdown-menu">
+                        <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
+                        <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
+                        <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
+                    </ul>
+                </li>
+            </ul>
+            @Html.Partial("_LoginPartial")
+        </div>
         </div>
     </div>
-    <div class="container box" style="margin-top:40px;">
+    <div class="container" id="container_view"  style="margin-top:23px;">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2" id="col_2_view">
+                <div class="fixed_ul col-md-12" style="padding-left:0">
+                    <div class="panel panel-default" id="fixed_ul_color">
+                        <div class="panel-body" id="panel-body-view">
+                            <ul class="list-unstyled" id="ul_btn">
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="#" style="text-indent: 16px;">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;下载系统
+                                        <ul class="list-unstyled position_ul hidden">
+                                            <li class="left-navbar"><a href="/ERPOrder/Download_Order_List"><i class="fa fa-book"></i>&nbsp;&nbsp;订单信息</a></li>
+                                            <li class="left-navbar"><a href="/ERPOrder/Download_Member_List"><i class="fa fa-user-secret"></i>&nbsp;&nbsp;会员信息</a></li>
+                                            <li class="left-navbar"><a href="/ERPOrder/Vip_Tag_Create"><i class="fa fa-user-secret"></i>&nbsp;&nbsp;会员打标</a></li>
+                                        </ul>
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="#" style="text-indent: 16px;">
+                                        <i class="fa fa-list"></i>
+                                        &nbsp;&nbsp;销售数据
+                                        <ul class="list-unstyled position_ul hidden">
+                                            <li class="left-navbar"><a href="/ERPOrder/GenericData_List"><i class="fa fa-search"></i>&nbsp;&nbsp;查看销售数据</a></li>
+                                            <li class="left-navbar"><a href="/ERPOrder/Product_Details_List"><i class="fa fa-search"></i>&nbsp;&nbsp;产品销售明细</a></li>
+                                            <li class="left-navbar"><a href="/ERPOrder/Product_Generic_Data_List"><i class="fa fa-search"></i>&nbsp;&nbsp;产品运营数据</a></li>
+                                        </ul>
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="#" style="text-indent: 16px;">
+                                        <i class="fa fa-list"></i>
+                                        &nbsp;&nbsp;销售数据
+                                        <ul class="list-unstyled position_ul hidden">
+                                            <li class="left-navbar"><a href="/ERPOrder/GenericData_Statistic"><i class="fa fa-line-chart"></i>&nbsp;&nbsp;店铺月度销售额</a></li>
+                                            <li class="left-navbar"><a href="/ERPOrder/Product_Details_Statistic"><i class="fa fa-bar-chart"></i>&nbsp;&nbsp;产品销售明细表</a></li>
+                                            <li class="left-navbar"><a href="/ERPOrder/Product_Generic_Data_Statistic"><i class="fa fa-area-chart"></i>&nbsp;&nbsp;产品运营数据表</a></li>
+                                        </ul>
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @*<div class="col-md-2">
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                     <div class="panel panel-default">
                         <div class="panel-heading" role="tab" id="headingOne">
@@ -142,11 +178,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-10">
-                <div class="container body-content">
-                    @RenderBody()
-                </div>
+            </div>*@
+            <div class="col-md-10" id="col_10_style">
+                @RenderBody()
             </div>
         </div>
         <div class="hidden" id="pagenumber">
@@ -173,6 +207,33 @@
             $("#ani_03").removeClass("res")
             $("div[aria-labelledby='headingThree']").addClass("in");
         }
+        // 新增
+        $(".nav_relative_ul li").mouseover(function () {
+            $(this).children(".nav_absolute_ul").removeClass("hidden")
+        })
+        $(".nav_relative_ul li").mouseout(function () {
+            $(this).children(".nav_absolute_ul").addClass("hidden")
+        })
+        $(".nav_absolute_ul li").mouseover(function () {
+            $(this).css("background", "#fff")
+        })
+        $(".nav_absolute_ul li").mouseout(function () {
+            $(this).css("background", "none")
+        })
+        $("#ul_btn li").mouseover(function () {
+            $(this).children(".position_ul").removeClass("hidden")
+            $(this).children(".san_you").removeClass("hidden")
+        })
+        $("#ul_btn li").mouseout(function () {
+            $(this).children(".position_ul").addClass("hidden")
+            $(this).children(".san_you").addClass("hidden")
+        })
+        $(".nav_relative_ul li").mouseover(function () {
+            $(this).children(".nav_absolute_ul").removeClass("hidden")
+        })
+        $(".nav_relative_ul li").mouseout(function () {
+            $(this).children(".nav_absolute_ul").addClass("hidden")
+        })
     </script>
 </body>
 </html>

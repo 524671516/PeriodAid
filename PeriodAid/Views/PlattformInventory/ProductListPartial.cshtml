@@ -27,6 +27,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -35,7 +37,7 @@
                     @Html.DisplayFor(modelItem => item.Item_Name)
                 </td>
                 <td>
-                    @Html.ProductTypeStatus(item.Product_Type)
+                    @Html.ProductType(item.Product_Type)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Carton_Spec)
@@ -47,10 +49,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
-                    <a class="JD-Traffic" data-val="@item.Id" data-name="@item.Item_Name" style="cursor:pointer">来源分析</a>
-                    @*<span class="JD-Traffic-Order">@Html.ActionLink("销量统计", "ViewTrafficStatistic", new { productId = item.Id })</span>*@
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                 </td>
             </tr>
         }
@@ -59,6 +58,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a class="fire-box"></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -67,7 +68,7 @@
                     @Html.DisplayFor(modelItem => item.Item_Name)
                 </td>
                 <td>
-                    @Html.ProductTypeStatus(item.Product_Type)
+                    @Html.ProductType(item.Product_Type)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Carton_Spec)
@@ -79,8 +80,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                     
                 </td>
             </tr>
@@ -94,6 +94,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -102,7 +104,7 @@
                     @Html.DisplayFor(modelItem => item.Item_Name)
                 </td>
                 <td>
-                    @Html.ProductTypeStatus(item.Product_Type)
+                    @Html.ProductType(item.Product_Type)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Carton_Spec)
@@ -114,9 +116,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="JD-product">@Html.ActionLink("数据统计", "ViewProductStatistic", new { productId = item.Id })</span>&nbsp;|&nbsp;
-                    <a class="JD-Traffic" data-val="@item.Id" data-name="@item.Item_Name" style="cursor:pointer">来源分析</a>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                 </td>
             </tr>
         }
@@ -125,6 +125,8 @@
             <tr>
                 <td style="position:relative" class="hot-product">
                     @Html.DisplayFor(modelItem => item.System_Code)<a></a>
+                    <i class="fa fa-arrow-down color-blue" hidden></i>
+                    <i class="fa fa-arrow-up color-red" hidden></i>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Item_Code)
@@ -133,7 +135,7 @@
                     @Html.DisplayFor(modelItem => item.Item_Name)
                 </td>
                 <td>
-                    @Html.ProductTypeStatus(item.Product_Type)
+                    @Html.ProductType(item.Product_Type)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Carton_Spec)
@@ -145,8 +147,7 @@
                     @item.Inventory_Date.ToString("yyyy-MM-dd")
                 </td>
                 <td>
-                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>&nbsp;|&nbsp;
-                    <span class="TM-product">@Html.ActionLink("数据统计", "ViewEventStatistic", new { productId = item.Id })</span>
+                    <a class="select-a" data-val="@item.Id" style="cursor:pointer" data-toggle="modal" data-target="#myModal">编辑</a>
                 </td>
             </tr>
         }
@@ -166,13 +167,35 @@
 </div>
 <script>
     $(function () {
+        //加载转化率图标
+        var productId_list = $(".select-a")
+        var i = 0;
+        for (i; i < productId_list.length; i++) {
+            var that = $(productId_list[i])
+            $.ajax({
+                url: "/PlattformInventory/ProductGrowthRate",
+                type: "post",
+                async: true,
+                data: {
+                    productId: that.attr("data-val"),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
+                },
+                success: function (data) {
+                    if (data["rate"] == 0) {
+                        $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-blue").show()
+                    } else {
+                        $(".select-a[data-val=" + data["p_id"] + "]").parent().parent().find(".color-red").show()
+                    }
+                }
+            })
+        }
         //页码
         $(".pagination > li > a").click(function () {
             var l = $(this).attr("href");
             $.ajax({
                 url: l,
                 data: {
-                    plattformId: getUrlParam('plattformId'),
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val"),
                     query: $("#storage-product-query").val()
                 },
                 success: function (data) {
@@ -187,7 +210,6 @@
             $('.TM-product').addClass('hidden')
         }
         $('.select-a').click(function () {
-            //console.log($(this).attr('data-val'))
             $.ajax({
                 url: '/PlattformInventory/EditProductInfo',
                 data: {
@@ -200,11 +222,5 @@
             })
         })
         
-        // TrafficView
-        $(".JD-Traffic").on("click", function () {
-            var product_Id = $(this).attr('data-val')
-            var product_Name = $(this).attr("data-name")
-            $(this).attr("href", "TrafficList?plattformId=" + getUrlParam('plattformId') + "&productId=" + product_Id)
-        })
     })
 </script>

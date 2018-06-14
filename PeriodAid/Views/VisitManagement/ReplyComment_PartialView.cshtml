@@ -1,0 +1,80 @@
+﻿@model IEnumerable<PeriodAid.Models.VM_Comment>
+
+<div class="modal-header">
+    <h3>需回复问题评论</h3>
+</div>
+<div class="modal-body" id="modal-body">
+    @foreach (var detial in Model)
+    {
+        <div id="messDivId">
+            <div class="story">
+                <div class="opbtn"></div>
+                <p class="story_t">@detial.Nick_Name</p>
+                <p class="story_time">@detial.Comment_Time.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                <p class="story_m">@detial.Comment_Detail</p>
+            </div>
+        </div>
+    }
+    <div id="comment_text">
+        @using (Html.BeginForm("CreateReplyComment", "VisitManagement", FormMethod.Post, new { @id = "comment-form" }))
+        {
+            <div class="form-horizontal" style="text-align:center">
+                <div>
+                    <div id="comment_container">
+                        <input id="com_detial" required="required" autocomplete="off" placeholder="评论内容" />
+                        <input type="button" value="确定" id="save-btn" class="btn btn-danger" name="save-btn" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $("#save-btn").on("click", function () {
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#comment-form").ajaxSubmit({
+                url: '/VisitManagement/CreateReplyComment',
+                type: 'post',
+                data: {
+                    detail: $("#com_detial").val(),
+                    rec_id: $("#modal-body").attr("data-id")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $('#myCommentModal').modal('hide')
+                        $.ajax({
+                            url: "/VisitManagement/Comment_Count",
+                            type: "post",
+                            data: {
+                                rec_id: $("#modal-body").attr("data-id"),
+                            },
+                            success: function (data) {
+                                $(".Replycomment_select_a[data-id=" + data.rid + "] span").text(data.reply)
+                            }
+                        })
+                    }
+                    else if (data.result == "FAIL") {
+                        $("#save-btn").removeClass("disabled")
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "输入内容不能为空",
+                        });
+
+                    }
+                    else {
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "请联系管理员开通权限",
+                        });
+                    }
+
+                }
+            })
+            return false;
+        }
+    })
+</script>

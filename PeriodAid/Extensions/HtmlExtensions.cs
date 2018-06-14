@@ -167,16 +167,72 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-        public static string ProductTypeStatus(this HtmlHelper helper, int status)
+        public static string ProductType(this HtmlHelper helper, int type)
         {
-            switch (status)
+            switch (type)
             {
                 case -1:
                     return "下架";
                 case 0:
-                    return "正常";
+                    return "在售";
                 case 1:
                     return "爆款";
+                default:
+                    return "未知";
+            }
+        }
+        // CRM
+        public static string ContractStatus(this HtmlHelper helper, string status)
+        {
+            switch (status)
+            {
+                case "3531567":
+                    return "待发货";
+                case "3764330":
+                    return "已发货";
+                case "3531568":
+                    return "提交待审核";
+                default:
+                    return "未知";
+            }
+        }
+        // MD
+        public static string DeliveryStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "待发货";
+                case 2:
+                    return "已发货";
+                default:
+                    return "未知";
+            }
+        }
+        // AR
+        public static string UserInfoType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "业务";
+                case 1:
+                    return "主管";
+                case 2:
+                    return "超级管理员";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string UploadStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "未推送";
+                case 1:
+                    return "已推送";
                 default:
                     return "未知";
             }
@@ -256,7 +312,157 @@ namespace System.Web.Mvc
                     return "未知";
             }
         }
-       
+
+        // VM
+        public static string SmoothlyStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "否";
+                case 0:
+                    return "是";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string ReplyStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "否";
+                case 0:
+                    return "是";
+                default:
+                    return "未知";
+            }
+        }
+
+        public static string CustomerReplyStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "否";
+                case 0:
+                    return "是";
+                default:
+                    return "未知";
+            }
+        }
+        // 通用 有 无
+        public static string SpecialSource(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "无";
+                case 0:
+                    return "有";
+                default:
+                    return "未知";
+            }
+        }
+        // 拜访方式
+        public static string VisitType(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case 0:
+                    return "面谈";
+                case 1:
+                    return "电话";
+                case 2:
+                    return "微信";
+                default:
+                    return "未知";
+            }
+        }
+        // 审核状态
+        public static string VisitStatus(this HtmlHelper helper, int status)
+        {
+            switch (status)
+            {
+                case -1:
+                    return "审核未通过";
+                case 0:
+                    return "待审核";
+                case 1:
+                    return "已审核";
+                default:
+                    return "未知";
+            }
+        }
+        // 合作方式
+        public static string CooperationType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case -1:
+                    return "无";
+                case 0:
+                    return "直营";
+                case 1:
+                    return "通过经销商";
+                default:
+                    return "未知";
+            }
+        }
+        // 客户情况
+        public static string CategoryType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "经销商";
+                case 1:
+                    return "渠道终端";
+                default:
+                    return "未知";
+            }
+        }
+        // 进场单位
+        public static string EntranceType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "门店";
+                case 1:
+                    return "系统";
+                default:
+                    return "未知";
+            }
+        }
+        // 下次拜访
+        public static string NextVisitType(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "是";
+                case -1:
+                    return "否";
+                default:
+                    return "未知";
+            }
+        }
+        // 待定状态
+        public static string CooperationStatus(this HtmlHelper helper, int type)
+        {
+            switch (type)
+            {
+                case 0:
+                    return "否";
+                case 1:
+                    return "待定";
+                default:
+                    return "未知";
+            }
+        }
+
 
         public static string ManagerNickName(this HtmlHelper helper, string username, int systemid)
         {

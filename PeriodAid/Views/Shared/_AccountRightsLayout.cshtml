@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>权限管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/share.css" rel="stylesheet" />
+    <link href="~/Content/SalesProcess.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/prettify.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
+</head>
+<body class="reset">
+    @RenderSection("menu", required: false)
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav nav_relative_ul">
+                    <li>
+                        @Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        @Html.ActionLink("线下销售", "StoreIndex", "OffStore")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/VisitManagement/Visit_View">新客户拜访管理系统</a></li>
+                        </ul>
+                    </li>
+                    <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
+                    <li>@Html.ActionLink("系统权限", "RightsList", "AccountRights")</li>
+                    <li role="presentation" class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
+                            工具　<span class="caret"></span>
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("问卷系统", "Index", "TestAdmin")</li>
+                            <li>@Html.ActionLink("个性图片", "CustomOrderList", "TestAdmin")</li>
+                            <li>@Html.ActionLink("生成二维码", "generateQRCode", "Home")</li>
+                        </ul>
+                    </li>
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <br /><br />
+    <div class="container" id="container_view" style="top:-11px">
+        <div class="row">
+            <div class="col-md-2" id="col_2_view">
+                <div class="fixed_ul">
+                    <div class="panel panel-default" id="fixed_ul_color">
+                        <div class="panel-body" id="panel-body-view">
+                            <ul class="list-unstyled" id="ul_btn">
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="/TaskManagement/Index">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;任务管理系统
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="/PlattformInventory/PlattformInventory_form?plattformId=1">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;线上库存管理系统
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="/SalesProcess/CRM_show">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;CRM销售管理系统
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="/MonthlyDelivery/MD_OrderView">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;月月送管理系统
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                                <li class="left-navbar" style="cursor:pointer">
+                                    <a href="/VisitManagement/Visit_View">
+                                        <i class="fa fa-window-maximize"></i>
+                                        &nbsp;&nbsp;新客户拜访管理系统
+                                    </a>
+                                    <div class="san_you hidden"></div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10" id="col_10_style">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
+    <script src="~/Scripts/SalesProcess.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/off-JavaScript.js"></script>
+    <script src="~/Scripts/bootstrap-typeahead.js"></script>
+    <script src="~/Scripts/kalendae.standalone.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script>
+    // 移入、移出三角样式
+    $("#ul_btn li").mouseover(function () {
+        $(this).children(".position_ul").removeClass("hidden")
+        $(this).children(".san_you").removeClass("hidden")
+    })
+    $("#ul_btn li").mouseout(function () {
+        $(this).children(".position_ul").addClass("hidden")
+        $(this).children(".san_you").addClass("hidden")
+    })
+    // 导航二级
+    $(".nav_relative_ul li").mouseover(function () {
+        $(this).children(".nav_absolute_ul").removeClass("hidden")
+    })
+    $(".nav_relative_ul li").mouseout(function () {
+        $(this).children(".nav_absolute_ul").addClass("hidden")
+    })
+    $(".nav_absolute_ul li").mouseover(function () {
+        $(this).css("background", "#fff")
+    })
+    $(".nav_absolute_ul li").mouseout(function () {
+        $(this).css("background", "none")
+    })
+    // 侧边栏li移动
+    $(".left-navbar").mouseover(function () {
+        $(this).children("a").css("paddingLeft", "5px")
+    })
+    $(".left-navbar").mouseout(function () {
+        $(this).children("a").css("paddingLeft", "0px")
+    })
+</script>

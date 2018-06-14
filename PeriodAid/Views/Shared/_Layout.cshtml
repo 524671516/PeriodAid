@@ -5,7 +5,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>寿全斋应用后台</title>
-    
+
+    <link href="~/Content/share.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @RenderSection("header",required: false)
@@ -22,20 +23,26 @@
                 @Html.ActionLink("寿全斋应用后台", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li role="presentation" class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
-                            管理系统　<span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("任务管理系统", "Index", "TaskManagement")</li>
-                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">库存管理系统</a></li>
-                            <li><a href="/SalesProcess/ProductList">销售管理系统</a></li>
+                <ul class="nav navbar-nav nav_relative_ul">
+                    <li>
+                        @Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/PlattformInventory/PlattformInventory_form?plattformId=1">线上库存管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/MonthlyDelivery/MD_OrderView">月月送管理系统</a></li>
                         </ul>
                     </li>
-                    <li>@Html.ActionLink("线上销售", "Download_Order_List", "ERPOrder")</li>
-                    <li>@Html.ActionLink("线下销售", "StoreIndex", "OffStore")</li>
+                    <li>
+                        @Html.ActionLink("线下销售", "StoreIndex", "OffStore")
+                        <ul class="nav_absolute_ul hidden">
+                            <li><a href="/TaskManagement/Index">任务管理系统</a></li>
+                            <li><a href="/SalesProcess/CRM_show">CRM销售管理系统</a></li>
+                            <li><a href="/VisitManagement/Visit_View">新客户拜访管理系统</a></li>
+                        </ul>
+                    </li>
                     <li>@Html.ActionLink("网站内容", "WebContentIndex", "WebContent")</li>
+                    <li>@Html.ActionLink("系统权限", "RightsList", "AccountRights")</li>
                     <li role="presentation" class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" href="javascript:;">
                             工具　<span class="caret"></span>
@@ -64,3 +71,11 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+<script>
+    $(".nav_relative_ul li").mouseover(function () {
+        $(this).children(".nav_absolute_ul").removeClass("hidden")
+    })
+    $(".nav_relative_ul li").mouseout(function () {
+        $(this).children(".nav_absolute_ul").addClass("hidden")
+    })
+</script>

@@ -1,4 +1,23 @@
 ﻿@{
-    ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_SalesProcessLayout.cshtml";
 }
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active"><a href="#home" aria-controls="home" data-val="1" role="tab" data-toggle="tab">已发货</a></li>
+        <li role="presentation"><a href="#profile" aria-controls="profile" data-val="1" role="tab" data-toggle="tab">待发货</a></li>
+    </ul>
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="home">123123丨123123</div>
+        <div role="tabpanel" class="tab-pane" id="profile">2</div>
+    </div>
+</div>
+@section scripts{
+<script>
+    $(function () {
+        var str = $("#home").html()
+        var sstr = str.split("丨")
+        console.log(sstr)
+    })
+</script>
+
+    }

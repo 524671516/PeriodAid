@@ -1,0 +1,1049 @@
+﻿
+@model PagedList.IPagedList<PeriodAid.Models.CRM_Contract>
+@using PagedList.Mvc;
+<style>
+    .form-control {
+        display: initial;
+        width: auto;
+        height: auto;
+        padding: 0;
+    }
+
+    .jconfirm-box-container {
+        top: -180px;
+        left: 480px;
+    }
+</style>
+<div>
+    <table class="table table-hover">
+        <tr style="background-color:#f9f9f9">
+            <th style="width:5%">
+                <label style="margin-left:5px" class="checkbox-custom">
+                    <input type="checkbox" class="btn" id="checkbox-all">
+                </label>
+            </th>
+            <th style="width:10%">订单号</th>
+            <th style="width:15%">订单名称</th>
+            <th style="width:15%" id="money_view">总金额</th>
+            <th style="width:10%">客户名称</th>
+            <th style="width:30%">邮寄地址</th>
+            <th style="width:10%" id="expressInfo">物流信息</th>
+            <th style="width:15%">
+                <a class="btn btn-xs btn-success hidden" id="batch_change_status" data-status="3531567" role="button" style="cursor:pointer"><i class="fa fa-upload"></i>&nbsp;&nbsp;批量同步</a>
+                <a class="btn btn-xs btn-success hidden" id="batch_change_deliverys" data-status="3531568" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+                <a class="btn btn-xs btn-success hidden" id="batch_change_Partdeliverys" data-status="3890335" role="button" style="cursor:pointer">批量获取ERP配送信息</a>
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr class="tm_list-item tm-show-task-modal border-blue" data-toggle="tooltip" data-placement="left" title="">
+                <td>
+                    <label class="checkbox-custom">
+                        <input type="checkbox" class="btn checkbox" data-val="@item.id" data-status="@item.contract_status" data-astatus="@item.address_status" data-rstatus="@item.received_payments_status">
+                    </label>
+                </td>
+                @*<td>@item.user_name</td>*@
+                <td>
+                    @item.platform_code
+                </td>
+                <td>
+                    <div style="width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.user_name：@item.contract_title">@item.contract_title</div>
+                </td>
+                <td class="money_model_view">
+                    @item.total_amount
+                </td>
+                @if (@item.CRM_Customer.customer_abbreviation != null)
+                {
+                    <td>
+                        @item.CRM_Customer.customer_abbreviation
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @item.CRM_Customer.customer_name
+                    </td>
+                }
+
+                @if (item.contract_status == "3531567")
+                {
+                    if (item.address_status == 1)
+                    {
+                        <td>
+                            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="select_address">
+                            <div class="distpicker5">
+                                <select class="select_province form-control" style="width:31%"></select>
+                                <select class="select_city form-control" style="width:31%"></select>
+                                <select class="select_district form-control" style="width:31%"></select>
+                            </div>
+                            <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.receiver_address</div>
+                        </td>
+                    }
+                    <td class="receiver_address">
+                        <a class="change_status btn btn-xs btn-success select_btn" role="button" data-val="@item.id" data-status="@item.contract_status" data-rstatus="@item.received_payments_status" data-astatus="@item.address_status" data-total_amount="@item.total_amount" data-unreceived_amount="@item.unreceived_amount" style="cursor:pointer">同步ERP</a>
+                        <a class="btn btn-xs btn-danger contract_detail" role="button" data-toggle="modal" data-target=".bs-example-modal-lg" data-val="@item.id" data-title="@item.contract_title">详情</a>
+                    </td>
+                }
+                else if (item.contract_status == "3531568")
+                {
+                    <td>
+                        <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+                    </td>
+                    <td>
+                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
+                    </td>
+                }
+                else if (item.contract_status == "3890335")
+                {
+                    <td>
+                        <div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div>
+                        <div>@item.express_information</div>
+                    </td>
+                    <td>
+                        <a class="get_erp_status btn btn-xs btn-success" role="button" data-val="@item.id" data-status="@item.contract_status" style="cursor:pointer">获取ERP配送信息</a>
+                    </td>
+                }
+                else
+                {
+                    <td><div style="width:272px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">@item.receiver_address</div></td>
+                    <td><div style="width:202px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.express_information">@item.express_information</div></td>
+                    <td></td>
+                }
+            </tr>
+        }
+
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("CRM_undeliveredPartical", new { page }))
+    </div>
+</div>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/distpicker.js"></script>
+<script src="~/Scripts/main.js"></script>
+<script>
+    $(function () {
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    status: $(".btn-danger").attr("data-val"),
+                    shopCode: $(".active").children(".shop_btn").attr("data-id"),
+                    query: $("#contract_query").val()
+                },
+                success: function (data) {
+                    $("#undelivered_list_content").html(data);
+                }
+            });
+            return false;
+        });
+        var border_list = $(".select_btn")
+        var j = 0
+        for (j; j < border_list.length; j++) {
+            var data_rstatus = $(border_list[j]).attr("data-rstatus")
+            var data_astatus = $(border_list[j]).attr("data-astatus")
+            if (data_rstatus == 0 && data_astatus == 0) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+                $(border_list[j]).parent().parent().attr("title", "地址格式错误；订单未回款！")
+            }
+            else if (data_rstatus == 1 && data_astatus == 0) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+                $(border_list[j]).parent().parent().attr("title", "地址格式错误！")
+            }
+            else if (data_rstatus == 0 && data_astatus == 1) {
+                $(border_list[j]).parent().parent().addClass("border-red")
+                var received_amount = $(border_list[j]).attr("data-total_amount") - $(border_list[j]).attr("data-unreceived_amount")
+                $(border_list[j]).parent().parent().attr("title", "回款未完成！回款:￥" + received_amount + "/" + $(border_list[j]).attr("data-unreceived_amount")+"。")
+            }
+        }
+        $("#expressInfo").addClass("hidden")
+        $('[data-toggle="tooltip"]').tooltip()
+        if ($("#fourth_btn").hasClass("btn-danger")) {
+            $(".checkbox-custom .btn").attr("disabled", true)
+            $("#money_view").html("")
+            $(".money_model_view").html("")
+            $("#expressInfo").removeClass("hidden")
+        }
+        if ($("#third_btn").hasClass("btn-danger")) {
+            $("#money_view").html("")
+            $(".money_model_view").html("")
+        }
+        if ($("#second_btn").hasClass("btn-danger")) {
+            $("#money_view").html("")
+            $(".money_model_view").html("")
+        }
+        $('.change_status[data-astatus="0"]').removeClass("change_status").addClass("change_address disabled")
+        $('.change_status[data-rstatus="0"]').removeClass("change_status").addClass("change_payments")
+        $(".distpicker5").distpicker({
+            autoSelect: false
+        });
+        $(".select_province").change(function () {
+            var options = $(this).children("option:selected");
+            $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-province", options.val())
+        })
+        $(".select_city").change(function () {
+            var options = $(this).children("option:selected");
+            $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-city", options.val())
+        })
+        $(".select_district").change(function () {
+            var options = $(this).children("option:selected");
+            $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").removeClass("disabled").attr("data-district", options.val())
+            var district = $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-district")
+            var rstatus = $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").attr("data-rstatus")
+            if (rstatus == "0") {
+                $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").removeClass("change_address").addClass("change_payments")
+            }
+            if (district == "") {
+                $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").addClass("disabled")
+                $(this).parents(".select_address").siblings(".receiver_address").children(".select_btn").removeClass("change_payments").addClass("change_address")
+            }
+        })
+        $("#checkbox-all").attr("data-status", $(".checkbox").attr("data-status"))
+        $('.checkbox[data-astatus="0"]').attr("disabled", "disabled")
+        $('.checkbox[data-rstatus="0"]').attr("disabled", "disabled")
+        var orderarry = [];
+        //全选
+        $("#checkbox-all").click(function () {
+            //$("#expressInfo").hide()
+            var i = 0
+            var that = $(this)
+            if (that.attr("data-status") == "3531567")
+            {
+                if (that.is(":checked")) {
+                    $("#batch_change_status").removeClass("hidden")
+                    $(".select_btn").addClass("disabled")
+                    $('.checkbox[data-astatus="1"][data-rstatus="1"]').prop("checked", true);
+                    var list = $(".checkbox:checked")
+                    if (list.length < 1) {
+                        $("#batch_change_status").addClass("hidden")
+                    } else {
+                        $("#batch_change_status").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
+                        }
+                    }
+                }
+                else {
+                    $("#batch_change_status").addClass("hidden")
+                    $(".select_btn").removeClass("disabled")
+                    $(".change_address").addClass('disabled')
+                    $("input").prop("checked", false);
+                    var list = $(".checkbox:unchecked")
+                    for (i; i < list.length; i++) {
+                        orderarry.remove($(list[i]).attr("data-val"))
+                    }
+                }
+            }
+            else if (that.attr("data-status") == "3890335") {
+                if (that.is(":checked")) {
+                    $("#batch_change_Partdeliverys").removeClass("hidden")
+                    $(".get_erp_status").addClass("hidden")
+                    $("input").prop("checked", true);
+                    var list = $(".checkbox:checked")
+                    if (list.length < 1) {
+                        $("#batch_change_Partdeliverys").addClass("hidden")
+                    } else {
+                        $("#batch_change_Partdeliverys").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
+                        }
+                        console.log(orderarry)
+                    }
+                } else {
+                    $("#batch_change_Partdeliverys").addClass("hidden")
+                    $(".get_erp_status").removeClass("hidden")
+                    $("input").prop("checked", false);
+                    var list = $(".checkbox:unchecked")
+                    for (i; i < list.length; i++) {
+                        orderarry.remove($(list[i]).attr("data-val"))
+                    }
+                    console.log(orderarry)
+                }
+            }
+            else if (that.attr("data-status") == "3531568") {
+                if (that.is(":checked")) {
+                    $("#batch_change_deliverys").removeClass("hidden")
+                    $(".get_erp_status").addClass("hidden")
+                    $("input").prop("checked", true);
+                    var list = $(".checkbox:checked")
+                    if (list.length < 1) {
+                        $("#batch_change_deliverys").addClass("hidden")
+                    }
+                    else {
+                        $("#batch_change_deliverys").removeClass("hidden")
+                        for (i; i < list.length; i++) {
+                            var list_data = $(list[i]).attr("data-val")
+                            if (orderarry.indexOf(list_data) == -1) {
+                                orderarry.push(list_data)
+                            }
+                        }
+                    }
+                } else {
+                    $("#batch_change_deliverys").addClass("hidden")
+                    $(".get_erp_status").removeClass("hidden")
+                    $("input").prop("checked", false);
+                    var list = $(".checkbox:unchecked")
+                    for (i; i < list.length; i++) {
+                        orderarry.remove($(list[i]).attr("data-val"))
+                    }
+                }
+            }
+        })
+        //单选
+        $(".checkbox").on("click", function () {
+            var that = $(this)
+            var C_id = that.attr("data-val")
+            var select = that.is(":checked");
+            if (select) {
+                orderarry.push(C_id)
+                if ($("input:checked").length > 1) {
+                    if (that.attr("data-status") == "3531567") {
+                        $("#batch_change_status").removeClass("hidden")
+                        $(".change_status").hide()
+                    }
+                    else if (that.attr("data-status") == "3890335") {
+                        $("#batch_change_Partdeliverys").removeClass("hidden")
+                        $(".get_erp_status").addClass("hidden")
+                    }
+                    else {
+                        $("#batch_change_deliverys").removeClass("hidden")
+                        $(".get_erp_status").addClass("hidden")
+                    }
+                }
+            }
+            else {
+                orderarry.remove(C_id)
+                if (orderarry.length < 2) {
+                    if (that.attr("data-status") == "3531567") {
+                        $("#batch_change_status").addClass("hidden")
+                        $(".change_status").show()
+                    }
+                    else if (that.attr("data-status") == "3890335") {
+                        $("#batch_change_Partdeliverys").addClass("hidden")
+                        $(".get_erp_status").removeClass("hidden")
+                    }
+                    else {
+                        $("#batch_change_deliverys").addClass("hidden")
+                        $(".get_erp_status").removeClass("hidden")
+                    }
+                }
+            }
+        })
+        //批量同步到ERP等待审核
+        $("#batch_change_status").click(function () {
+            var that = $(this);
+            var failarr = [];
+            var partialarr = [];
+            var successarr = [];
+            var strfail = "";
+            var strpartial = "";
+            var strsuccess = "";
+            $("#tm-view-loading").show()
+            if (orderarry.length != 0) {
+                $.ajax({
+                    url: "/SalesProcess/createOrder/",
+                    type: "post",
+                    data: {
+                        c_id: orderarry,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#tm-view-loading").hide()
+                            try {
+
+                                // fail
+                                if (data.faillist.length != 0)
+                                {
+                                    for (var i = 0 ; i < data.faillist.length; i++) {
+                                        failarr.push(data.faillist[i])
+                                    }
+                                    strfail = failarr.join("<br/>")
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strfail,
+                                    })
+                                }
+                                // crm err
+                                if (data.partiallist.length != 0)
+                                {
+                                    for (var i = 0 ; i < data.partiallist.length; i++) {
+                                        partialarr.push(data.partiallist[i] + "&nbsp&nbsp" + "CRM同步失败")
+                                    }
+                                    strpartial = partialarr.join("<br/>")
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strpartial,
+                                    });
+                                }// success
+                                if (data.successlist.length != 0) {
+                                    for (var i = 0 ; i < data.successlist.length; i++) {
+                                        successarr.push(data.successlist[i] + "&nbsp&nbsp" + "已推送至ERP等待审核")
+                                    }
+                                    strsuccess = successarr.join("<br/>")
+                                    throw $.alert({
+                                        title: '提示!',
+                                        type: 'green',
+                                        content: strsuccess,
+                                    });
+                                }
+                            }
+                            catch(success){
+                                //$.ajax({
+                                //    url: "/SalesProcess/GetCrmInfo/",
+                                //    type: "post",
+                                //    data: {
+                                //        url_api: "/api/v2/contracts/"
+                                //    },
+                                //    success: function (data) {
+                                //    }
+                                //})
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3531567",
+                                        shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                    }
+                                })
+                            }
+                            finally {
+                                that.removeClass("disabled")
+                                $("input").attr("checked", false)
+                                orderarry.splice(0, orderarry.length)
+                                $("#batch_change_status").addClass("hidden")
+                                $(".select_btn").removeClass("disabled")
+                            }
+                        }
+                        else {
+                            $("#tm-view-loading").hide()
+                            $.confirm({
+                                title: '提示!',
+                                type: 'red',
+                                content: "系统错误，请刷新后重试",
+                                buttons: {
+                                    "确认": function () {
+                                        window.location.reload()
+                                    }
+                                }
+                            });
+                        }
+                    }
+                })
+            }
+        })
+        //
+        $("#batch_change_Partdeliverys").click(function () {
+            var that = $(this)
+            $("#tm-view-loading").show()
+            var errorarr = [];
+            var failarr = [];
+            var partialarr = [];
+            var successarr = [];
+            var strfail = "";
+            var strerr = "";
+            var strpartial = ""
+            var strsuccess = "";
+            that.addClass("disabled")
+            if (orderarry.length != 0) {
+                $.ajax({
+                    url: "/SalesProcess/getERPORDERS/",
+                    type: "post",
+                    data: {
+                        c_id: orderarry,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#tm-view-loading").hide()
+                            try {
+                                // error
+                                if (data.errorlist.length != 0)
+                                {
+                                    for (var i = 0; i < data.errorlist.length; i++) {
+                                        errorarr.push(data.errorlist[i] + "&nbsp&nbsp" + "暂未发货")
+                                    }
+                                    strerr = errorarr.join("<br/>");
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strerr,
+                                    });
+                                }
+                                // fail
+                                if (data.faillist.length != 0)
+                                {
+                                    for (var i = 0; i < data.faillist.length; i++) {
+                                        failarr.push(data.faillist[i])
+                                    }
+                                    strfail = failarr.join("<br/>")
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strfail,
+                                    });
+                                }
+                                // crm error
+                                if (data.partiallist.length != 0)
+                                {
+                                    for (var i = 0; i < data.partiallist.length; i++) {
+                                        partialarr.push(data.partiallist[i] + "&nbsp&nbsp" + "CRM同步失败")
+                                    }
+                                    strpartial = partialarr.join("<br/>")
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strpartial,
+                                    });
+                                }
+                                // success
+                                if (data.successlist.length != 0) {
+                                    for (var i = 0; i < data.successlist.length; i++) {
+                                        successarr.push(data.successlist[i] + "&nbsp&nbsp" + "已从ERP获取成功")
+                                    }
+                                    strsuccess = successarr.join("<br/>")
+                                    throw $.alert({
+                                        title: '提示!',
+                                        type: 'green',
+                                        content: strsuccess,
+                                    });
+                                }
+                            }
+                            catch(success){
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3890335",
+                                        shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                    }
+                                })
+                            }
+                            finally {
+                                that.removeClass("disabled")
+                                $("input").attr("checked", false)
+                                orderarry.splice(0, orderarry.length)
+                                that.addClass("hidden")
+                                $(".get_erp_status").removeClass("hidden")
+                            }
+                        }
+                        else {
+                            $("#tm-view-loading").hide()
+                            $.confirm({
+                                title: '提示!',
+                                type: 'red',
+                                content: "系统错误，请刷新后重试",
+                                buttons: {
+                                    "确认": function () {
+                                        window.location.reload()
+                                    }
+                                }
+                            });
+                        }
+                    }
+                })
+            }
+            orderarry.remove(that.attr("data-val"))
+        })
+        //批量获取ERP快递信息
+        $("#batch_change_deliverys").click(function () {
+            var that = $(this)
+            $("#tm-view-loading").show()
+            var errorarr = [];
+            var failarr = [];
+            var partialarr = [];
+            var successarr = [];
+            var strfail = "";
+            var strerr = "";
+            var strpartial = ""
+            var strsuccess = "";
+            that.addClass("disabled")
+            if (orderarry.length != 0) {
+                $.ajax({
+                    url: "/SalesProcess/getERPORDERS/",
+                    type: "post",
+                    data: {
+                        c_id: orderarry,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#tm-view-loading").hide()
+                            try {
+                                // error
+                                if (data.errorlist.length != 0) {
+                                    for (var i = 0; i < data.errorlist.length; i++) {
+                                        errorarr.push(data.errorlist[i] + "&nbsp&nbsp" + "暂未发货")
+                                    }
+                                    strerr = errorarr.join("<br/>");
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strerr,
+                                    });
+                                }
+                                // fail
+                                if (data.faillist.length != 0) {
+                                    for (var i = 0; i < data.faillist.length; i++) {
+                                        failarr.push(data.faillist[i])
+                                    }
+                                    strfail = failarr.join("<br/>")
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strfail,
+                                    });
+                                }
+                                // crm error
+                                if (data.partiallist.length != 0) {
+                                    for (var i = 0; i < data.partiallist.length; i++) {
+                                        partialarr.push(data.partiallist[i] + "&nbsp&nbsp" + "CRM同步失败")
+                                    }
+                                    strpartial = partialarr.join("<br/>")
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: strpartial,
+                                    });
+                                }
+                                // success
+                                if (data.successlist.length != 0) {
+                                    for (var i = 0; i < data.successlist.length; i++) {
+                                        successarr.push(data.successlist[i] + "&nbsp&nbsp" + "已从ERP获取成功")
+                                    }
+                                    strsuccess = successarr.join("<br/>")
+                                    throw $.alert({
+                                        title: '提示!',
+                                        type: 'green',
+                                        content: strsuccess,
+                                    });
+                                }
+                            }
+                            catch(success) {
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3764330",
+                                        shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                        $("#second_btn").removeClass("btn-danger")
+                                        $("#third_btn").removeClass("btn-danger")
+                                        $("#fourth_btn").addClass("btn-danger")
+                                        $(".checkbox").attr("disabled", "disabled")
+                                        $("#checkbox-all").attr("disabled", "disabled")
+                                    }
+                                })
+                            }
+                            finally {
+                                that.removeClass("disabled")
+                                $("input").attr("checked", false)
+                                orderarry.splice(0, orderarry.length)
+                                $("#batch_change_Partdeliverys").addClass("hidden")
+                                that.addClass("hidden")
+                                $(".get_erp_status").removeClass("hidden")
+                            }
+                        }
+                        else {
+                            $("#tm-view-loading").hide()
+                            $.confirm({
+                                title: '提示!',
+                                type: 'red',
+                                content: "系统错误，请刷新后重试",
+                                buttons: {
+                                    "确认": function () {
+                                        window.location.reload()
+                                    }
+                                }
+                            });
+                        }
+                    }
+                })
+            }
+            orderarry.remove(that.attr("data-val"))
+        })
+        // 同步ERP快递信息
+        $(".get_erp_status").click(function () {
+            var that = $(this)
+            $("#tm-view-loading").show()
+            if (orderarry.length == 0) {
+                orderarry.push(that.attr("data-val"))
+            }
+            $.ajax({
+                url: "/SalesProcess/getERPORDERS/",
+                type: "post",
+                data: {
+                    c_id: orderarry,
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#tm-view-loading").hide()
+                        try{
+                            // error
+                            if(data.errorlist.length != 0)
+                                 $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: data.errorlist[0] + "&nbsp&nbsp" + "暂未发货",
+                                 });
+                            // fail
+                            if(data.faillist.length != 0)
+                                 $.alert({
+                                    title: '提示!',
+                                    type: 'red',
+                                    content: data.faillist[0],
+                                 });
+                            // crm error
+                            if (data.partiallist.length != 0)
+                                 $.alert({
+                                    title: '提示!',
+                                    type: 'red',
+                                    content: data.partiallist[0] + "&nbsp&nbsp" + "CRM同步失败",
+                                 });
+                            // success
+                            if (data.successlist.length != 0)
+                                throw $.alert({
+                                    title: '提示!',
+                                    type: 'green',
+                                    content: data.successlist[0] + "&nbsp&nbsp" + "已从ERP获取成功",
+                                });
+                        }
+                        catch(success){
+                            $.ajax({
+                                url: "/SalesProcess/CRM_undeliveredPartical/",
+                                data: {
+                                    status: "3764330",
+                                    shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                },
+                                success: function (data) {
+                                    $("#undelivered_list_content").html(data)
+                                    $("#second_btn").removeClass("btn-danger")
+                                    $("#third_btn").removeClass("btn-danger")
+                                    $("#fourth_btn").addClass("btn-danger")
+                                    $("input").attr("disabled", "disabled")
+                                }
+                            })
+                        }
+                    }
+                    else {
+                        $("#tm-view-loading").hide()
+                        $.confirm({
+                            title: '提示!',
+                            type: 'red',
+                            content: "系统错误，请刷新后重试",
+                            buttons: {
+                                "确认": function () {
+                                    window.location.reload()
+                                }
+                            }
+                        });
+                    }
+                }
+            })
+            orderarry.remove(that.attr("data-val"))
+        })
+        // 同步到ERP等待审核
+        $(".change_status").on("click", function () {
+            var that = $(this)
+            $("#tm-view-loading").show()
+            if (orderarry.length == 0) {
+                orderarry.push(that.attr("data-val"))
+            }
+            $.ajax({
+                url: "/SalesProcess/createOrder/",
+                type: "post",
+                data: {
+                    c_id: orderarry
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $("#tm-view-loading").hide()
+                        try{
+                            // fail
+                            if(data.faillist.length != 0)
+                                $.alert({
+                                    title: '提示!',
+                                    type: 'red',
+                                    content: data.faillist[0],
+                                });
+                            // crm err
+                            if (data.partiallist.length != 0)
+                            $.alert({
+                                title: '提示!',
+                                type: 'red',
+                                content: data.partiallist[0] + "&nbsp&nbsp" + "CRM同步失败",
+                            });
+                            // success
+                            if (data.successlist.length != 0)
+                                throw $.alert({
+                                    title: '提示!',
+                                    type: 'green',
+                                    content: data.successlist[0] + "&nbsp&nbsp" + "已推送至ERP等待审核",
+                                });
+                        }
+                        catch (success) {
+                            //$.ajax({
+                            //    url: "/SalesProcess/GetCrmInfo/",
+                            //    type: "post",
+                            //    data: {
+                            //        url_api: "/api/v2/contracts/"
+                            //    },
+                            //    success: function (data) {
+                            //    }
+                            //})
+                            $.ajax({
+                                url: "/SalesProcess/CRM_undeliveredPartical/",
+                                data: {
+                                    status: "3531567",
+                                    shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                },
+                                success: function (data) {
+                                    $("#undelivered_list_content").html(data)
+                                }
+                            })
+                        }
+                    }
+                    else {
+                        $("#tm-view-loading").hide()
+                        $.confirm({
+                            title: '提示!',
+                            type: 'red',
+                            content: "系统错误，请刷新后重试",
+                            buttons: {
+                                "确认": function () {
+                                    window.location.reload()
+                                }
+                            }
+                        });
+                    }
+                }
+            })
+            orderarry.remove(that.attr("data-val"))
+        })
+        //
+        $(".select_btn").on("click", function () {
+            var that = $(this)
+            $("#tm-view-loading").show()
+            var Province = that.attr("data-province")
+            var City = that.attr("data-city")
+            var District = that.attr("data-district")
+            if (that.hasClass("change_address")) {
+                $.ajax({
+                    url: "/SalesProcess/createOrder/",
+                    type: "post",
+                    data: {
+                        c_id: that.attr("data-val"),
+                        province: Province,
+                        city: City,
+                        district: District,
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $("#tm-view-loading").hide()
+                            try {
+                                // fail
+                                if (data.faillist.length != 0)
+                                    $.alert({
+                                        title: '提示!',
+                                        type: 'red',
+                                        content: data.faillist[0],
+                                    });
+                                // crm err
+                                if (data.partiallist.length != 0)
+                                $.alert({
+                                    title: '提示!',
+                                    type: 'red',
+                                    content: data.partiallist[0] + "&nbsp&nbsp" + "CRM同步失败",
+                                });
+                                // success
+                                if (data.successlist.length != 0)
+                                    throw $.alert({
+                                        title: '提示!',
+                                        type: 'green',
+                                        content: data.successlist[0] + "&nbsp&nbsp" + "已推送至ERP等待审核",
+                                    });
+                            }
+                            catch(success) {
+                                //$.ajax({
+                                //    url: "/SalesProcess/GetCrmInfo/",
+                                //    type: "post",
+                                //    data: {
+                                //        url_api: "/api/v2/contracts/"
+                                //    },
+                                //    success: function (data) {
+                                //    }
+                                //})
+                                $.ajax({
+                                    url: "/SalesProcess/CRM_undeliveredPartical/",
+                                    data: {
+                                        status: "3531567",
+                                        shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                    },
+                                    success: function (data) {
+                                        $("#undelivered_list_content").html(data)
+                                    }
+                                })
+                            }
+                        }
+                        else {
+                            $("#tm-view-loading").hide()
+                            $.confirm({
+                                title: '提示!',
+                                type: 'red',
+                                content: "系统错误，请刷新后重试",
+                                buttons: {
+                                    "确认": function () {
+                                        window.location.reload()
+                                    }
+                                }
+                            });
+                        }
+
+                    }
+                })
+            }
+            else if (that.hasClass("change_payments")) {
+                $.ajax({
+                    url: "/SalesProcess/Admin_pass",
+                    type:"post",
+                    data: {
+                        c_id: that.attr("data-val")
+                    },
+                    success: function (data) {
+                        if (data.result == "SUCCESS") {
+                            $.ajax({
+                                url: "/SalesProcess/createOrder/",
+                                type: "post",
+                                data: {
+                                    c_id: that.attr("data-val"),
+                                    province: Province,
+                                    city: City,
+                                    district: District,
+                                },
+                                success: function (data) {
+                                    if (data.result == "SUCCESS") {
+                                        $("#tm-view-loading").hide()
+                                        try {
+                                            // fail
+                                            if (data.faillist.length != 0)
+                                                $.alert({
+                                                    title: '提示!',
+                                                    type: 'red',
+                                                    content: data.faillist[0],
+                                                });
+                                            // crm err
+                                            if (data.partiallist.length != 0)
+                                            $.alert({
+                                                title: '提示!',
+                                                type: 'red',
+                                                content: data.partiallist[0] + "&nbsp&nbsp" + "CRM同步失败",
+                                            });
+                                            // success
+                                            if (data.successlist.length != 0)
+                                                throw $.alert({
+                                                    title: '提示!',
+                                                    type: 'green',
+                                                    content: data.successlist[0] + "&nbsp&nbsp" + "已推送至ERP等待审核",
+                                                });
+                                        }
+                                        catch(success) {
+                                            //$.ajax({
+                                            //    url: "/SalesProcess/GetCrmInfo/",
+                                            //    type: "post",
+                                            //    data: {
+                                            //        url_api: "/api/v2/contracts/"
+                                            //    },
+                                            //    success: function (data) {
+                                            //    }
+                                            //})
+                                            $.ajax({
+                                                url: "/SalesProcess/CRM_undeliveredPartical/",
+                                                data: {
+                                                    status: "3531567",
+                                                    shopCode: $(".active").children(".shop_btn").attr("data-id")
+                                                },
+                                                success: function (data) {
+                                                    $("#undelivered_list_content").html(data)
+                                                }
+                                            })
+                                        }
+                                    }
+                                    else {
+                                        $("#tm-view-loading").hide()
+                                        $.confirm({
+                                            title: '提示!',
+                                            type: 'red',
+                                            content: "系统错误，请刷新后重试",
+                                            buttons: {
+                                                "确认": function () {
+                                                    window.location.reload()
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            })
+                        }
+                        else {
+                            $.alert({
+                                title: '提示!',
+                                type: 'red',
+                                content: "回款未完成，无法提交",
+                            });
+                        }
+                    }
+                })
+            }
+            orderarry.remove(that.attr("data-val"))
+        })
+        // 详情
+        $(".contract_detail").on("click", function () {
+            var that = $(this)
+            $.ajax({
+                url: "/SalesProcess/ContractDetail_show",
+                data: {
+                    c_id: $(this).attr("data-val")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                    $("#contract-title").text(that.attr("data-title"))
+                }
+            })
+        })
+        //刷新组织架构
+        $("#expressInfo").dblclick(function () {
+            $("#refresh_org").slideToggle()
+        });
+        $("#refresh_org").unbind("click")
+        $("#refresh_org").on("click",function () {
+            $.ajax({
+                url: "/SalesProcess/GetUserInfo/",
+                type:"post",
+                success: function (data) {
+                    alert("组织机构刷新成功")
+                }
+            })
+        })
+    })
+</script>

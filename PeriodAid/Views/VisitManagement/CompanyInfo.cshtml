@@ -1,0 +1,262 @@
+﻿@model PeriodAid.Models.VM_Company
+    <style>
+        .form-group{
+            margin-bottom:10px
+        }
+        label{
+            font-family: "Arial","Microsoft YaHei","黑体","宋体",sans-serif;
+            font-weight:500
+        }
+        .col-md-2{
+            padding-right:0;
+            width: 14%;
+        }
+        .col-md-3{
+            padding-right:0;
+        }
+    </style>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h3 style="padding-left: 50px;display:inline-block">@Model.Company_Name</h3>
+</div>
+<div class="hidden" id="orderId_show"></div>
+<div class="modal-body" id="modal-body" style="padding-top:10px">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-size:15px;font-weight:600">基本信息:</label>
+        </div>
+        <div class="form-group">
+            @if (Model.Company_Category == 1)
+            {
+                <label class="col-md-2 control-label" style="font-size:15px">客户类型:</label>
+                <div class="col-md-5" style="line-height: 36px;font-size: 14px">
+                    @Model.Company_Type
+                </div>
+                <label class="col-md-1 control-label" style="font-size:15px;padding-left:0">客户情况:</label>
+                <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                    @Html.CategoryType(Model.Company_Category)
+                </div>
+            }
+            else
+            {
+                <label class="col-md-2 control-label" style="font-size:15px">客户类型:</label>
+                <div class="col-md-2" style="line-height: 36px;font-size: 14px;white-space:normal">
+                    @Model.Company_Type
+                </div>
+                <label class="col-md-2 control-label" style="font-size:15px">客户情况:</label>
+                <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                    @Html.CategoryType(Model.Company_Category)
+                </div>
+                <label class="col-md-1 control-label" style="font-size:15px">年销售额:</label>
+                <div class="col-md-2" style="line-height: 36px;font-size: 14px">
+                    @Model.Sales_Amount 万元
+                </div>
+            }
+        </div>
+        <div class="form-group">
+            @if (Model.Company_Category == 1)
+            {
+                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">渠道名称:</label>
+                <div class="col-md-5" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                    <span style="float:left">@Model.Source_Name</span>
+                </div>
+                if (Model.Store_Count != null)
+                {
+                    <label class="col-md-1 control-label" style="white-space: nowrap;font-size:15px;padding-left:0">门店总数:</label>
+                    <div class="col-md-2" style="font-size:14px;line-height: 36px;padding-left:15px">
+                        @Model.Store_Count.Value
+                    </div>
+                }
+            }
+            else
+            {
+                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">渠道名称:</label>
+                <div class="col-md-10" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                    <span style="float:left">@Model.Source_Name</span>
+                </div>
+            }
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label " style="font-size:15px">所属区域:</label>
+            <div class="col-md-2" style="white-space:normal;float:left;font-size:14px;line-height: 36px;">
+                <span style="float:left">@Model.Region</span>
+            </div>
+            <label class="col-md-2 control-label" style="font-size:15px">渠道类型:</label>
+            <div class="col-md-2" style="line-height: 36px;font-size: 14px">
+                @Model.Source_Type
+            </div>
+            @if (Model.Company_Category == 1)
+            {
+                <label class="col-md-1 control-label" style="font-size:15px;padding-left:0">客户来源:</label>
+                <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                    <span style="float:left" class="replace_text">@Model.Company_Source @Model.Company_Source_Detail</span>
+                </div>
+            }
+            else
+            {
+                <label class="col-md-1 control-label" style="font-size:15px">客户来源:</label>
+                <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                    <span style="float:left" class="replace_text">@Model.Company_Source @Model.Company_Source_Detail</span>
+                </div>
+            }
+
+        </div>
+        
+        <div class="form-group">
+            @if (Model.Company_Category == 1)
+            {
+                if (Model.Entrance_Fee != null)
+                {
+                    if (Model.Entrance_Fee.Value == 0)
+                    {
+                        <label class="col-md-2 control-label" style="font-size:15px">进场费用:</label>
+                        <div class="col-md-2" style="line-height: 36px;font-size: 14px">
+                            @Html.SpecialSource(Model.Entrance_Fee.Value)
+                        </div>
+                        if (Model.Entrance_Type != null)
+                        {
+                            <label class="col-md-2 control-label" style="font-size:15px">费用单位:</label>
+                            <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                                @Html.EntranceType(Model.Entrance_Type.Value)
+                            </div>
+                        }
+                        if (Model.EntranceFee_Count != null)
+                        {
+                            <label class="col-md-1 control-label" style="font-size:15px;padding-left:0">费用数额:</label>
+                            <div class="col-md-3" style="font-size:14px;line-height: 36px;">
+                                @Model.EntranceFee_Count.Value 元/SKU
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <label class="col-md-2 control-label" style="font-size:15px">进场费用:</label>
+                        <div class="col-md-10" style="line-height: 36px;font-size: 14px">
+                            @Html.SpecialSource(Model.Entrance_Fee.Value)
+                        </div>
+                    }
+                }
+            }
+        </div>
+        @if (Model.Company_Category == 0)
+            {
+            <div class="form-group">
+
+                @if (Model.Dedicated_Warehouse == 0)
+                {
+                    <label class="col-md-2 control-label " style="font-size:15px">专用仓库:</label>
+                    <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                        @Html.SpecialSource(Model.Dedicated_Warehouse)
+                    </div>
+                    <label class="col-md-2 control-label" style="font-size:15px">仓库面积:</label>
+                    <div class="col-md-2" style="line-height: 36px;font-size: 14px">
+                        @Model.Warehouse_Area 平方米
+                    </div>
+                    <label class="col-md-1 control-label" style="font-size:15px">销售人员:</label>
+                    <div class="col-md-3" style="font-size:14px;line-height: 36px;">
+                        @Model.Employee_Count 人
+                    </div>
+                }
+                else
+                {
+                    <label class="col-md-2 control-label " style="font-size:15px">专用仓库:</label>
+                    <div class="col-md-5" style="font-size:14px;line-height: 36px;">
+                        @Html.SpecialSource(Model.Dedicated_Warehouse)
+                    </div>
+                    <label class="col-md-1 control-label" style="font-size:15px;padding-left:5px">销售人员:</label>
+                    <div class="col-md-2" style="font-size:14px;line-height: 36px;">
+                        @Model.Employee_Count 人
+                    </div>
+                }
+
+            </div>
+        }
+        @if (Model.Company_Category == 0)
+        {
+            <div class="form-group">
+                @if (Model.Special_Source != null)
+                {
+                    if (Model.Special_Source.Value != -1)
+                    {
+                        <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
+                        <div class="col-md-4" style="line-height: 36px;font-size: 14px">
+                            @Html.SpecialSource(Model.Special_Source.Value)
+                        </div>
+                        <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道详情:</label>
+                        <div class="col-md-3" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                            <span style="float:left">@Model.SpecialSource_Detail</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">特殊渠道:</label>
+                        <div class="col-md-9" style="line-height: 36px;font-size: 14px">
+                            @Html.SpecialSource(Model.Special_Source.Value)
+                        </div>
+                    }
+                }
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" style="white-space: nowrap;font-size:15px">代理知名品牌:</label>
+                <div class="col-md-10" style="white-space: normal;float:left;font-size:14px;line-height: 36px;">
+                    <span style="float:left">@Model.Agent_FamousBrand</span>
+                </div>
+            </div>
+        }
+        
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-size:15px">联系电话:</label>
+            <div class="col-md-9" style="line-height: 36px;font-size: 14px">
+                @Model.Company_Phone
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-md-2 control-label" style="font-size:15px">公司地址:</label>
+            <div class="col-md-9" style="line-height: 36px;font-size: 14px">
+                @Model.Company_Address
+            </div>
+        </div>
+
+    <hr style="margin:0;border:1px solid #e5e5e5" />
+    <div class="form-group" style="margin-bottom:50px">
+        <label class="col-md-2 control-label" style="font-size:15px;font-weight:600">联系人信息:</label>
+        <div class="col-md-11 col-md-offset-1" style="margin-top:10px;flex-wrap: wrap;">
+            <div class="contact_shared_view col-md-2">姓名</div>
+            <div class="contact_shared_view col-md-3">联系电话</div>
+            <div class="contact_shared_view col-md-3">邮箱</div>
+            <div class="contact_shared_view col-md-2">微信</div>
+            <div class="contact_shared_view col-md-2">职务</div>
+            @foreach (var contact in Model.VM_Contact)
+            {
+                    <div class="contact_shared_view col-md-2" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="@contact.Contact_Name">
+                        @contact.Contact_Name
+                    </div>
+                    <div class="contact_shared_view col-md-3">@contact.Contact_Mobile</div>
+                    <div class="contact_shared_view col-md-3">@contact.Contact_Email</div>
+                    <div class="contact_shared_view col-md-2">@contact.Contact_WeChat</div>
+                    <div class="contact_shared_view col-md-2">@contact.Contact_Type</div>
+            }
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-1 col-md-9">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    $(".angle_btn").on("click", function () {
+        var that = $(this)
+        if (that.children("i").hasClass("fa-angle-double-down")) {
+            that.children("i").removeClass("fa-angle-double-down")
+            that.children("i").addClass("fa-angle-double-up")
+        } else {
+            that.children("i").removeClass("fa-angle-double-up")
+            that.children("i").addClass("fa-angle-double-down")
+        }
+    })
+    // 替换
+    var str = $(".replace_text").text()
+    $(".replace_text").text(str.replace("/"," "))
+</script>

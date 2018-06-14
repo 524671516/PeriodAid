@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>销售管理系统</title>
+    <title>CRM销售管理系统</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
     <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
@@ -58,16 +58,11 @@
     <div class="navbar  navbar-default navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/SalesProcess/ProductList?productType=0"><strong class="color-blue">销售管理</strong></a>
+                    <a class="navbar-brand" href="/SalesProcess/CRM_show"><strong class="color-blue">销售管理</strong></a>
                 </div>
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav" id="ul-hover">
-                        <li><a href="/SalesProcess/ProductList">产品管理</a></li>
-                        <li><a href="/SalesProcess/ClientList">经销商管理</a></li>
-                        <li><a href="/SalesProcess/SalesList">渠道管理</a></li>
-                        <li><a href="/SalesProcess/SellerList">人员管理</a></li>
-                        <li><a href="/SalesProcess/OrderList">订单管理</a></li>
-                        <li><a>财务管理</a></li>
+                        <li><a href="/SalesProcess/CRM_show">爱客订单管理</a></li>
                     </ul>
                     @Html.Partial("_LoginPartial")
                 </div>
@@ -88,27 +83,13 @@
                         <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
                             <div class="panel-body">
                                 <ul class="list-unstyled">
-                                    @*<li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>*@
+                                    <li class="left-navbar" style="cursor:pointer"><a href=""><i class="fa fa-bars"></i>&nbsp;&nbsp;暂未开通</a></li>
+
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingTwo">
-                            <h4 class="panel-title">
-                                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                    线下 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow" aria-hidden="true" aria-labelledby="headingTwo"></i>
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-                            <div class="panel-body">
-                                <ul class="list-unstyled">
-                                    @*<li class="left-navbar" style="cursor:pointer"><a href="/SalesProcess/ProductList"><i class="fa fa-bars"></i>&nbsp;&nbsp;产品列表</a></li>*@
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
             <div class="col-md-10">

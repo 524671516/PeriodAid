@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "MD_OrderDetailView";
+    Layout = "~/Views/Shared/_MonthlyDeliveryLayout.cshtml";
+}
+<style>
+    .jconfirm-box-container {
+        top: -200px;
+        left: 480px;
+    }
+</style>
+<div class="h2 text-center" id="orderId" data-id="@ViewBag.orderDetail">订单详情</div>
+<ol class="breadcrumb">
+    当前位置：
+    <li class="active">订单详情</li>
+    <li><a style="cursor:pointer" class="backBtn">返回上一页</a></li>
+</ol>
+<div id="orderdetail_list_content" style="margin-top:20px">
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $("#ul-hover").children("li").eq(0).addClass("current")
+            $.ajax({
+                url: "/MonthlyDelivery/MD_OrderDetailPartialView/",
+                data: {
+                    parentOrder_id: $("#orderId").attr("data-id")
+                },
+                success: function (data) {
+                    $("#orderdetail_list_content").html(data)
+                    $(".amalgamate_btn").attr("data-pid", $("#orderId").attr("data-id"))
+                }
+            })
+            $(".backBtn").on("click", function () {
+                $(this).attr("href", "/MonthlyDelivery/MD_OrderView/")
+            })
+        })
+    </script>
+
+
+}

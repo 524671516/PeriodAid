@@ -1,0 +1,85 @@
+﻿@model IEnumerable<PeriodAid.Models.VM_Comment>
+
+<div class="modal-header">
+    <h2>所有评论</h2>
+</div>
+<div class="modal-body" id="modal-body">
+    @foreach (var detial in Model)
+    {
+        <div id="messDivId">
+            <div class="story">
+                <div class="opbtn"></div>
+                <p class="story_t">@detial.Nick_Name</p>
+                <p class="story_time">@detial.Comment_Time.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                <p class="story_m">@detial.Comment_Detail</p>
+            </div>
+        </div>
+    }
+    <div id="comment_text">
+        @using (Html.BeginForm("CreateComment", "VisitManagement", FormMethod.Post, new { @id = "comment-form" }))
+        {
+            <div class="form-horizontal" style="text-align:center">
+                <div>
+                    <div id="comment_container">
+                        <input id="com_detial"required="required" autocomplete="off" placeholder="评论内容" />
+                        <input type="button" value="确定" id="save-btn" class="btn btn-danger" name="save-btn" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $("#save-btn").on("click", function () {
+        var that = $(this)
+        if (!$(this).hasClass("disabled")) {
+            $(this).addClass("disabled")
+            $("#comment-form").ajaxSubmit({
+                url: '/VisitManagement/CreateComment',
+                type: 'post',
+                data: {
+                    detail: $("#com_detial").val(),
+                    rec_id: $("#modal-body").attr("data-id")
+                },
+                success: function (data) {
+                    if (data.result == "SUCCESS") {
+                        $('#myCommentModal').modal('hide')
+                        var comment_list = $(".comment_select_a")
+                        for (i = 0 ; i < comment_list.length; i++) {
+                            var that = $(comment_list[i])
+                            $.ajax({
+                                url: "/VisitManagement/Comment_Count",
+                                type: "post",
+                                data: {
+                                    rec_id: that.attr("data-id"),
+                                },
+                                success: function (data) {
+                                    $(".comment_select_a[data-id=" + data.rid + "]").children("span").text(data.comment)
+                                }
+                            })
+                        }
+                    }
+                    else if (data.result == "FAIL") {
+                        $("#save-btn").removeClass("disabled")
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "输入内容不能为空",
+                        });
+                        
+                    }
+                    else {
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "请联系管理员开通权限",
+                        });
+                    }
+                    
+                }
+            })
+            return false;
+        }
+    })
+</script>

@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "Comment_View";
+    Layout = "~/Views/Shared/_VisitManagementView.cshtml";
+}
+<div class="hidden" id="record_id"></div>
+<div class="ylcon" id="comment_view">
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $.ajax({
+                url: "/VisitManagement/Comment_PartialView",
+                data: {
+                    rec_id: getUrlParam("rec_id")
+                },
+                success: function (data) {
+                    $("#comment_view").html(data)
+                }
+            })
+        })
+    </script>
+    }

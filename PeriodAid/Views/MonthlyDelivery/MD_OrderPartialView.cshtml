@@ -1,0 +1,158 @@
+﻿@model PagedList.IPagedList<PeriodAid.Models.MD_Order>
+@using PagedList.Mvc;
+<style>
+    .jconfirm-box-container {
+        top: -200px;
+        left: 480px;
+    }
+</style>
+<div>
+    <table class="table table-hover">
+        <tr style="background-color:#f9f9f9">
+            <th style="width:10%">平台单号</th>
+            <th style="width:8%">代码</th>
+            <th style="width:5%">数量</th>
+            <th style="width:10%">客户名称</th>
+            <th style="width:10%">发货日期</th>
+            <th style="width:20%">邮寄地址</th>
+            <th style="width:30%"></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr class="times_view" data-id="@item.Id" data-toggle="tooltip" data-placement="left">
+                <td>
+                    <div style="width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.order_code</div>
+                </td>
+                <td>@item.MD_Product.product_code</td>
+                <td style="text-indent:7px">@item.qty</td>
+                <td>
+                    <div style="width:82px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">@item.vip_code</div>
+                </td>
+                <td>@(item.receiver_date != null ? item.receiver_date.Value.ToString("yyyy-MM-dd") : "n/a")</td>
+                <td>
+                    <div style="width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" data-toggle="tooltip" data-placement="bottom" title="@item.receiver_address">
+                        @item.receiver_area @item.receiver_address
+                    </div>
+                </td>
+                <td>
+                    <a class="btn btn-xs btn-success create_btn select_btn" role="button" data-id="@item.Id" data-pid="@item.parentOrder_id" data-cstatus="@item.createSub_status" data-toggle="modal" data-target="#myModal">生成复购订单</a>
+                    <a class="btn btn-xs btn-danger cancel_btn select_btn" role="button" data-id="@item.Id" data-ostatus="@item.order_status">取消发送</a>
+                    <a class="btn btn-xs btn-info orderDetail_btn" role="button" data-id="@item.Id">复购订单</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="text-right">
+        @Html.PagedListPager(Model, page => Url.Action("MD_OrderPartialView", new { page }))
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+<script>
+    $(".times_view").mouseover(function () {
+        var that = $(this)
+        $.ajax({
+            url: "/MonthlyDelivery/ReceiverTimes/",
+            data: {
+                order_id: that.attr("data-id")
+            },
+            success: function (data) {
+                that.attr("data-original-title", "待发货:" + data + "次")
+            }
+        })
+    })
+    $(function () {
+        $('.create_btn[data-cstatus="1"]').addClass("disabled")
+        $('.create_btn[data-cstatus="0"]').removeClass("disabled")
+        $('.cancel_btn[data-ostatus="-1"]').addClass("disabled")
+        $(".times_view").trigger("mouseover").unbind("mouseover")
+        $('[data-toggle="tooltip"]').tooltip();
+        $(".pagination > li > a").click(function () {
+            var l = $(this).attr("href");
+            $.ajax({
+                url: l,
+                data: {
+                    query: $("#order_query").val(),
+                    create_status: $(".active").children(".order_btn").attr("data-cstatus")
+                },
+                success: function (data) {
+                    $("#order_list_content").html(data);
+                }
+            });
+            return false;
+        });
+        $(".orderDetail_btn").on("click", function () {
+            var that = $(this);
+            var orderId = that.attr("data-id")
+            that.attr("href", "/MonthlyDelivery/MD_OrderDetailView/?order_id=" + orderId)
+        })
+        // 取消发送
+        $(".cancel_btn").on("click", function () {
+            var that = $(this)
+            $.confirm({
+                title: '注意!',
+                content: "是否取消发货",
+                type: 'red',
+                buttons: {
+                    确认: function () {
+                        $.ajax({
+                            url: "/MonthlyDelivery/Cancel_Order/",
+                            type: "post",
+                            data: {
+                                order_id: that.attr("data-id")
+                            },
+                            success: function (data) {
+                                if (data.result == "SUCCESS") {
+                                    $.alert({
+                                        title: '提示!',
+                                        content: '取消成功!',
+                                        type: 'green',
+                                    });
+                                    $.ajax({
+                                        url: "/MonthlyDelivery/MD_OrderPartialView/",
+                                        data: {
+                                            page: 1,
+                                            query: $("#order_query").val(),
+                                            create_status: $(".active").children(".order_btn").attr("data-cstatus")
+                                        },
+                                        success: function (data) {
+                                            $("#order_list_content").html(data)
+                                            $("#tm-view-loading").hide()
+                                        }
+                                    })
+                                }
+                                else {
+                                    $.alert({
+                                        title: '提示!',
+                                        content: '订单已全部推送ERP,无法直接取消!',
+                                        type: 'red',
+                                    });
+                                }
+                            }
+                        })
+                    },
+                    取消: function () {
+                    },
+                }
+            });
+        })
+        // 生成子订单
+        $(".create_btn").on("click", function () {
+            var that = $(this)
+            $.ajax({
+                url: "/MonthlyDelivery/CreateSubOrders/",
+                data: {
+                    order_id: that.attr("data-id")
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+    })
+</script>

@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>月月送管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/SalesProcess.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/prettify.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
+    <style>
+        .navbar-default .navbar-nav > li > a{
+            color: #393232;
+        }
+        .form-horizontal .control-label{
+            padding-top: 10px;
+        }
+        .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td{
+            vertical-align: bottom
+        }
+        .nav-tabs{
+            border-bottom:none
+        }
+        .has-error {
+            padding-top: 2px;
+
+            font-weight: 400;
+
+            color: #a94442;
+        }  
+        .breadcrumb{
+            background:none;
+            padding:0;
+            margin:0
+        }
+        .btn-xs {
+        line-height: 1.4;
+        }
+        .date-readonly[readonly]{
+             background:#fff
+         }
+    </style>
+</head>
+<body>
+    @RenderSection("menu", required: false)
+    <div class="navbar  navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/MonthlyDelivery/MD_OrderView"><strong class="color-blue">月月送管理</strong></a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav" id="ul-hover">
+                        <li><a href="/MonthlyDelivery/MD_OrderView">月月送订单管理</a></li>
+                    </ul>
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+    <div class="container body-content" style="padding:20px">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    线上 <i class="fa fa-chevron-right pull-right text-muted leftnav-arrow panel-animate" aria-hidden="true" aria-labelledby="headingOne"></i>
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                <ul class="list-unstyled">
+                                    <li class="left-navbar" style="cursor:pointer"><a href=""><i class="fa fa-bars"></i>&nbsp;&nbsp;暂未开通</a></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+            <div class="col-md-10">
+                @RenderBody()
+            </div>
+        </div>
+        <footer>
+            @*<p>&copy; @DateTime.Now.Year - 我的 ASP.NET 应用程序</p>*@
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
+    <script src="~/Scripts/SalesProcess.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/off-JavaScript.js"></script>
+    <script src="~/Scripts/bootstrap-typeahead.js"></script>
+    <script src="~/Scripts/kalendae.standalone.js"></script>
+    <script src="~/Scripts/ajaxfileupload.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script>
+    var locUrl = window.location.pathname;
+    console.log(locUrl)
+    $("#ul-hover li a").each(function (index, el) {
+        var href = this.getAttribute("href");
+        if( href == locUrl){
+            $(this).parent("li").addClass('current');
+        }
+    });
+    function backBtn() {
+        window.history.back();
+    };
+</script>

@@ -1,0 +1,72 @@
+﻿
+@{
+    ViewBag.Title = "RightsList";
+    Layout = "~/Views/Shared/_AccountRightsLayout.cshtml";
+}
+<table class="offline-search-box" style="margin-bottom:10px">
+    <tr>
+        <td class="float-right">
+            <label>姓名：</label>
+            <input class="form-control input-sm offline-search-inline" style="height:30px" id="employee_name" placeholder="搜索内容" />
+            <a class="btn btn-info btn-sm" id="employee_search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+        </td>
+    </tr>
+</table>
+<a class="btn btn-info btn-sm" id="add_user" style="margin-bottom:20px" data-toggle="modal" data-target="#myModal"><i class="fa fa-plus-circle"></i>&nbsp;&nbsp;新增人员信息</a>
+<div id="manager_list">
+</div>
+<div class="tm-veiw-loading text-center" id="tm-view-loading" style="height:100%">
+    <i class="fa fa-spinner fa-pulse fa-3x fa-fw color-blue"></i><br><h4>数据加载中，请勿刷新界面！</h4>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+@section scripts{
+<script>
+    $(function () {
+        $("#tm-view-loading").show()
+        $.ajax({
+            url: "/AccountRights/RightsListPartial",
+            success: function (data) {
+                $("#tm-view-loading").hide()
+                $("#manager_list").html(data)
+            }
+        });
+        
+        //搜索
+        $("#employee_search").click(function () {
+            $("#tm-view-loading").show()
+            $("#manager_list").html("")
+            var query = $("#employee_name").val();
+            var url = "/AccountRights/RightsListPartial"
+            $.ajax({
+                url: url,
+                data: {
+                    query: query
+                },
+                success: function (data) {
+                    $("#manager_list").html(data)
+                    $("#tm-view-loading").hide()
+                }
+            })
+        });
+        // 新增人员信息
+        $("#add_user").on("click", function () {
+            $.ajax({
+                url: '/AccountRights/Add_UserInfo',
+                data: {
+                },
+                success: function (data) {
+                    $('#modal-content').html(data)
+                    $("#myModal").modal('show')
+                }
+            })
+        })
+    })
+</script>
+    }
+
+

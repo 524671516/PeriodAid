@@ -1,0 +1,55 @@
+﻿@model SqzEvent.Models.VM_VisitRecord
+<div class="navbar">
+    <div class="navbar-inner">
+        <div class="left">
+            <a href="#" class="back link">
+                <i class="icon icon-back" aria-hidden="true"></i>
+                <span>返回</span>
+            </a>
+        </div>
+        <div class="center sliding"><strong>新增拜访记录</strong></div>
+        <div class="right">
+            <a href="javascript:;" class="link" id="addvisit-submit">提交</a>
+        </div>
+    </div>
+</div>
+<div class="pages">
+    <div class="page" data-page="addbreakdown">
+        <div class="page-content">
+            @using (Html.BeginForm("AddVisit", "VisitManagementController", FormMethod.Post, new { @id = "addvisit-form", @class = "validate-form" }))
+            {
+            <div class="content-block-title">新增拜访记录</div>
+                <div class="list-block">
+                    <ul>
+                        <li id="FactoryLi">
+                            <a href="#" class="item-link smart-select" data-back-text="返回" data-back-on-select="true" data-searchbar-placeholder="选择客户" data-searchbar-cancel="取消" id="factory-select">
+                                @Html.DropDownList("Customer_Id", ViewBag.CustomerDropDown as SelectList, "- 请选择 -", new { @class = "required" })
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title">选择客户</div>
+                                        <div class="item-after">- 请选择 -</div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li>
+                            <div class="item-content middle-content">
+                                @Html.TextAreaFor(m => m.Meeting_Summary, new { placeholder = "请输入会议纪要", required = "required", maxlength = "200" })
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">下次拜访时间</div>
+                                    <div class="item-input">
+                                        <input type="text" class="item-input-right" id="BreakDownTimeTiny" name="BreakDownTimeTiny" placeholder="故障时间" />
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,116 @@
+﻿
+@{
+    ViewBag.Title = "SalesStatistics_View";
+    Layout = "~/Views/Shared/_PlattformInventory.cshtml";
+}
+<style>
+    label{
+        margin-bottom:0
+    }
+    #daily-date{
+        line-height: normal;
+        font-size: 12px;
+        display: inline-block;
+        padding:4px 15px 4px 8px;
+        width: 104px;
+        text-align: center;
+        margin-left:0 
+    }
+</style>
+<div id="select_condition">
+    <table class="offline-search-box" style="float:right;width:50%">
+        <tr>
+            <td class="pull-right">
+                <label>产品名称：</label>
+                <input class="form-control input-sm offline-search-inline" id="sales_product_query" placeholder="搜索内容" />
+                <a class="btn btn-info btn-sm" id="sales_product_search"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</a>
+            </td>
+        </tr>
+    </table>
+    <div class="date_section_select select_condition_div">
+        <label class="pull-left">平台选择：</label>
+        <ul class="shop_section_ul">
+            <li class="date_section_li_active">
+                <a class="shop_select active" data-val="1">京东</a>
+            </li>
+            @*<li>
+                    <a class="shop_select" data-val="2">天猫</a>
+                </li>*@
+        </ul>
+    </div>
+    <div class="date_section_select select_condition_div">
+        <label class="pull-left">数据日期：</label>
+        <ul class="view_section_ul">
+            <li class="date_section_li_active">
+                <a class="view_select active">@ViewBag.Upload.SalesRecord_Date.ToString("yyyy-MM-dd")</a>
+            </li>
+        </ul>
+    </div>
+    <div class="date_section_select select_condition_div">
+        <form method="post" id="dailyData_form" action="/PlattformInventory/getDailyData">
+            <span hidden>@Html.TextBox("daily_date", "", new { @class = "form-control input-sm", type = "text" })</span>
+        </form>
+        <label class="pull-left">数据导出：</label>
+        <div>
+            <input type="text" class="file-date" readonly="readonly" autocomplete="off" id="daily-date" name="file-date" placeholder="选择日期" value="" />
+            <span class="btn btn-primary" id="Statistic_form-download" data-date="30" onclick="$('#dailyData_form').submit();" style="padding:2px 12px;margin-left:8px">数据导出</span>
+        </div>
+    </div>
+</div>
+<div id="salesstatistics_list_content">
+</div>
+@section scripts{
+    <script>
+        $(function () {
+            $("#daily_date").attr("value", $('#daily-date').val())
+            //日期格式改变
+            $(".file-date").datepicker({ dateFormat: "yy-mm-dd" });
+            //星期格式汉化
+            $(".file-date").datepicker("option", "dayNamesMin", ["日", "一", "二", "三", "四", "五", "六"]);
+            //月份格式汉化
+            $(".file-date").datepicker("option", "monthNames", ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]);
+            $(".file-date").datepicker();
+            // 选择日期
+            $('#daily-date').change(function () {
+                $("#daily_date").attr("value", $('#daily-date').val())
+            })
+            $.ajax({
+                url: "/PlattformInventory/SalesStatistics_PartialView",
+                data: {
+                    plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val")
+                },
+                success: function (data) {
+                    $("#salesstatistics_list_content").html(data)
+                }
+            })
+            //搜索
+            $("#sales_product_search").click(function () {
+                $.ajax({
+                    url: "/PlattformInventory/SalesStatistics_PartialView",
+                    data: {
+                        plattformId: $(".shop_section_ul").children(".date_section_li_active").children(".active").attr("data-val")
+                    },
+                    success: function (data) {
+                        $("#salesstatistics_list_content").html(data);
+                    }
+                })
+            });
+            $(".shop_select").click(function () {
+                var that = $(this)
+                $(".shop_section_ul").children("li").removeClass("date_section_li_active")
+                $(".shop_select").removeClass("active")
+                that.addClass("active")
+                that.parent("li").addClass("date_section_li_active")
+                $.ajax({
+                    url: "/PlattformInventory/SalesStatistics_PartialView",
+                    data: {
+                        plattformId: that.attr("data-val")
+                    },
+                    success: function (data) {
+                        $("#salesstatistics_list_content").html(data);
+                    }
+                })
+            })
+        })
+    </script>
+    }

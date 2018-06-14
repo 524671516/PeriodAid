@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "主页";
+    Layout = "~/Views/Shared/_VisitManagement.cshtml";
+}
+<!-- Status bar overlay for fullscreen mode-->
+<div class="statusbar-overlay"></div>
+<!-- Panels overlay-->
+<div class="panel-overlay"></div>
+<!-- Left panel with reveal effect-->
+<div class="panel panel-left panel-reveal left-nav" id="userinfo">
+</div>
+<!-- Views-->
+<div class="views">
+    <!-- Your main view, should have "view-main" class-->
+    <div class="view view-main">
+        <!-- Top Navbar-->
+        <div class="navbar">
+            <div class="navbar-inner">
+                <!-- We have home navbar without left link-->
+                <div class="center sliding">主页</div>
+                <div class="right">
+                    <a href="#" class="link icon-only open-panel"><i class="icon icon-bars"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- Pages, because we need fixed-through navbar and toolbar, it has additional appropriate classes-->
+        <div class="pages navbar-through toolbar-through">
+            <!-- Page, data-page contains page name-->
+            <div data-page="Home" class="page">
+                <!-- Scrollable page content-->
+                <div id="home-refresh" class="page-content pull-to-refresh-content">
+                    <div class="pull-to-refresh-layer">
+                        <div class="preloader"></div>
+                        <div class="pull-to-refresh-arrow"></div>
+                    </div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <div class="item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title center sliding">拜访管理系统</div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="list-block">
+                        <ul>
+                            <li>
+                                <a href="/VisitManagement/CreateVisit" class="item-link item-content">
+                                    <div class="item-media"><i class="fa fa-calendar  icon-css" aria-hidden="true"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title">创建拜访</div>
+                                        <div class="item-after"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/QualityControl/QCCheckin" class="item-link item-content">
+                                    <div class="item-media"><i class="fa fa-sign-in icon-css" aria-hidden="true"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title">拜访记录</div>
+                                        <div class="item-after"></div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/QualityControl/QualityTestList" class="item-link item-content">
+                                    <div class="item-media"><i class="fa fa-check-square icon-css" aria-hidden="true"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title">我的客户&nbsp;<span id="qt_dot" class="hidden weui-badge weui-badge-dot"></span></div>
+                                        <div class="item-after" id="qt_count">0</div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="hidden">
+    <span id="appId">@ViewBag.AppId</span>
+    <span id="timeStamp">@ViewBag.TimeStamp</span>
+    <span id="nonce">@ViewBag.Nonce</span>
+    <span id="url">@ViewBag.Url</span>
+    <span id="signature">@ViewBag.Signature</span>
+</div>
+

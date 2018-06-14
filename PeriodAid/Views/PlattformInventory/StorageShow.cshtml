@@ -1,47 +1,53 @@
 ﻿@model IEnumerable<PeriodAid.Models.Product_SummaryViewModel>
-    <div class="center-block" id="my-form-content">
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active">
-                <table class="table table-bordered table-hover">
-                    <thead>
-                        <tr id="view-head-tr">
-                            <th>产品编号</th>
-                            <th>商品编号</th>
-                            <th>商品名称</th>
-                            <th>销售数据</th>
-                            <th>结算单价</th>
-                            <th>仓库库存</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.OrderByDescending(m => m.Sales_Sum))
+<div class="center-block" id="my-form-content">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr id="view-head-tr">
+                        <th>产品编号</th>
+                        <th>商品编号</th>
+                        <th>商品名称</th>
+                        <th>销售数据</th>
+                        <th>结算单价</th>
+                        <th>仓库库存</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderByDescending(m => m.Sales_Sum))
+                    {
+                        if (item.Product.Product_Type == 1)
                         {
-                            if (item.Product.Product_Type == 1)
-                            {
-                                <tr class="view-body-tr">
-                                    <th scope="row" class="hot-product">@item.Product.System_Code<a class="fire-box"></a></th>
-                                    <td></td>
-                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                    <td class="product-count">@item.Sales_Sum</td>
-                                    <td>@item.Settlement</td>
-                                    <td class="sales-storage">@item.Inventory_Sum</td>
-                                </tr>
-                            }
-                            else
-                            {
-                                <tr class="view-body-tr">
-                                    <th scope="row" class="hot-product">@item.Product.System_Code<a></a></th>
-                                    <td></td>
-                                    <td><a data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
-                                    <td class="product-count">@item.Sales_Sum</td>
-                                    <td>@item.Settlement</td>
-                                    <td class="sales-storage">@item.Inventory_Sum</td>
-                                </tr>
-                            }
+                            <tr class="view-body-tr">
+                                <th scope="row" class="hot-product">@item.Product.System_Code<a class="fire-box"></a></th>
+                                <td>
+                                    @item.Product.Item_Code
+                                </td>
+                                <td><a data-href="#" data-pid="@item.Product.Id" name="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td class="product-count">@item.Sales_Sum</td>
+                                <td>@item.Settlement</td>
+                                <td class="sales-storage">@item.Inventory_Sum</td>
+                            </tr>
                         }
-                    </tbody>
-                </table>
-            </div>
+                        else
+                        {
+                            <tr class="view-body-tr">
+                                <th scope="row" class="hot-product">@item.Product.System_Code<a></a></th>
+                                <td>
+                                    @item.Product.Item_Code
+                                </td>
+                                <td><a data-href="#" data-pid="@item.Product.Id" name="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
+                                <td class="product-count">@item.Sales_Sum</td>
+                                <td>@item.Settlement</td>
+                                <td class="sales-storage">@item.Inventory_Sum</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+   
         </div>
     </div>
+</div>
+    

@@ -1,0 +1,32 @@
+﻿
+@{
+    ViewBag.Title = "AccountRights_View";
+    Layout = "~/Views/Shared/_AccountRightsLayout.cshtml";
+}
+<div class="col-md-12">
+    <h3 class="page-title">
+        修改权限 <small id="user_id" data-id="@ViewBag.Nickname.Id">管理员姓名：@ViewBag.Nickname.NickName</small>
+    </h3>
+</div>
+<ol class="breadcrumb" style="background-color:white">
+    当前位置：
+    <li class="active">权限详情</li>
+    <li><a style="cursor:pointer" class="backBtn">返回上一页</a></li>
+</ol>
+<div id="roles_list"></div>
+@section scripts{
+   <script>
+       $(".backBtn").on("click", function () {
+           $(this).attr("href", "/AccountRights/RightsList/")
+       })
+       $.ajax({
+           url: "/AccountRights/AccountRights_PartialView",
+           data:{
+               userId: $("#user_id").attr("data-id")
+           },
+           success: function (data) {
+               $("#roles_list").html(data)
+           }
+       });
+    </script>
+}

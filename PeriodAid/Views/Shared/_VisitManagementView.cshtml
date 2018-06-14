@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>新客户拜访管理系统</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/font-awesome-ie7.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-confirm.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <link href="~/Content/share.css" rel="stylesheet" />
+    <link href="~/Content/VisitManagement.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css")
+    @RenderSection("header", required: false)
+    <style>
+        label {
+            margin: 0;
+            font-family: 微软雅黑, Arial;
+            font-size: 12px;
+        }
+        .ui-widget {
+            font-size: 12px;
+        }
+        .shared_view_date {
+            line-height: normal;
+            font-size: 12px;
+            display: inline-block;
+            padding: 4px 15px 4px 0;
+            width: 200px;
+            text-align: center;
+            margin-left: 0;
+        }
+        a:focus {
+            outline: none;
+            text-decoration: none;
+        }
+        .navbar-default .navbar-nav > li > a {
+            color: #393232;
+        }
+        .container {
+            margin-left: 40px;
+        }
+        #ui-datepicker-div{
+            z-index:10000 !important
+        }
+        .badge{
+            margin-left: 3px;
+            margin-top: -1px;
+        }
+        .pagination{
+            margin:10px 0 0 0 !important
+        }
+    </style>
+</head>
+<body>
+    @RenderSection("menu", required: false)
+    <div class="navbar  navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><strong class="color-blue">新客户拜访管理</strong></a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav" id="ul-hover">
+                    <li><a href="/VisitManagement/Visit_View">拜访信息管理</a></li>
+                    <li><a href="/VisitManagement/Company_View">公司列表</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="row" style="margin:0">
+            <div style="padding:10px;background:#eef1f5">
+                @RenderBody()
+            </div>
+        </div>
+        <footer>
+        </footer>
+    </div>
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.form.min.js"></script>
+    <script src="~/Scripts/jquery-confirm.js"></script>
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="utf-8"></script>
+    <script src="~/Scripts/bootstrap-select.js"></script>
+    <script src="~/Scripts/defaults-zh_CN.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/bootstrap-typeahead.js"></script>
+    <script src="~/Scripts/kalendae.standalone.js"></script>
+    <script src="~/Scripts/View_VisitManagement.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script>
+    var locUrl = window.location.pathname;
+    $("#ul-hover li a").each(function (index, el) {
+        var href = this.getAttribute("href");
+        if( href == locUrl){
+            $(this).parent("li").addClass('current');
+        }
+    });
+</script>
