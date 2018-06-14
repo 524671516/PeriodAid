@@ -133,5 +133,12 @@
             }
         })
     }
+    //
+    $("#number-control").change(function () {
+        $(".calc_number").val($(this).val())
+    })
+    $("#number-control").keyup(function () {
+        $(".calc_number").val($(this).val())
+    })
 </script>
 

@@ -99,11 +99,28 @@
         <div style="width:35%;border:2px solid black;position:absolute;top:15px;right:76px;height:172px;">
             <h5 style="font-size:12px;text-align:center;"><b><i>（客户名片粘贴处，如无名片，请填写以下内容）</i></b></h5>
             <h5 style="margin-left:5px;font-size:12px;"><b><i>公司名称：</i></b>@Model.VM_Company.Company_Name</h5>
-            <h5 style="margin-left:5px;font-size:12px;"><b><i>客户姓名/职务：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Name / @Model.VM_Company.VM_Contact.First().Contact_Type</h5>
+            @if (Model.VM_Company.VM_Contact.FirstOrDefault() != null)
+            {
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>客户姓名/职务：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Name / @Model.VM_Company.VM_Contact.First().Contact_Type</h5>
+            }
+            else
+            {
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>客户姓名/职务：</i></b> 无</h5>
+            }
             <h5 style="margin-left:5px;font-size:12px;"><b><i>公司地址：</i></b><span title="@Model.VM_Company.Company_Address" style="position:absolute;width:245px;overflow:hidden;text-overflow:ellipsis;">@Model.VM_Company.Company_Address</span></h5>
-            <h5 style="margin-left:5px;font-size:12px;"><b><i>电话：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Mobile</h5>
-            <h5 style="margin-left:5px;font-size:12px;"><b><i>E-Mail：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Email</h5>
-            <h5 style="margin-left:5px;font-size:12px;"><b><i>微信号：</i></b>@Model.VM_Company.VM_Contact.First().Contact_WeChat</h5>
+            @if (Model.VM_Company.VM_Contact.FirstOrDefault() != null)
+            {
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>电话：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Mobile</h5>
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>E-Mail：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Email</h5>
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>微信号：</i></b>@Model.VM_Company.VM_Contact.First().Contact_WeChat</h5>
+            }
+            else
+            {
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>电话：</i></b>无</h5>
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>E-Mail：</i></b>无</h5>
+                <h5 style="margin-left:5px;font-size:12px;"><b><i>微信号：</i></b>无</h5>
+            }
+            
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label" style="font-weight:600">*I.基本情况:</label>
@@ -211,7 +228,7 @@
                     <td><b>2.7</b></td>
                     <td><b>代理过知名品牌:</b></td>
                     <td class="text-left">
-                        <div style="width:399px;white-space:normal">
+                        <div style="width:457px;white-space:normal">
                             @Model.VM_Company.Agent_FamousBrand
                         </div>
                     </td>
@@ -221,7 +238,6 @@
                     <td><b>有无特殊渠道:</b></td>
                     @if (Model.VM_Company.Special_Source != null)
                 {
-                    @*<span>@Html.SpecialSource(Model.VM_Company.Special_Source.Value)</span>*@
                 if (Model.VM_Company.Special_Source.Value == 0)
                 {
                     <td class="text-left">
@@ -333,7 +349,7 @@
                             </div>
                             <div class="left_share_div">
                                 <ul class="text-left">
-                                    <li style="line-height:40px">感兴趣品项<b style="opacity:0">空格</b></li>
+                                    <li style="line-height:40px">感兴趣品项</li>
                                     <li style="line-height:40px">操作资金</li>
                                 </ul>
                             </div>
@@ -420,7 +436,7 @@
                                         <span class="overflow_hidden_span" title="@Model.Core_Problem">@Model.Core_Problem</span>
                                         <a style="cursor:pointer;position:absolute;right:10px;top:0" data-id="@Model.Id" class="Corecomment_select_a" data-target="#myCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
                                     </li>
-                                    <li style="position:relative;top:15px;height:34px">
+                                    <li style="position:relative;top:13px;height:34px">
                                         <span class="overflow_hidden_span" title="@Model.Support">@Model.Support</span>
                                         <a style="cursor:pointer;position: absolute;right:10px;top:0" data-id="@Model.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
                                     </li>
@@ -450,7 +466,7 @@
                         }
                         else
                         {
-                            <div  style="height: 94px;line-height:94px">
+                            <div>
                                 否
                             </div>
                         }
@@ -483,7 +499,7 @@
                 }
                 else
                 {
-                    <div style="height: 94px;line-height:94px">
+                    <div>
                         否
                     </div>
             }
