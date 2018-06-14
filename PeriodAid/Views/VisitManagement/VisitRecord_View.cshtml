@@ -30,64 +30,75 @@
     </div>
 </div>
 <div class="modal-body" id="modal-body" style="padding-top:10px;">
-    
+
     <div class="form-horizontal">
-        <div class="form-group">
-            <label class="col-md-2 control-label" style="font-weight:600">销售人员:</label>
-            <div class="col-md-4" style="white-space: normal;line-height: 34px;">
+        <div style="width:50%;margin-left:60px;">
+            <div class="form-group">
+                <label class="col-md-2 control-label" style="font-weight:600">销售人员:</label>
+                <div class="col-md-4" style="white-space: normal;line-height: 34px;">
                     @foreach (var item in Model.AttendEmployee)
-                    {
-                        <span>@item.Employee_Name</span><b>&nbsp;&nbsp;</b>
-                    }
-             </div>
-            <label class="col-md-2 control-label" style="font-weight:600">填表人员:</label>
-            <div class="col-md-4" style="line-height: 34px;">
-                @Model.VM_Employee.Employee_Name
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label" style="font-weight:600">销售团队:</label>
-            <div class="col-md-4" style="line-height: 34px;">
-                @Model.VM_Employee.VM_Department.Department_Name
-            </div>
-            <label class="col-md-2 control-label" style="font-weight:600">审批状态:</label>
-            @if (Model.status == 0)
-            {
-                <div class="col-md-4 color-blue" style="line-height: 34px;">待审批</div>
+                {
+                    <span>@item.Employee_Name</span><b>&nbsp;&nbsp;</b>
             }
-            else if (Model.status == -1)
-            {
-                <div class="col-md-4 color-red" style="line-height: 34px;">驳回</div>
-            }
-            else if (Model.status == 1)
-            {
-                <div class="col-md-4 color-green" style="line-height: 34px;">通过</div>
-            }
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label" style="font-weight:600">客户类型:</label>
-            <div class="col-md-4" style="line-height: 34px;">
-                @Model.VM_Company.Company_Type
+                </div>
+                <label class="col-md-2 control-label" style="font-weight:600">填表人员:</label>
+                <div class="col-md-4" style="line-height: 34px;">
+                    @Model.VM_Employee.Employee_Name
+                </div>
             </div>
-            @if (Model.status == -1)
+            <div class="form-group">
+                <label class="col-md-2 control-label" style="font-weight:600">销售团队:</label>
+                <div class="col-md-4" style="line-height: 34px;">
+                    @Model.VM_Employee.VM_Department.Department_Name
+                </div>
+                <label class="col-md-2 control-label" style="font-weight:600">审批状态:</label>
+                @if (Model.status == 0)
+            {
+                <div class="col-md-4 color-orange" style="line-height: 34px;">待审核</div>
+        }
+        else if (Model.status == -1)
+        {
+            <div class="col-md-4 color-red" style="line-height: 34px;">已驳回</div>
+    }
+    else if (Model.status == 1)
+    {
+        <div class="col-md-4 color-green" style="line-height: 34px;">已通过</div>
+}
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" style="font-weight:600">客户类型:</label>
+                <div class="col-md-4" style="line-height: 34px;">
+                    @Model.VM_Company.Company_Type
+                </div>
+                @if (Model.status == -1)
             {
                 <label class="col-md-2 control-label" style="font-weight:600">驳回原因:</label>
                 <div class="col-md-4" style="line-height: 34px;white-space:normal">
                     @Model.Veto_Cause @Model.Veto_Detail
                 </div>
-            }
-        </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label" style="font-weight:600">拜访日期:</label>
-            <div class="col-md-5" style="line-height: 34px;">
-                @Model.Visit_Time.ToString("yyyy-MM-dd")
+        }
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" style="font-weight:600">拜访日期:</label>
+                <div class="col-md-5" style="line-height: 34px;">
+                    @Model.Visit_Time.ToString("yyyy-MM-dd")
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" style="font-weight:600">客户情况:</label>
+                <div class="col-md-5" style="line-height: 34px;">
+                    @Html.CategoryType(Model.VM_Company.Company_Category)
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-md-2 control-label" style="font-weight:600">客户情况:</label>
-            <div class="col-md-5" style="line-height: 34px;">
-                @Html.CategoryType(Model.VM_Company.Company_Category)
-            </div>
+        <div style="width:35%;border:2px solid black;position:absolute;top:15px;right:76px;height:172px;">
+            <h5 style="font-size:12px;text-align:center;"><b><i>（客户名片粘贴处，如无名片，请填写以下内容）</i></b></h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>公司名称：</i></b>@Model.VM_Company.Company_Name</h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>客户姓名/职务：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Name / @Model.VM_Company.VM_Contact.First().Contact_Type</h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>公司地址：</i></b><span title="@Model.VM_Company.Company_Address" style="position:absolute;width:245px;overflow:hidden;text-overflow:ellipsis;">@Model.VM_Company.Company_Address</span></h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>电话：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Mobile</h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>E-Mail：</i></b>@Model.VM_Company.VM_Contact.First().Contact_Email</h5>
+            <h5 style="margin-left:5px;font-size:12px;"><b><i>微信号：</i></b>@Model.VM_Company.VM_Contact.First().Contact_WeChat</h5>
         </div>
         <div class="form-group">
             <label class="col-md-2 control-label" style="font-weight:600">*I.基本情况:</label>
@@ -96,23 +107,22 @@
             <div class="col-md-2 control-label"></div>
             <table class="col-md-9 information_share_view share_table">
                 <tr>
-                    <td>1.1</td>
-                    <td>拜访序次</td>
+                    <td><b>1.1</b></td>
+                    <td><b>拜访序次:</b></td>
                     <td class="text-left">第 @Model.Visit_Count  次</td>
                 </tr>
                 <tr>
-                    <td>1.2</td>
-                    <td>拜访方式</td>
+                    <td><b>1.2</b></td>
+                    <td><b>拜访方式:</b></td>
                     <td class="text-left">@Html.VisitType(Model.Visit_Type)</td>
                 </tr>
                 <tr>
-                    <td>1.3</td>
-                    <td>客户来源</td>
+                    <td><b>1.3</b></td>
+                    <td><b>客户来源:</b></td>
                     <td class="text-left">@Model.VM_Company.Company_Source</td>
                 </tr>
             </table>
         </div>
-
         <div class="form-group">
             <label class="col-md-2 control-label" style="font-weight:600">*II.拜访记录:</label>
         </div>
@@ -120,121 +130,121 @@
             <div class="col-md-2 control-label"></div>
             <table class="col-md-9 record_share_view share_table">
                 <tr>
-                    <td>2.1</td>
-                    <td>渠道名称</td>
+                    <td><b>2.1</b></td>
+                    <td><b>渠道名称:</b></td>
                     <td class="text-left">@Model.VM_Company.Source_Name</td>
                 </tr>
                 <tr>
-                    <td>2.2</td>
-                    <td>所属区域</td>
+                    <td><b>2.2</b></td>
+                    <td><b>所属区域:</b></td>
                     <td class="text-left">@Model.VM_Company.Region</td>
                 </tr>
                 <tr>
-                    <td>2.3</td>
-                    <td>渠道类型</td>
+                    <td><b>2.3</b></td>
+                    <td><b>渠道类型:</b></td>
                     <td class="text-left">@Model.VM_Company.Source_Type</td>
                 </tr>
                 @if (Model.VM_Company.Company_Category == 1)
-                {
-                    <tr>
-                        <td>2.4</td>
-                        <td>进场费用</td>
-                        <td>
-                            @if (Model.VM_Company.Entrance_Fee != null)
+            {
+                <tr>
+                    <td><b>2.4</b></td>
+                    <td><b>进场费用:</b></td>
+                    <td>
+                        @if (Model.VM_Company.Entrance_Fee != null)
+                    {
+                        if (Model.VM_Company.Entrance_Fee.Value == 0)
+                        {
+                            if (Model.VM_Company.Entrance_Type != null)
                             {
-                                if (Model.VM_Company.Entrance_Fee.Value == 0)
-                                {
-                                    if (Model.VM_Company.Entrance_Type != null)
-                                    {
-                                        <span class="record_sharp_span" style="float:left;text-indent:10px">单位: @Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
-                                    }
-                                    if (Model.VM_Company.EntranceFee_Count != null)
-                                    {
-                                        <span style="float:left">@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
-                                    }
-                                }
-                                else
-                                {
-                                    <span style="float:left;text-indent:10px">无</span>
-                                }
-                            }
-                        </td>
-                    </tr>
+                                <span class="record_sharp_span" style="float:left;text-indent:10px">单位: @Html.EntranceType(Model.VM_Company.Entrance_Type.Value)</span>
+                        }
+                        if (Model.VM_Company.EntranceFee_Count != null)
+                        {
+                            <span style="float:left">@Model.VM_Company.EntranceFee_Count.Value 元 /SKU</span>
+                    }
                 }
+                else
+                {
+                    <span style="float:left;text-indent:10px">无</span>
+            }
+        }
+                    </td>
+                </tr>
+        }
                 @if (Model.VM_Company.Company_Category == 0)
-                {
-                    <tr>
-                        <td>2.4</td>
-                        <td>有无专用仓库</td>
-                        <td class="text-left">
-                            @if (Model.VM_Company.Dedicated_Warehouse == 0)
-                            {
-                                <span class="record_sharp_span">@Model.VM_Company.Warehouse_Area  平方米</span>
-                            }
-                            else
-                            {
-                                <span>无</span>
-                            }
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.5</td>
-                        <td>年销售额流水</td>
-
-                        <td class="text-left">
-                            ￥:   @Model.VM_Company.Sales_Amount  万元
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.6</td>
-                        <td>销售人员</td>
-                        <td class="text-left">
-                            有  @Model.VM_Company.Employee_Count     人
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.7</td>
-                        <td>代理过知名品牌</td>
-                        <td class="text-left">
-                            <div style="width:399px;white-space:normal">
-                                @Model.VM_Company.Agent_FamousBrand
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2.8</td>
-                        <td>有无特殊渠道</td>
-                        @if (Model.VM_Company.Special_Source != null)
-                        {
-                            @*<span>@Html.SpecialSource(Model.VM_Company.Special_Source.Value)</span>*@
-                        if (Model.VM_Company.Special_Source.Value == 0)
-                        {
-                            <td class="text-left">
-                                <span>@Model.VM_Company.SpecialSource_Detail</span>
-                                <span>@Model.VM_Company.SpecialSource_OtherDetail</span>
-                            </td>
-                        }
-                        else
-                        {
-                            <td class="text-left">
-                                <span>无</span>
-                            </td>
-                            }
-                        }
-                    </tr>
+            {
+                <tr>
+                    <td><b>2.4</b></td>
+                    <td><b>有无专用仓库:</b></td>
+                    <td class="text-left">
+                        @if (Model.VM_Company.Dedicated_Warehouse == 0)
+                    {
+                        <span class="record_sharp_span">@Model.VM_Company.Warehouse_Area  平方米</span>
                 }
+                else
+                {
+                    <span>无</span>
+            }
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>2.5</b></td>
+                    <td><b>年销售额流水:</b></td>
+
+                    <td class="text-left">
+                        ￥:   @Model.VM_Company.Sales_Amount  万元
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>2.6</b></td>
+                    <td><b>销售人员:</b></td>
+                    <td class="text-left">
+                        有  @Model.VM_Company.Employee_Count     人
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>2.7</b></td>
+                    <td><b>代理过知名品牌:</b></td>
+                    <td class="text-left">
+                        <div style="width:399px;white-space:normal">
+                            @Model.VM_Company.Agent_FamousBrand
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>2.8</b></td>
+                    <td><b>有无特殊渠道:</b></td>
+                    @if (Model.VM_Company.Special_Source != null)
+                {
+                    @*<span>@Html.SpecialSource(Model.VM_Company.Special_Source.Value)</span>*@
+                if (Model.VM_Company.Special_Source.Value == 0)
+                {
+                    <td class="text-left">
+                        <span>@Model.VM_Company.SpecialSource_Detail</span>
+                        <span>@Model.VM_Company.SpecialSource_OtherDetail</span>
+                    </td>
+            }
+            else
+            {
+                <td class="text-left">
+                    <span>无</span>
+                </td>
+        }
+    }
+                </tr>
+        }
                 <tr style="height:94px">
                     @if (Model.VM_Company.Company_Category == 0)
-                    {
-                        <td>2.9</td>
-                    }
-                    else
-                    {
-                        <td>2.5</td>
-                    }
-                    <td>合作意向</td>
+                {
+                    <td><b>2.9</b></td>
+            }
+            else
+            {
+                <td><b>2.5</b></td>
+        }
+                    <td><b>合作意向:</b></td>
                     <td class="share_height">
-                    @if (Model.Cooperation_Intention == 0)
+                        @if (Model.Cooperation_Intention == 0)
                     {
                         if (Model.VM_Company.Company_Category == 1)
                         {
@@ -264,26 +274,26 @@
                                     <div style="display:inline-block">
                                         <ul style="text-align:left;text-indent:10px">
                                             @if (Model.Cooperation_Status != null)
+                                        {
+                                            if (Model.Cooperation_Status == 1)
                                             {
-                                                if (Model.Cooperation_Status == 1)
+                                                if (Model.Reply_Time != null)
                                                 {
-                                                    if (Model.Reply_Time != null)
-                                                    {
-                                                        <li style="width:228px;white-space:normal">
-                                                            待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
-                                                        </li>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <li style="width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Company_Name">
-                                                        经销商名称 : @Model.Company_Name
+                                                    <li style="width:228px;white-space:normal">
+                                                        待定回复日期 :@Model.Reply_Time.Value.ToString("yyyy-MM-dd")
                                                     </li>
-                                                    <li style="width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Contact_Mobile">
-                                                        联系人电话 : @Model.Contact_Mobile
-                                                    </li>
-                                                }
                                             }
+                                        }
+                                        else
+                                        {
+                                            <li style="width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Company_Name">
+                                                经销商名称 : @Model.Company_Name
+                                            </li>
+                                            <li style="width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px" title="@Model.Contact_Mobile">
+                                                联系人电话 : @Model.Contact_Mobile
+                                            </li>
+                                    }
+                                }
                                         </ul>
                                     </div>
                                 }
@@ -364,8 +374,8 @@
             <div class="col-md-2 control-label"></div>
             <table class="col-md-9 result_share_view share_table">
                 <tr>
-                    <td>3.1</td>
-                    <td>综合结果</td>
+                    <td><b>3.1</b></td>
+                    <td><b>综合结果:</b></td>
                     <td class="text-left share_height">
                         @if (Model.Smoothly == 0)
                         {
@@ -416,8 +426,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>3.2</td>
-                    <td>需要我司回复</td>
+                    <td><b>3.2</b></td>
+                    <td><b>需要我司回复:</b></td>
                     <td>
                         @if (Model.Reply_Status == 0)
                         {
@@ -442,10 +452,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>3.3</td>
-                    <td>等待对方回复的信息</td>
+                    <td><b>3.3</b></td>
+                    <td><b>等待对方回复的信息:</b></td>
                     <td>
-                    @if (Model.CustomerReply_Status == 0)
+                        @if (Model.CustomerReply_Status == 0)
                     {
                         <div class="left_share_div">
                             是
@@ -460,51 +470,51 @@
                             <ul style="text-align:left;text-indent:10px">
                                 <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
                                 @if (@Model.CustomerReply_Time != null)
-                                {
-                                    <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
-                                }
+                            {
+                                <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
+                        }
                             </ul>
                         </div>
-                    }
-                    else
-                    {
-                        <div style="height: 94px;line-height:94px">
-                            否
-                        </div>
-                    }
+                }
+                else
+                {
+                    <div style="height: 94px;line-height:94px">
+                        否
+                    </div>
+            }
                     </td>
                 </tr>
                 <tr>
-                    <td>3.4</td>
-                    <td>下次拜访计划</td>
+                    <td><b>3.4</b></td>
+                    <td><b>下次拜访计划:</b></td>
                     <td>
                         @if (Model.NextVisit == 0)
-                        {
-                            <div class="left_share_div">
-                                <ul>
-                                    <li>拜访方式</li>
-                                    <li>拜访时间</li>
-                                    <li>拜访事项</li>
-                                </ul>
-                            </div>
-                            <div style="display:inline-block;float:left">
-                                <ul style="text-align:left;text-indent:10px">
-                                    @if (Model.NextVisit_Type != null)
-                                    {
-                                        <li>@Html.VisitType(Model.NextVisit_Type.Value)</li>
-                                    }
-                                    @if (Model.NextVisit_Time != null)
-                                    {
-                                        <li>@Model.NextVisit_Time.Value.ToString("yyyy-MM-dd")</li>
-                                    }
-                                    <li style="width:340px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
-                                </ul>
-                            </div>
+                    {
+                        <div class="left_share_div">
+                            <ul>
+                                <li>拜访方式</li>
+                                <li>拜访时间</li>
+                                <li>拜访事项</li>
+                            </ul>
+                        </div>
+                        <div style="display:inline-block;float:left">
+                            <ul style="text-align:left;text-indent:10px">
+                                @if (Model.NextVisit_Type != null)
+                            {
+                                <li>@Html.VisitType(Model.NextVisit_Type.Value)</li>
                         }
-                        else
-                        {
-                            <div>无</div>
+                                @if (Model.NextVisit_Time != null)
+                            {
+                                <li>@Model.NextVisit_Time.Value.ToString("yyyy-MM-dd")</li>
                         }
+                                <li style="width:340px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.NextVisit_Detail">@Model.NextVisit_Detail</li>
+                            </ul>
+                        </div>
+                }
+                else
+                {
+                    <div>无</div>
+            }
                     </td>
                 </tr>
             </table>
@@ -545,43 +555,43 @@
             buttons: {
                 审批通过: function () {
                     btnClass: 'btn-red',
-                    $.ajax({
-                        url: "/VisitManagement/Supervise_Status/",
-                        type: "post",
-                        data: {
-                            rec_id: that.attr("data-id"),
-                            rec_status: 1
-                        },
-                        success: function (data) {
-                            $.alert({
-                                title: '提示!',
-                                type: 'green',
-                                content: "操作成功",
-                            });
-                            $.ajax({
-                                url: "/VisitManagement/Visit_PartialView/",
-                                type: "post",
-                                data: {
-                                    visit_date: $("#select_date").val(),
-                                    dep_id: $(".team_select.active").attr("data-val"),
-                                    com_type: $(".company_type.active").text(),
-                                    com_name: $("#company_id .shared_view_span").attr("data-name"),
-                                    vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
-                                    sort: $(".sort_type.active").attr("data-val"),
-                                    status: $(".status_type.active").attr("data-val"),
-                                    page_count: $(".share_select_page option:selected").val(),
-                                },
-                                success: function (data) {
-                                    $("#visit_list_content").html(data)
-                                    if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
-                                        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
-                                    } else {
-                                        $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                        $.ajax({
+                            url: "/VisitManagement/Supervise_Status/",
+                            type: "post",
+                            data: {
+                                rec_id: that.attr("data-id"),
+                                rec_status: 1
+                            },
+                            success: function (data) {
+                                $.alert({
+                                    title: '提示!',
+                                    type: 'green',
+                                    content: "操作成功",
+                                });
+                                $.ajax({
+                                    url: "/VisitManagement/Visit_PartialView/",
+                                    type: "post",
+                                    data: {
+                                        visit_date: $("#select_date").val(),
+                                        dep_id: $(".team_select.active").attr("data-val"),
+                                        com_type: $(".company_type.active").text(),
+                                        com_name: $("#company_id .shared_view_span").attr("data-name"),
+                                        vis_name: $("#visitor_id .shared_view_span").attr("data-name"),
+                                        sort: $(".sort_type.active").attr("data-val"),
+                                        status: $(".status_type.active").attr("data-val"),
+                                        page_count: $(".share_select_page option:selected").val(),
+                                    },
+                                    success: function (data) {
+                                        $("#visit_list_content").html(data)
+                                        if ($("#toggle_btn").hasClass("fa-angle-double-up")) {
+                                            $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + "px")
+                                        } else {
+                                            $("#freezing_record").css("height", document.documentElement.clientHeight - $(".navbar-default.navbar-fixed-top").outerHeight(true) - $("#toggle_view_div").outerHeight(true) - 46 - 10 - 6 + 20 + "px")
+                                        }
                                     }
-                                }
-                            })
-                        }
-                    })
+                                })
+                            }
+                        })
                 },
                 heyThere: {
                     text: '审批否决',

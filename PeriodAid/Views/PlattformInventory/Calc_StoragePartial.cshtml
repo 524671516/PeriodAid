@@ -1,9 +1,7 @@
 ﻿@model IEnumerable<PeriodAid.Models.CalcStorageViewModel>
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active">
-
-        <a class="btn btn-primary float-right" href="javascript:;" id="download_calc" onclick="$('#calc_form').submit();">下载完整预估表</a>
-
+        <a class="btn btn-primary float-right" href="javascript:;" id="download_calc_storage" onclick="$('#calc_form').submit();" style="position:relative;top:-10px;">下载完整预估表</a>
         <form method="post" id="calc_form" action="/PlattformInventory/getInventoryExcel">
             <table class="table table-bordered table-hover">
                 <thead>
@@ -12,7 +10,9 @@
                         <th>商品编号</th>
                         <th>商品名称</th>
                         <th>日均销量</th>
-                        <th>仓库库存</th>
+                        <th>可订购数据</th>
+                        <th>总体库存</th>
+                        <th>库存周转数</th>
                         <th style="width:15%">
                             <i style="position:relative;top:5px;font-style:normal">周转数</i><input type="text" id="top-control" value="30" class="form-control calc_rate" readonly="readonly" style="font-weight:500;width:65%;position:relative;top:4px;margin-left:5px;display:inline-block;height:30px;padding-left: 27px;" />
                         </th>
@@ -37,14 +37,30 @@
                                 <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                <td>@Html.Encode(item.New_Storage_Count)</td>
+                                @if (@Html.Encode(item.Sales_Avg) == "0")
+                                {
+                                    <td style="background-color:red;">0</td>
+                                }
+                                else {
+                                    if (item.New_Storage_Count / item.Sales_Avg < 16)
+                                    {
+                                    <td style="background-color:red;">@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
+                                    else {
+                                    <td>@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
+                                }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="55" type="text" style="text-align:center" />
                                 </td>
                                 <td>
                                     <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
                                 </td>
-                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg, new { @class = "form-control calc_avgsales input-sm", type = "text" })</td>
                                 <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg.ToString("F0"), new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_storage_" + item.Product.Id, item.Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_newstorage_" + item.Product.Id, item.New_Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
                             </tr>
                         }
                         else
@@ -58,6 +74,20 @@
                                 <td><a class="product_id" data-href="#" data-pid="@item.Product.Id" style="cursor:pointer">@item.Product.Item_Name</a></td>
                                 <td class="calc_avgsales">@Html.Encode(item.Sales_Avg.ToString("F2"))</td>
                                 <td class="calc_storage">@Html.Encode(item.Storage_Count)</td>
+                                <td>@Html.Encode(item.New_Storage_Count)</td>
+                                @if (@Html.Encode(item.Sales_Avg) == "0")
+                                {
+                                    <td style="background-color:red;">0</td>
+                                }
+                                else {
+                                    if (item.New_Storage_Count / item.Sales_Avg < 16)
+                                    {
+                                    <td style="background-color:red;">@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
+                                    else {
+                                    <td>@Html.Encode((item.New_Storage_Count / item.Sales_Avg).ToString("F0"))</td>
+                                    }
+                                }
                                 <td>
                                     <input class="form-control calc_rate input-sm" readonly="readonly" value="30" type="text" style="text-align:center" />
 
@@ -65,8 +95,10 @@
                                 <td>
                                     <input class="form-control calc_number input-sm" value="1" type="number" style="text-align:center" />
                                 </td>
-                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg, new { @class = "form-control calc_avgsales input-sm", type = "text" })</td>
                                 <td hidden>@Html.TextBox("p_rate_" + item.Product.Id, 1, new { @class = "form-control calc_rate input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_avg_" + item.Product.Id, item.Sales_Avg.ToString("F0"), new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_storage_" + item.Product.Id, item.Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
+                                <td hidden>@Html.TextBox("p_newstorage_" + item.Product.Id, item.New_Storage_Count, new { @class = "form-control input-sm", type = "number" })</td>
                             </tr>
                         }
                     }
