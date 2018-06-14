@@ -224,68 +224,96 @@ namespace PeriodAid.Controllers
         public ActionResult CreateComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_Comment comment = new VM_Comment();
-            comment.Comment_Time = DateTime.Now;
-            comment.Nick_Name = user.NickName;
-            comment.User_Name = user.UserName;
-            comment.VisitRecord_Id = rec_id;
-            comment.Comment_Detail = detail;
-            comment.Comment_Type = 0;
-            comment.Comment_Status = 0;
-            _vmdb.VM_Comment.Add(comment);
-            _vmdb.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            if (detail !="")
+            {
+                VM_Comment comment = new VM_Comment();
+                comment.Comment_Time = DateTime.Now;
+                comment.Nick_Name = user.NickName;
+                comment.User_Name = user.UserName;
+                comment.VisitRecord_Id = rec_id;
+                comment.Comment_Detail = detail;
+                comment.Comment_Type = 0;
+                comment.Comment_Status = 0;
+                _vmdb.VM_Comment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
 
         [HttpPost]
         public ActionResult CreateReplyComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_Comment comment = new VM_Comment();
-            comment.Comment_Time = DateTime.Now;
-            comment.Nick_Name = user.NickName;
-            comment.User_Name = user.UserName;
-            comment.VisitRecord_Id = rec_id;
-            comment.Comment_Detail = detail;
-            comment.Comment_Type = 3;
-            comment.Comment_Status = 0;
-            _vmdb.VM_Comment.Add(comment);
-            _vmdb.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            if (detail!="")
+            {
+                VM_Comment comment = new VM_Comment();
+                comment.Comment_Time = DateTime.Now;
+                comment.Nick_Name = user.NickName;
+                comment.User_Name = user.UserName;
+                comment.VisitRecord_Id = rec_id;
+                comment.Comment_Detail = detail;
+                comment.Comment_Type = 3;
+                comment.Comment_Status = 0;
+                _vmdb.VM_Comment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
 
         [HttpPost]
         public ActionResult CreateCoreComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_Comment comment = new VM_Comment();
-            comment.Comment_Time = DateTime.Now;
-            comment.Nick_Name = user.NickName;
-            comment.User_Name = user.UserName;
-            comment.VisitRecord_Id = rec_id;
-            comment.Comment_Detail = detail;
-            comment.Comment_Type = 1;
-            comment.Comment_Status = 0;
-            _vmdb.VM_Comment.Add(comment);
-            _vmdb.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            if (detail !="")
+            {
+                VM_Comment comment = new VM_Comment();
+                comment.Comment_Time = DateTime.Now;
+                comment.Nick_Name = user.NickName;
+                comment.User_Name = user.UserName;
+                comment.VisitRecord_Id = rec_id;
+                comment.Comment_Detail = detail;
+                comment.Comment_Type = 1;
+                comment.Comment_Status = 0;
+                _vmdb.VM_Comment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
 
         [HttpPost]
         public ActionResult CreateSupportComment(string detail, int rec_id)
         {
             var user = getUser(User.Identity.Name);
-            VM_Comment comment = new VM_Comment();
-            comment.Comment_Time = DateTime.Now;
-            comment.Nick_Name = user.NickName;
-            comment.User_Name = user.UserName;
-            comment.VisitRecord_Id = rec_id;
-            comment.Comment_Detail = detail;
-            comment.Comment_Type = 2;
-            comment.Comment_Status = 0;
-            _vmdb.VM_Comment.Add(comment);
-            _vmdb.SaveChanges();
-            return Json(new { result = "SUCCESS" });
+            if (detail!="")
+            {
+                VM_Comment comment = new VM_Comment();
+                comment.Comment_Time = DateTime.Now;
+                comment.Nick_Name = user.NickName;
+                comment.User_Name = user.UserName;
+                comment.VisitRecord_Id = rec_id;
+                comment.Comment_Detail = detail;
+                comment.Comment_Type = 2;
+                comment.Comment_Status = 0;
+                _vmdb.VM_Comment.Add(comment);
+                _vmdb.SaveChanges();
+                return Json(new { result = "SUCCESS" });
+            }
+            else
+            {
+                return Json(new { result = "FAIL" });
+            }
         }
 
         // 审批

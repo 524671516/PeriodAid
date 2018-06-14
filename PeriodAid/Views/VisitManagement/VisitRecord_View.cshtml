@@ -1,5 +1,5 @@
 ﻿@model PeriodAid.Models.VM_VisitRecord
-    <style>
+   <style>
     .modal-header {
         padding-bottom: 5px !important;
     }
@@ -12,15 +12,20 @@
         text-indent: 10px;
         white-space: normal;
     }
+
     .btn_container {
         position: absolute !important;
         top: 0;
         padding: 0;
         left: 0;
     }
-    .share_table tr td:nth-child(2){
-        width:139px
+    .share_table tr td:nth-child(2) {
+        width: 139px;
     }
+    ul{
+        margin-bottom:0!important
+    }
+    
 </style>
 <div class="modal-header">
     <h4 class="text-center col-md-12" id="record_id" data-id="@Model.Id">新客户拜访信息共享表</h4>
@@ -332,7 +337,7 @@
                                     <li style="line-height:40px">操作资金</li>
                                 </ul>
                             </div>
-                            <div style="display:inline-block;float:left">
+                            <div class="inline_share_div">
                                 <ul style="text-indent:10px;text-align:left">
                                     <li style="line-height:40px">
                                         @Model.Intentional_Products
@@ -359,7 +364,7 @@
                         <div class="left_share_div text-center">
                             原因
                         </div>
-                        <div style="white-space:normal;text-indent:10px;text-align: justify;width:229px;display:inline-block">
+                        <div style="white-space:normal;text-indent:10px;text-align: justify;width:229px;display:inline-block;line-height:18px">
                             @Model.NoIntention_Reason  @Model.NoIntention_Detail
                         </div>
                     }
@@ -409,15 +414,15 @@
                                     <li style="line-height:40px;">需要支持</li>
                                 </ul>
                             </div>
-                            <div>
+                            <div class="inline_share_div">
                                 <ul>
-                                    <li style="position:relative;line-height:37px">
-                                        <span style="text-indent:0;display:inline-block;width:158px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Core_Problem">@Model.Core_Problem</span>
-                                        <a style="cursor:pointer;display:inline-block;position:absolute;right:10px" data-id="@Model.Id" class="Corecomment_select_a" data-target="#myCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
+                                    <li style="position:relative;top:6px;height:34px">
+                                        <span class="overflow_hidden_span" title="@Model.Core_Problem">@Model.Core_Problem</span>
+                                        <a style="cursor:pointer;position:absolute;right:10px;top:0" data-id="@Model.Id" class="Corecomment_select_a" data-target="#myCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
                                     </li>
-                                    <li style="position:relative;line-height:20px;">
-                                        <span style="text-indent:0;display:inline-block;width:158px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;" title="@Model.Support">@Model.Support</span>
-                                        <a style="cursor:pointer;display:inline-block;position: absolute;right:10px" data-id="@Model.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
+                                    <li style="position:relative;top:15px;height:34px">
+                                        <span class="overflow_hidden_span" title="@Model.Support">@Model.Support</span>
+                                        <a style="cursor:pointer;position: absolute;right:10px;top:0" data-id="@Model.Id" class="Supportcomment_select_a" data-target="#mySupportCommentModal">评论<span style="text-indent:0" class="badge"></span></a>
                                     </li>
                                     
                                 </ul>
@@ -437,7 +442,7 @@
                             <div class="left_share_div" style="text-indent:10px">
                                 需要回复的问题
                             </div>
-                            <div style="display:inline-block;float:left;position:relative;width:229px;text-align:left">
+                            <div class="inline_share_div" style="position:relative;text-align:left">
                                 <span style="width:167px;white-space:normal;line-height:20px;text-indent:10px;text-align:left;display:inline-block">@Model.Reply_Detail</span>
                                 <a style="cursor:pointer;display:inline-block;position: absolute;right:10px" data-id="@Model.Id" class="Replycomment_select_a" data-target="#myReplyCommentModal">评论<span class="badge"></span></a>
                             </div>
@@ -466,12 +471,12 @@
                                 <li style="line-height:40px;">预计回复时间</li>
                             </ul>
                         </div>
-                        <div>
+                        <div class="inline_share_div">
                             <ul style="text-align:left;text-indent:10px">
-                                <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</li>
+                                <li style="height:34px;margin-top:6px"><span class="overflow_hidden_span" style="width:229px;white-space:normal" title="@Model.CustomerReply_Detail">@Model.CustomerReply_Detail</span></li>
                                 @if (@Model.CustomerReply_Time != null)
                             {
-                                <li style="line-height:40px;width:228px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
+                                <li style="line-height:40px;width:229px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-align:left">@Model.CustomerReply_Time.Value.ToString("yyyy-MM-dd")</li>
                         }
                             </ul>
                         </div>
@@ -528,6 +533,13 @@
 </div>
 
 <script>
+    $(function () {
+        $('.modal').on('hidden.bs.modal', function () {
+            if ($('.modal.in').length >= 1) {
+                $('body').addClass('modal-open')
+            }
+        })
+    })
     $('.supervise_btn[data-status="1"]').addClass("disabled")
     $(function () {
         $.ajax({

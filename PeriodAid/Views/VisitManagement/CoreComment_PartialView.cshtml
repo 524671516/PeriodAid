@@ -54,7 +54,17 @@
                                 $(".Corecomment_select_a[data-id=" + data.rid + "] span").text(data.core)
                             }
                         })
-                    } else {
+                    }
+                    else if (data.result == "FAIL") {
+                        $("#save-btn").removeClass("disabled")
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "输入内容不能为空",
+                        });
+
+                    }
+                    else {
                         $.alert({
                             title: '提示!',
                             type: 'red',

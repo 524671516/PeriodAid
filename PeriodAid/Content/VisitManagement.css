@@ -572,4 +572,19 @@ body,html{
     float:right;
     border-radius:0 6px 0 0
 }        
+.inline_share_div{
+        display: inline-block;
+        float: left;
+        width: 229px;
+    }
 /*还原共享表样式结束*/
+/*溢出隐藏*/
+.overflow_hidden_span {
+    width: 158px;
+    overflow: hidden;
+    display: -webkit-box;
+    line-height: 18px;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    }
+/*溢出隐藏结束*/

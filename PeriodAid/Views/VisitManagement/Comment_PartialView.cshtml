@@ -32,6 +32,7 @@
 
 <script>
     $("#save-btn").on("click", function () {
+        var that = $(this)
         if (!$(this).hasClass("disabled")) {
             $(this).addClass("disabled")
             $("#comment-form").ajaxSubmit({
@@ -58,7 +59,17 @@
                                 }
                             })
                         }
-                    } else {
+                    }
+                    else if (data.result == "FAIL") {
+                        $("#save-btn").removeClass("disabled")
+                        $.alert({
+                            title: '提示!',
+                            type: 'red',
+                            content: "输入内容不能为空",
+                        });
+                        
+                    }
+                    else {
                         $.alert({
                             title: '提示!',
                             type: 'red',
